@@ -16,39 +16,48 @@ export type Database = {
     Tables: {
       clients: {
         Row: {
+          active: boolean | null
           business_name: string | null
           created_at: string | null
           email: string
           id: string
+          monthly_fee_cents: number | null
           monthly_included_minutes: number
           name: string
           notes: string | null
           phone: string | null
           plan_type: string
+          setup_fee_cents: number | null
           website_url: string | null
         }
         Insert: {
+          active?: boolean | null
           business_name?: string | null
           created_at?: string | null
           email: string
           id?: string
+          monthly_fee_cents?: number | null
           monthly_included_minutes?: number
           name: string
           notes?: string | null
           phone?: string | null
           plan_type?: string
+          setup_fee_cents?: number | null
           website_url?: string | null
         }
         Update: {
+          active?: boolean | null
           business_name?: string | null
           created_at?: string | null
           email?: string
           id?: string
+          monthly_fee_cents?: number | null
           monthly_included_minutes?: number
           name?: string
           notes?: string | null
           phone?: string | null
           plan_type?: string
+          setup_fee_cents?: number | null
           website_url?: string | null
         }
         Relationships: []
@@ -82,6 +91,41 @@ export type Database = {
           wish?: string
         }
         Relationships: []
+      }
+      request_limits: {
+        Row: {
+          client_id: string
+          created_at: string | null
+          id: string
+          included_requests: number | null
+          month: string
+          used_requests: number | null
+        }
+        Insert: {
+          client_id: string
+          created_at?: string | null
+          id?: string
+          included_requests?: number | null
+          month: string
+          used_requests?: number | null
+        }
+        Update: {
+          client_id?: string
+          created_at?: string | null
+          id?: string
+          included_requests?: number | null
+          month?: string
+          used_requests?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "request_limits_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       update_requests: {
         Row: {
