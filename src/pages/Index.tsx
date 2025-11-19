@@ -15,10 +15,13 @@ const Index = () => {
       <section className="flex min-h-screen items-center justify-center px-6 py-20">
         <div className="max-w-3xl text-center">
           <h1 className="mb-6 text-5xl font-bold leading-tight text-foreground md:text-6xl">
-            Simple websites for real businesses
+            Simple websites for real work and real projects
           </h1>
-          <p className="mb-12 text-xl text-muted-foreground md:text-2xl">
-            I help small business owners get a website without the headaches, big bills, or long contracts.
+          <p className="mb-8 text-xl text-muted-foreground md:text-2xl">
+            I help people put their work on the web without headaches, big bills, or long contracts.
+          </p>
+          <p className="mb-12 text-base text-muted-foreground/80 md:text-lg">
+            Good for small service businesses, solo professionals, artists, coaches, nonprofits, film projects, and other serious ideas that need a clean, honest site.
           </p>
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Button
@@ -52,7 +55,7 @@ const Index = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  About 30 minutes so I can understand your business, what you offer, and what you want people to do on your site.
+                  About 30 minutes so I can understand your work or project, what you offer, and what you want people to do on your site.
                 </p>
               </CardContent>
             </Card>
@@ -105,7 +108,7 @@ const Index = () => {
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0 text-primary" />
-                  <span className="text-lg">A clean, simple website that makes you look legit</span>
+                  <span className="text-lg">A clean, simple website that makes your work, business, or project look real and trustworthy</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0 text-primary" />
@@ -113,11 +116,11 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0 text-primary" />
-                  <span className="text-lg">A clear call to action so people know how to contact you</span>
+                  <span className="text-lg">A clear next step for visitors, whether that is calling you, requesting info, applying, or reaching out about a project</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0 text-primary" />
-                  <span className="text-lg">One person who knows your business and handles your changes</span>
+                  <span className="text-lg">One person who knows your work and handles your changes</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0 text-primary" />
@@ -233,21 +236,21 @@ const Index = () => {
       <section className="px-6 py-20">
         <div className="mx-auto max-w-6xl">
           <h2 className="mb-16 text-center text-4xl font-bold text-foreground">Simple sites I have worked on</h2>
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <div className="aspect-video overflow-hidden rounded-t-lg bg-accent">
                 <img
                   src="/placeholder.svg"
-                  alt="Contractor website example"
+                  alt="Service business website example"
                   className="h-full w-full object-cover"
                 />
               </div>
               <CardHeader>
-                <CardTitle>Contractor example</CardTitle>
+                <CardTitle>Service business example</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Simple, non fancy design that makes the business look real and trustworthy.
+                  Clean, straightforward design that builds trust and makes it easy to request a quote or book a call.
                 </p>
               </CardContent>
             </Card>
@@ -256,16 +259,16 @@ const Index = () => {
               <div className="aspect-video overflow-hidden rounded-t-lg bg-accent">
                 <img
                   src="/placeholder.svg"
-                  alt="Therapist website example"
+                  alt="Portfolio or artist website example"
                   className="h-full w-full object-cover"
                 />
               </div>
               <CardHeader>
-                <CardTitle>Therapist example</CardTitle>
+                <CardTitle>Portfolio or artist example</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Calm layout that makes it easy to understand what they offer and how to reach them.
+                  Simple showcase that lets your work speak for itself with a clear way to get in touch or commission work.
                 </p>
               </CardContent>
             </Card>
@@ -274,16 +277,34 @@ const Index = () => {
               <div className="aspect-video overflow-hidden rounded-t-lg bg-accent">
                 <img
                   src="/placeholder.svg"
-                  alt="Coach website example"
+                  alt="Film or project website example"
                   className="h-full w-full object-cover"
                 />
               </div>
               <CardHeader>
-                <CardTitle>Coach example</CardTitle>
+                <CardTitle>Film or project example</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Straightforward site that focuses on who they help and how to book.
+                  Direct, honest layout for creative projects, investment opportunities, or campaigns that need credibility and a clear ask.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <div className="aspect-video overflow-hidden rounded-t-lg bg-accent">
+                <img
+                  src="/placeholder.svg"
+                  alt="Nonprofit or community website example"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <CardHeader>
+                <CardTitle>Nonprofit or community example</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Warm, accessible site that explains your mission and makes it easy for people to support, volunteer, or learn more.
                 </p>
               </CardContent>
             </Card>
@@ -390,7 +411,16 @@ const Index = () => {
       <section className="px-6 py-20">
         <div className="mx-auto max-w-3xl">
           <h2 className="mb-16 text-center text-4xl font-bold text-foreground">Questions people usually ask</h2>
-          <Accordion type="single" collapsible defaultValue="item-1">
+          <Accordion type="single" collapsible defaultValue="item-0">
+            <AccordionItem value="item-0">
+              <AccordionTrigger className="text-left text-lg">
+                What kinds of websites do you build?
+              </AccordionTrigger>
+              <AccordionContent className="text-base text-muted-foreground">
+                Simple 5 to 7 page sites for service businesses, solo professionals, artists, coaches, nonprofits, film and other creative projects, and similar work that needs a clear, honest web presence. I do not build online stores or real estate listing sites.
+              </AccordionContent>
+            </AccordionItem>
+
             <AccordionItem value="item-1">
               <AccordionTrigger className="text-left text-lg">
                 Do I have to sign a contract?
