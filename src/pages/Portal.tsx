@@ -31,6 +31,7 @@ const Portal = () => {
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSignup, setIsSignup] = useState(false);
   const [client, setClient] = useState<Client | null>(null);
   const [requests, setRequests] = useState<UpdateRequest[]>([]);
   const [requestForm, setRequestForm] = useState({
@@ -85,12 +86,30 @@ const Portal = () => {
     }
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
     
-    if (error) {
-      toast.error(error.message);
+    if (isSignup) {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/portal`
+        }
+      });
+      
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Account created! You can now log in.");
+        setIsSignup(false);
+      }
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      
+      if (error) {
+        toast.error(error.message);
+      }
     }
   };
 
@@ -154,13 +173,18 @@ const Portal = () => {
       <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl">Client portal</CardTitle>
+            <CardTitle className="text-2xl">
+              {isSignup ? "Create account" : "Client portal"}
+            </CardTitle>
             <CardDescription className="text-base">
-              If I have already built your site, you can log in here and send change requests.
+              {isSignup 
+                ? "Set up your client account to access your project."
+                : "If I have already built your site, you can log in here and send change requests."
+              }
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleAuth} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -182,11 +206,19 @@ const Portal = () => {
                 />
               </div>
               <Button type="submit" className="w-full">
-                Log in
+                {isSignup ? "Create account" : "Log in"}
               </Button>
-              <p className="text-sm text-center text-muted-foreground">
-                Need an account? I will set one up for you when your site is ready.
-              </p>
+              <Button 
+                type="button" 
+                variant="ghost" 
+                className="w-full"
+                onClick={() => setIsSignup(!isSignup)}
+              >
+                {isSignup 
+                  ? "Already have an account? Log in" 
+                  : "Need an account? Sign up"
+                }
+              </Button>
             </form>
           </CardContent>
         </Card>
