@@ -221,11 +221,11 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0 text-primary" />
-                  <span className="text-lg">No dashboards to learn. No platform to manage.</span>
+                  <span className="text-lg">No dashboards to learn. No logins to manage.</span>
                 </li>
               </ul>
               <p className="mt-8 text-center text-sm text-muted-foreground">
-                I do not sell platforms or solutions. Just a website that works, and a person you can reach.
+                I do not sell services or packages. Just a website that works, and a person you can reach.
               </p>
             </CardContent>
           </Card>
