@@ -7,8 +7,11 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import AdminSubmissions from "./pages/AdminSubmissions";
 import Portal from "./pages/Portal";
+import PortalHome from "./pages/PortalHome";
+import PortalRequest from "./pages/PortalRequest";
 import AdminClients from "./pages/AdminClients";
 import AdminClientDetail from "./pages/AdminClientDetail";
+import AdminRequests from "./pages/AdminRequests";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 
@@ -24,6 +27,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
           <Route path="/portal" element={<Portal />} />
+          <Route path="/portal/home" element={<PortalHome />} />
+          <Route path="/portal/request" element={<PortalRequest />} />
           <Route
             path="/admin/submissions"
             element={
@@ -45,6 +50,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <AdminClientDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/requests"
+            element={
+              <ProtectedRoute>
+                <AdminRequests />
               </ProtectedRoute>
             }
           />
