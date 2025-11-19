@@ -253,8 +253,56 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Pricing */}
+        {/* Who This Is For */}
         <section className="py-16 md:py-24 px-4 bg-muted/30">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">
+              Who this is for (and not for)
+            </h2>
+            <div className="grid md:grid-cols-2 gap-8">
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  <h3 className="text-xl font-semibold">This is a good fit if you:</h3>
+                  <ul className="space-y-3">
+                    {[
+                      "Want a simple 5 to 7 page site that looks clean and professional",
+                      "Do not want to learn a website platform or deal with a big agency",
+                      "Have a real business, practice, or project you are ready to share",
+                      "Are fine with straightforward, non fancy design that is clear and easy to read"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-base leading-relaxed">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  <h3 className="text-xl font-semibold">This is not a good fit if you:</h3>
+                  <ul className="space-y-3">
+                    {[
+                      "Need ecommerce, online courses, or complex booking systems",
+                      "Need a large custom web app or portal",
+                      "Want endless rounds of design changes",
+                      "Expect a full marketing agency, SEO campaign, or ad management"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                        <span className="text-base leading-relaxed">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Pricing */}
+        <section className="py-16 md:py-24 px-4">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">Pricing</h2>
             <Card className="shadow-lg border-2">
@@ -292,7 +340,7 @@ const Index = () => {
                   <span className="text-lg leading-relaxed font-medium">How long does it take?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed text-muted-foreground">
-                  Most sites are done in 2-4 weeks, depending on how quickly you can provide content and feedback.
+                  Most sites take about 2 to 4 weeks once I have your content and we have done a kickoff call. I will give you a realistic timeline before we start and keep you updated as I go.
                 </AccordionContent>
               </AccordionItem>
 
@@ -301,7 +349,7 @@ const Index = () => {
                   <span className="text-lg leading-relaxed font-medium">What if I don't have all my content ready?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed text-muted-foreground">
-                  That's fine. I can help you figure out what you need, or we can work in phases. But the more ready you are, the faster we can move.
+                  That is common. We can start with what you have. I will give you a simple checklist for the rest and we will fill it in together. The clearer your answers are, the better the site will feel.
                 </AccordionContent>
               </AccordionItem>
 
@@ -310,7 +358,7 @@ const Index = () => {
                   <span className="text-lg leading-relaxed font-medium">Can I update the site myself after it's done?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed text-muted-foreground">
-                  Yes. I'll set it up so you can edit text, add images, and make simple changes. I'll show you how everything works.
+                  If you want to, yes. I will show you the basics and give you a short written guide for simple text or image updates. If you would rather not touch it, I can handle changes for you.
                 </AccordionContent>
               </AccordionItem>
 
@@ -319,7 +367,7 @@ const Index = () => {
                   <span className="text-lg leading-relaxed font-medium">What platform do you use?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed text-muted-foreground">
-                  I typically use WordPress or static site generators, depending on what makes sense for your project and technical comfort level.
+                  I use modern tools behind the scenes, but you do not have to log in or learn a new system. You own the finished site and we can export it if you ever want to move it somewhere else.
                 </AccordionContent>
               </AccordionItem>
 
@@ -328,7 +376,7 @@ const Index = () => {
                   <span className="text-lg leading-relaxed font-medium">Do you do ecommerce or real estate sites?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed text-muted-foreground">
-                  No. Those require different tools and ongoing management that's outside the scope of this service.
+                  No. I focus on simple service, portfolio, nonprofit, and project sites. If you need full ecommerce or complex real estate listings, I am not the right fit and I can point you toward better options.
                 </AccordionContent>
               </AccordionItem>
 
@@ -337,7 +385,7 @@ const Index = () => {
                   <span className="text-lg leading-relaxed font-medium">What if I need changes after the site launches?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed text-muted-foreground">
-                  Small tweaks right after launch are included. For bigger updates down the road, we can work out a simple hourly rate or retainer.
+                  Small changes are easy to handle. We can either set up a simple monthly arrangement for ongoing edits, or I can price changes as one off updates. You will always know the cost before I do the work.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
