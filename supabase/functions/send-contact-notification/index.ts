@@ -62,7 +62,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
       body: JSON.stringify({
         from: "Website Inquiries <onboarding@resend.dev>",
-        to: ["YOUR_EMAIL@example.com"], // Replace with your actual email
+        to: ["dannyrimada@gmail.com"],
         subject: "New website inquiry",
         html: emailHtml,
       }),
