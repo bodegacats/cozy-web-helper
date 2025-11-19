@@ -8,15 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
-import {
-  DndContext,
-  DragEndEvent,
-  DragOverlay,
-  DragStartEvent,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
 
 interface Client {
   id: string;
@@ -45,15 +36,7 @@ const AdminPipeline = () => {
   const { isAdmin, loading: adminLoading } = useAdminCheck();
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeId, setActiveId] = useState<string | null>(null);
-  
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    })
-  );
+  const [draggedClient, setDraggedClient] = useState<Client | null>(null);
 
   useEffect(() => {
     if (!adminLoading && !isAdmin) {
@@ -95,20 +78,11 @@ const AdminPipeline = () => {
     setLoading(false);
   };
 
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
-  };
-
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event;
+  const handleDrop = async (e: React.DragEvent, newStage: string) => {
+    e.preventDefault();
     
-    if (!over) {
-      setActiveId(null);
-      return;
-    }
-
-    const clientId = active.id as string;
-    const newStage = over.id as string;
+    const clientId = e.dataTransfer.getData("clientId");
+    if (!clientId) return;
 
     // Update local state optimistically
     setClients((prev) =>
@@ -130,14 +104,12 @@ const AdminPipeline = () => {
       toast.success("Pipeline stage updated");
     }
 
-    setActiveId(null);
+    setDraggedClient(null);
   };
 
   const getClientsForStage = (stageId: string) => {
     return clients.filter((client) => client.pipeline_stage === stageId);
   };
-
-  const activeClient = clients.find((c) => c.id === activeId);
 
   if (adminLoading || loading) {
     return (
@@ -164,26 +136,18 @@ const AdminPipeline = () => {
           </div>
         </div>
 
-        <DndContext
-          sensors={sensors}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
-            {stages.map((stage) => (
-              <PipelineColumn
-                key={stage.id}
-                stage={stage}
-                clients={getClientsForStage(stage.id)}
-                navigate={navigate}
-              />
-            ))}
-          </div>
-
-          <DragOverlay>
-            {activeClient ? <ClientCard client={activeClient} isDragging /> : null}
-          </DragOverlay>
-        </DndContext>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
+          {stages.map((stage) => (
+            <PipelineColumn
+              key={stage.id}
+              stage={stage}
+              clients={getClientsForStage(stage.id)}
+              navigate={navigate}
+              onDrop={handleDrop}
+              setDraggedClient={setDraggedClient}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -193,9 +157,13 @@ interface PipelineColumnProps {
   stage: { id: string; label: string };
   clients: Client[];
   navigate: (path: string) => void;
+  onDrop: (e: React.DragEvent, stageId: string) => void;
+  setDraggedClient: (client: Client | null) => void;
 }
 
-const PipelineColumn = ({ stage, clients, navigate }: PipelineColumnProps) => {
+const PipelineColumn = ({ stage, clients, navigate, onDrop, setDraggedClient }: PipelineColumnProps) => {
+  const [isOver, setIsOver] = useState(false);
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between px-2">
@@ -206,14 +174,25 @@ const PipelineColumn = ({ stage, clients, navigate }: PipelineColumnProps) => {
       </div>
       
       <div
-        className="flex-1 bg-muted/50 rounded-lg p-2 min-h-[200px] space-y-2"
-        data-stage={stage.id}
+        className={`flex-1 rounded-lg p-2 min-h-[200px] space-y-2 transition-colors ${
+          isOver ? "bg-primary/10 border-2 border-primary border-dashed" : "bg-muted/50"
+        }`}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsOver(true);
+        }}
+        onDragLeave={() => setIsOver(false)}
+        onDrop={(e) => {
+          setIsOver(false);
+          onDrop(e, stage.id);
+        }}
       >
         {clients.map((client) => (
           <DraggableClientCard
             key={client.id}
             client={client}
             navigate={navigate}
+            setDraggedClient={setDraggedClient}
           />
         ))}
       </div>
@@ -224,9 +203,10 @@ const PipelineColumn = ({ stage, clients, navigate }: PipelineColumnProps) => {
 interface DraggableClientCardProps {
   client: Client;
   navigate: (path: string) => void;
+  setDraggedClient: (client: Client | null) => void;
 }
 
-const DraggableClientCard = ({ client, navigate }: DraggableClientCardProps) => {
+const DraggableClientCard = ({ client, navigate, setDraggedClient }: DraggableClientCardProps) => {
   const [isDragging, setIsDragging] = useState(false);
 
   return (
@@ -234,11 +214,15 @@ const DraggableClientCard = ({ client, navigate }: DraggableClientCardProps) => 
       draggable
       onDragStart={(e) => {
         setIsDragging(true);
+        setDraggedClient(client);
         e.dataTransfer.effectAllowed = "move";
         e.dataTransfer.setData("clientId", client.id);
       }}
-      onDragEnd={() => setIsDragging(false)}
-      className={isDragging ? "opacity-50" : ""}
+      onDragEnd={() => {
+        setIsDragging(false);
+        setDraggedClient(null);
+      }}
+      className={isDragging ? "opacity-50 cursor-grabbing" : "cursor-grab"}
     >
       <ClientCard client={client} onClick={() => navigate(`/admin/clients/${client.id}`)} />
     </div>
@@ -251,12 +235,10 @@ interface ClientCardProps {
   onClick?: () => void;
 }
 
-const ClientCard = ({ client, isDragging = false, onClick }: ClientCardProps) => {
+const ClientCard = ({ client, onClick }: ClientCardProps) => {
   return (
     <Card
-      className={`cursor-pointer hover:shadow-md transition-shadow ${
-        isDragging ? "opacity-50 rotate-3" : ""
-      }`}
+      className="hover:shadow-md transition-shadow"
       onClick={onClick}
     >
       <CardContent className="p-3 space-y-2">
@@ -302,46 +284,6 @@ const ClientCard = ({ client, isDragging = false, onClick }: ClientCardProps) =>
         )}
       </CardContent>
     </Card>
-  );
-};
-
-// Droppable zone component
-const DroppableZone = ({ stageId, children }: { stageId: string; children: React.ReactNode }) => {
-  const [isOver, setIsOver] = useState(false);
-
-  return (
-    <div
-      onDragOver={(e) => {
-        e.preventDefault();
-        setIsOver(true);
-      }}
-      onDragLeave={() => setIsOver(false)}
-      onDrop={async (e) => {
-        e.preventDefault();
-        setIsOver(false);
-        
-        const clientId = e.dataTransfer.getData("clientId");
-        if (!clientId) return;
-
-        // Update in database
-        const { error } = await supabase
-          .from("clients")
-          .update({ pipeline_stage: stageId })
-          .eq("id", clientId);
-
-        if (error) {
-          toast.error("Failed to update pipeline stage");
-        } else {
-          toast.success("Pipeline stage updated");
-          window.location.reload(); // Simple reload for now
-        }
-      }}
-      className={`flex-1 rounded-lg p-2 min-h-[200px] space-y-2 transition-colors ${
-        isOver ? "bg-primary/10 border-2 border-primary border-dashed" : "bg-muted/50"
-      }`}
-    >
-      {children}
-    </div>
   );
 };
 
