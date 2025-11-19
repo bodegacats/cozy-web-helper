@@ -66,8 +66,16 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* 
+        SEMANTIC STRUCTURE:
+        - Single <h1> in hero for main heading
+        - Section headings use <h2>
+        - Subsection headings use <h3>
+        - Wrapped in <header>, <main>, <footer> for accessibility and SEO
+      */}
+      
       {/* Hero Section */}
-      <section className="min-h-[85vh] flex items-center justify-center bg-gradient-to-b from-background via-muted/20 to-background px-4 py-16">
+      <header className="min-h-[85vh] flex items-center justify-center bg-gradient-to-b from-background via-muted/20 to-background px-4 py-16">
         <div className="max-w-3xl mx-auto text-center space-y-8">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight">
             Simple websites for real work.
@@ -84,260 +92,262 @@ const Index = () => {
             </Button>
           </div>
         </div>
-      </section>
+      </header>
 
-      {/* How This Works */}
-      <section className="py-16 md:py-24 px-4">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">How this works</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <Card>
-              <CardContent className="p-6 space-y-3">
-                <div className="text-4xl font-semibold text-primary">1</div>
-                <h3 className="text-xl font-semibold">You tell me what you need</h3>
-                <p className="text-base leading-relaxed text-muted-foreground">
-                  We talk through your project, goals, and content. I'll let you know if this service is a good fit.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-6 space-y-3">
-                <div className="text-4xl font-semibold text-primary">2</div>
-                <h3 className="text-xl font-semibold">I build your site</h3>
-                <p className="text-base leading-relaxed text-muted-foreground">
-                  I design and build your site, check in with you as I go, and make revisions based on your feedback.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-6 space-y-3">
-                <div className="text-4xl font-semibold text-primary">3</div>
-                <h3 className="text-xl font-semibold">Your site goes live</h3>
-                <p className="text-base leading-relaxed text-muted-foreground">
-                  I launch your site, show you how to update it, and make sure everything works smoothly.
-                </p>
-              </CardContent>
-            </Card>
+      <main>
+        {/* How This Works */}
+        <section className="py-16 md:py-24 px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">How this works</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card>
+                <CardContent className="p-6 space-y-3">
+                  <div className="text-4xl font-semibold text-primary">1</div>
+                  <h3 className="text-xl font-semibold">You tell me what you need</h3>
+                  <p className="text-base leading-relaxed text-muted-foreground">
+                    We talk through your project, goals, and content. I'll let you know if this service is a good fit.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6 space-y-3">
+                  <div className="text-4xl font-semibold text-primary">2</div>
+                  <h3 className="text-xl font-semibold">I build your site</h3>
+                  <p className="text-base leading-relaxed text-muted-foreground">
+                    I design and build your site, check in with you as I go, and make revisions based on your feedback.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6 space-y-3">
+                  <div className="text-4xl font-semibold text-primary">3</div>
+                  <h3 className="text-xl font-semibold">Your site goes live</h3>
+                  <p className="text-base leading-relaxed text-muted-foreground">
+                    I launch your site, show you how to update it, and make sure everything works smoothly.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Checklist Section */}
-      <section id="checklist" className="py-16 md:py-24 px-4 bg-muted/30">
-        <div className="max-w-2xl mx-auto">
-          <div className="space-y-3 mb-8 text-center">
-            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight">Simple Website Sanity Checklist</h2>
-            <p className="text-lg md:text-xl leading-relaxed text-muted-foreground">
-              Answer these 7 questions to see if this service is right for your project.
-            </p>
-          </div>
+        {/* Checklist Section */}
+        <section id="checklist" className="py-16 md:py-24 px-4 bg-muted/30">
+          <div className="max-w-2xl mx-auto">
+            <div className="space-y-3 mb-8 text-center">
+              <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight">Simple Website Sanity Checklist</h2>
+              <p className="text-lg md:text-xl leading-relaxed text-muted-foreground">
+                Answer these 7 questions to see if this service is right for your project.
+              </p>
+            </div>
 
-          <Card className="shadow-lg border-2">
-            <CardContent className="p-8 space-y-6">
-              <div className="space-y-4">
-                {checklistQuestions.map((question, index) => (
-                  <div 
-                    key={question.id}
-                    className="p-4 rounded-lg bg-muted/50 hover:bg-accent/50 transition-colors"
-                  >
-                    <p className="text-base leading-relaxed font-medium mb-3">{question.text}</p>
-                    <RadioGroup
-                      value={checklistAnswers[question.id]}
-                      onValueChange={(value) => {
-                        setChecklistAnswers(prev => ({ ...prev, [question.id]: value }));
-                        setShowResult(false);
-                      }}
-                      className="flex gap-4"
+            <Card className="shadow-lg border-2">
+              <CardContent className="p-8 space-y-6">
+                <div className="space-y-4">
+                  {checklistQuestions.map((question, index) => (
+                    <div 
+                      key={question.id}
+                      className="p-4 rounded-lg bg-muted/50 hover:bg-accent/50 transition-colors"
                     >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="yes" id={`q${question.id}-yes`} />
-                        <Label htmlFor={`q${question.id}-yes`} className="cursor-pointer">Yes</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="no" id={`q${question.id}-no`} />
-                        <Label htmlFor={`q${question.id}-no`} className="cursor-pointer">No</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-                ))}
-              </div>
-
-              <Button 
-                onClick={handleChecklistSubmit}
-                disabled={Object.keys(checklistAnswers).length < 7}
-                className="w-full mt-6"
-                size="lg"
-              >
-                See my result
-              </Button>
-
-              {showResult && result && (
-                <div 
-                  id="checklist-result"
-                  className="mt-8 p-6 rounded-xl bg-primary/5 border-2 border-primary/20 animate-fadeInUp"
-                >
-                  <h3 className="text-xl font-semibold mb-3">{result.title}</h3>
-                  <p className="text-base leading-relaxed mb-4">{result.message}</p>
-                  {result.cta && (
-                    <Button onClick={scrollToContact} size="lg">
-                      Talk to me about my site
-                    </Button>
-                  )}
+                      <p className="text-base leading-relaxed font-medium mb-3">{question.text}</p>
+                      <RadioGroup
+                        value={checklistAnswers[question.id]}
+                        onValueChange={(value) => {
+                          setChecklistAnswers(prev => ({ ...prev, [question.id]: value }));
+                          setShowResult(false);
+                        }}
+                        className="flex gap-4"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="yes" id={`q${question.id}-yes`} />
+                          <Label htmlFor={`q${question.id}-yes`} className="cursor-pointer">Yes</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="no" id={`q${question.id}-no`} />
+                          <Label htmlFor={`q${question.id}-no`} className="cursor-pointer">No</Label>
+                        </div>
+                      </RadioGroup>
+                    </div>
+                  ))}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </section>
 
-      {/* What You Get */}
-      <section className="py-16 md:py-24 px-4">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">What you get</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <Card>
-              <CardContent className="p-6 space-y-4">
-                <h3 className="text-xl font-semibold">Included in every site</h3>
-                <ul className="space-y-3">
-                  {[
-                    "5-7 pages (Home, About, Services/Work, Contact, etc.)",
-                    "Mobile-friendly responsive design",
-                    "Fast loading and clean code",
-                    "Basic SEO setup",
-                    "Contact form that works",
-                    "Simple, clear navigation",
-                    "Instructions for making updates"
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="text-base leading-relaxed">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
+                <Button 
+                  onClick={handleChecklistSubmit}
+                  disabled={Object.keys(checklistAnswers).length < 7}
+                  className="w-full mt-6"
+                  size="lg"
+                >
+                  See my result
+                </Button>
 
-            <Card>
-              <CardContent className="p-6 space-y-4">
-                <h3 className="text-xl font-semibold">Simple sites this works for</h3>
-                <ul className="space-y-3">
-                  {[
-                    "Service businesses (consultants, therapists, contractors)",
-                    "Portfolios (artists, photographers, writers)",
-                    "Nonprofits and community organizations",
-                    "Creative projects (films, books, events)",
-                    "Solo professionals (coaches, educators, speakers)",
-                    "Small retail or local businesses (no ecommerce)"
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="text-base leading-relaxed">{item}</span>
-                    </li>
-                  ))}
-                </ul>
+                {showResult && result && (
+                  <div 
+                    id="checklist-result"
+                    className="mt-8 p-6 rounded-xl bg-primary/5 border-2 border-primary/20 animate-fadeInUp"
+                  >
+                    <h3 className="text-xl font-semibold mb-3">{result.title}</h3>
+                    <p className="text-base leading-relaxed mb-4">{result.message}</p>
+                    {result.cta && (
+                      <Button onClick={scrollToContact} size="lg">
+                        Talk to me about my site
+                      </Button>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Pricing */}
-      <section className="py-16 md:py-24 px-4 bg-muted/30">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">Pricing</h2>
-          <Card className="shadow-lg border-2">
-            <CardContent className="p-8 text-center space-y-6">
-              <div>
-                <div className="text-5xl font-semibold text-primary mb-2">$1,500</div>
-                <p className="text-lg leading-relaxed text-muted-foreground">One-time project fee</p>
-              </div>
-              <div className="border-t-2 border-border pt-6 space-y-4 text-left">
-                <p className="text-base leading-relaxed">
-                  This covers design, development, revisions, and launch. You own the site completely.
-                </p>
-                <p className="text-base leading-relaxed">
-                  Hosting and domain registration are separate (usually $100-200/year through your own provider).
-                </p>
-                <p className="text-base leading-relaxed">
-                  If you need ongoing updates or maintenance, we can discuss a simple retainer or per-update pricing.
-                </p>
-              </div>
-              <Button size="lg" onClick={scrollToContact} className="mt-4">
-                Start a conversation
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+        {/* What You Get */}
+        <section className="py-16 md:py-24 px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">What you get</h2>
+            <div className="grid md:grid-cols-2 gap-8">
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  <h3 className="text-xl font-semibold">Included in every site</h3>
+                  <ul className="space-y-3">
+                    {[
+                      "5-7 pages (Home, About, Services/Work, Contact, etc.)",
+                      "Mobile-friendly responsive design",
+                      "Fast loading and clean code",
+                      "Basic SEO setup",
+                      "Contact form that works",
+                      "Simple, clear navigation",
+                      "Instructions for making updates"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-base leading-relaxed">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
 
-      {/* FAQ */}
-      <section className="py-16 md:py-24 px-4">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">Common questions</h2>
-          <Accordion type="single" collapsible className="space-y-4">
-            <AccordionItem value="item-1" className="border-2 rounded-lg px-6 bg-card">
-              <AccordionTrigger className="text-left hover:no-underline">
-                <span className="body-lg font-medium">How long does it take?</span>
-              </AccordionTrigger>
-              <AccordionContent className="body-base text-foreground-muted">
-                Most sites are done in 2-4 weeks, depending on how quickly you can provide content and feedback.
-              </AccordionContent>
-            </AccordionItem>
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  <h3 className="text-xl font-semibold">Simple sites this works for</h3>
+                  <ul className="space-y-3">
+                    {[
+                      "Service businesses (consultants, therapists, contractors)",
+                      "Portfolios (artists, photographers, writers)",
+                      "Nonprofits and community organizations",
+                      "Creative projects (films, books, events)",
+                      "Solo professionals (coaches, educators, speakers)",
+                      "Small retail or local businesses (no ecommerce)"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-base leading-relaxed">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
 
-            <AccordionItem value="item-2" className="border-2 rounded-lg px-6 bg-card">
-              <AccordionTrigger className="text-left hover:no-underline">
-                <span className="body-lg font-medium">What if I don't have all my content ready?</span>
-              </AccordionTrigger>
-              <AccordionContent className="body-base text-foreground-muted">
-                That's fine. I can help you figure out what you need, or we can work in phases. But the more ready you are, the faster we can move.
-              </AccordionContent>
-            </AccordionItem>
+        {/* Pricing */}
+        <section className="py-16 md:py-24 px-4 bg-muted/30">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">Pricing</h2>
+            <Card className="shadow-lg border-2">
+              <CardContent className="p-8 text-center space-y-6">
+                <div>
+                  <div className="text-5xl font-semibold text-primary mb-2">$1,500</div>
+                  <p className="text-lg leading-relaxed text-muted-foreground">One-time project fee</p>
+                </div>
+                <div className="border-t-2 border-border pt-6 space-y-4 text-left">
+                  <p className="text-base leading-relaxed">
+                    This covers design, development, revisions, and launch. You own the site completely.
+                  </p>
+                  <p className="text-base leading-relaxed">
+                    Hosting and domain registration are separate (usually $100-200/year through your own provider).
+                  </p>
+                  <p className="text-base leading-relaxed">
+                    If you need ongoing updates or maintenance, we can discuss a simple retainer or per-update pricing.
+                  </p>
+                </div>
+                <Button size="lg" onClick={scrollToContact} className="mt-4">
+                  Start a conversation
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
 
-            <AccordionItem value="item-3" className="border-2 rounded-lg px-6 bg-card">
-              <AccordionTrigger className="text-left hover:no-underline">
-                <span className="body-lg font-medium">Can I update the site myself after it's done?</span>
-              </AccordionTrigger>
-              <AccordionContent className="body-base text-foreground-muted">
-                Yes. I'll set it up so you can edit text, add images, and make simple changes. I'll show you how everything works.
-              </AccordionContent>
-            </AccordionItem>
+        {/* FAQ */}
+        <section className="py-16 md:py-24 px-4">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">Common questions</h2>
+            <Accordion type="single" collapsible className="space-y-4">
+              <AccordionItem value="item-1" className="border-2 rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="text-lg leading-relaxed font-medium">How long does it take?</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-base leading-relaxed text-muted-foreground">
+                  Most sites are done in 2-4 weeks, depending on how quickly you can provide content and feedback.
+                </AccordionContent>
+              </AccordionItem>
 
-            <AccordionItem value="item-4" className="border-2 rounded-lg px-6 bg-card">
-              <AccordionTrigger className="text-left hover:no-underline">
-                <span className="body-lg font-medium">What platform do you use?</span>
-              </AccordionTrigger>
-              <AccordionContent className="body-base text-foreground-muted">
-                I typically use WordPress or static site generators, depending on what makes sense for your project and technical comfort level.
-              </AccordionContent>
-            </AccordionItem>
+              <AccordionItem value="item-2" className="border-2 rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="text-lg leading-relaxed font-medium">What if I don't have all my content ready?</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-base leading-relaxed text-muted-foreground">
+                  That's fine. I can help you figure out what you need, or we can work in phases. But the more ready you are, the faster we can move.
+                </AccordionContent>
+              </AccordionItem>
 
-            <AccordionItem value="item-5" className="border-2 rounded-lg px-6 bg-card">
-              <AccordionTrigger className="text-left hover:no-underline">
-                <span className="body-lg font-medium">Do you do ecommerce or real estate sites?</span>
-              </AccordionTrigger>
-              <AccordionContent className="body-base text-foreground-muted">
-                No. Those require different tools and ongoing management that's outside the scope of this service.
-              </AccordionContent>
-            </AccordionItem>
+              <AccordionItem value="item-3" className="border-2 rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="text-lg leading-relaxed font-medium">Can I update the site myself after it's done?</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-base leading-relaxed text-muted-foreground">
+                  Yes. I'll set it up so you can edit text, add images, and make simple changes. I'll show you how everything works.
+                </AccordionContent>
+              </AccordionItem>
 
-            <AccordionItem value="item-6" className="border-2 rounded-lg px-6 bg-card">
-              <AccordionTrigger className="text-left hover:no-underline">
-                <span className="body-lg font-medium">What if I need changes after the site launches?</span>
-              </AccordionTrigger>
-              <AccordionContent className="body-base text-foreground-muted">
-                Small tweaks right after launch are included. For bigger updates down the road, we can work out a simple hourly rate or retainer.
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </div>
-      </section>
+              <AccordionItem value="item-4" className="border-2 rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="text-lg leading-relaxed font-medium">What platform do you use?</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-base leading-relaxed text-muted-foreground">
+                  I typically use WordPress or static site generators, depending on what makes sense for your project and technical comfort level.
+                </AccordionContent>
+              </AccordionItem>
 
-      {/* Contact */}
-      <section id="contact" className="py-16 md:py-24 px-4 bg-muted/30">
-        <div className="max-w-2xl mx-auto">
-          <ContactForm />
-        </div>
-      </section>
+              <AccordionItem value="item-5" className="border-2 rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="text-lg leading-relaxed font-medium">Do you do ecommerce or real estate sites?</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-base leading-relaxed text-muted-foreground">
+                  No. Those require different tools and ongoing management that's outside the scope of this service.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-6" className="border-2 rounded-lg px-6 bg-card">
+                <AccordionTrigger className="text-left hover:no-underline">
+                  <span className="text-lg leading-relaxed font-medium">What if I need changes after the site launches?</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-base leading-relaxed text-muted-foreground">
+                  Small tweaks right after launch are included. For bigger updates down the road, we can work out a simple hourly rate or retainer.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+        </section>
+
+        {/* Contact */}
+        <section id="contact" className="py-16 md:py-24 px-4 bg-muted/30">
+          <div className="max-w-2xl mx-auto">
+            <ContactForm />
+          </div>
+        </section>
+      </main>
 
       {/* Footer */}
       <footer className="py-8 text-center border-t-2 border-border">
