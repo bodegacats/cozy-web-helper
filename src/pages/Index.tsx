@@ -268,11 +268,13 @@ const Index = () => {
               {/* Project 1: RuffLife */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  <img 
-                    src="https://i.imgur.com/7rAmj6S.jpeg" 
-                    alt="RuffLife Jersey City website screenshot" 
-                    className="w-full h-56 object-cover rounded-lg" 
-                  />
+                  <a href="https://rufflifejc.com/" target="_blank" rel="noopener noreferrer">
+                    <img 
+                      src="https://i.imgur.com/7rAmj6S.jpeg" 
+                      alt="RuffLife Jersey City website screenshot" 
+                      className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
+                    />
+                  </a>
                   <h3 className="text-xl font-semibold">RuffLife: Jersey City</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     Dog walking and pet sitting service in Jersey City.
@@ -280,17 +282,27 @@ const Index = () => {
                   <p className="text-sm leading-relaxed">
                     The site focuses on trust, local proof, and making it easy for people to call or book a walk.
                   </p>
+                  <a 
+                    href="https://rufflifejc.com/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-block text-sm font-medium text-primary hover:underline"
+                  >
+                    View site →
+                  </a>
                 </CardContent>
               </Card>
 
               {/* Project 2: Cats About Town Tours */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  <img 
-                    src="https://i.imgur.com/vuJkqLu.jpeg" 
-                    alt="Cats About Town Tours website screenshot" 
-                    className="w-full h-56 object-cover rounded-lg" 
-                  />
+                  <a href="https://catsabouttowntours.com/" target="_blank" rel="noopener noreferrer">
+                    <img 
+                      src="https://i.imgur.com/vuJkqLu.jpeg" 
+                      alt="Cats About Town Tours website screenshot" 
+                      className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
+                    />
+                  </a>
                   <h3 className="text-xl font-semibold">Cats About Town Tours</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     NYC walking tours with a cat-history twist.
@@ -298,17 +310,27 @@ const Index = () => {
                   <p className="text-sm leading-relaxed">
                     This site needed to clearly explain each tour, highlight press, and guide people to book dates.
                   </p>
+                  <a 
+                    href="https://catsabouttowntours.com/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-block text-sm font-medium text-primary hover:underline"
+                  >
+                    View site →
+                  </a>
                 </CardContent>
               </Card>
 
               {/* Project 3: Bodega Cats of New York */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  <img 
-                    src="https://i.imgur.com/9Kcx0Dp.jpeg" 
-                    alt="Bodega Cats of New York website screenshot" 
-                    className="w-full h-56 object-cover rounded-lg" 
-                  />
+                  <a href="https://bodegacatsofnewyork.com/" target="_blank" rel="noopener noreferrer">
+                    <img 
+                      src="https://i.imgur.com/9Kcx0Dp.jpeg" 
+                      alt="Bodega Cats of New York website screenshot" 
+                      className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
+                    />
+                  </a>
                   <h3 className="text-xl font-semibold">Bodega Cats of New York</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     Advocacy, stories, and community around NYC's shop cats.
@@ -316,17 +338,27 @@ const Index = () => {
                   <p className="text-sm leading-relaxed">
                     The goal was to showcase news, blog posts, and press while giving visitors clear ways to follow and support the project.
                   </p>
+                  <a 
+                    href="https://bodegacatsofnewyork.com/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-block text-sm font-medium text-primary hover:underline"
+                  >
+                    View site →
+                  </a>
                 </CardContent>
               </Card>
 
               {/* Project 4: Pencils & Pecs */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  <img 
-                    src="https://i.imgur.com/HptFEBB.jpeg" 
-                    alt="Pencils & Pecs website screenshot" 
-                    className="w-full h-56 object-cover rounded-lg" 
-                  />
+                  <a href="http://pencilsandpecs.com/" target="_blank" rel="noopener noreferrer">
+                    <img 
+                      src="https://i.imgur.com/HptFEBB.jpeg" 
+                      alt="Pencils & Pecs website screenshot" 
+                      className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
+                    />
+                  </a>
                   <h3 className="text-xl font-semibold">Pencils & Pecs</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     Pop-up life drawing experience for events and celebrations.
@@ -334,6 +366,14 @@ const Index = () => {
                   <p className="text-sm leading-relaxed">
                     This site needed to explain the concept quickly and drive event inquiries and venue bookings.
                   </p>
+                  <a 
+                    href="http://pencilsandpecs.com/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-block text-sm font-medium text-primary hover:underline"
+                  >
+                    View site →
+                  </a>
                 </CardContent>
               </Card>
             </div>
