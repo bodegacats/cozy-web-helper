@@ -25,7 +25,8 @@ const PortalRequest = () => {
   const [form, setForm] = useState({
     title: "",
     description: "",
-    priority: "normal"
+    priority: "normal",
+    size_tier: "small"
   });
 
   useEffect(() => {
@@ -65,6 +66,43 @@ const PortalRequest = () => {
     setLoading(false);
   };
 
+  const calculateQuotedPrice = (sizeTier: string): number | null => {
+    switch (sizeTier) {
+      case 'tiny': return 0;
+      case 'small': return 5000;
+      case 'medium': return 10000;
+      case 'large': return null;
+      default: return 5000;
+    }
+  };
+
+  const getQuoteDisplay = (sizeTier: string) => {
+    switch (sizeTier) {
+      case 'tiny':
+        return {
+          price: "$0",
+          message: "If this really is a tiny fix, I will just take care of it for you as part of working together."
+        };
+      case 'small':
+        return {
+          price: "$50",
+          message: "If this looks right, send the request and I will take care of it."
+        };
+      case 'medium':
+        return {
+          price: "$100",
+          message: "If this looks right, send the request and I will take care of it."
+        };
+      case 'large':
+        return {
+          price: "Quote needed",
+          message: "I will review this and email you a clear quote before doing anything."
+        };
+      default:
+        return { price: "$50", message: "" };
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -82,6 +120,8 @@ const PortalRequest = () => {
         title: form.title,
         description: form.description,
         priority: form.priority,
+        size_tier: form.size_tier,
+        quoted_price_cents: calculateQuotedPrice(form.size_tier),
         status: 'new'
       });
 
@@ -211,6 +251,77 @@ const PortalRequest = () => {
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                 />
               </div>
+
+              <div className="space-y-3">
+                <Label>How big is this change?</Label>
+                <RadioGroup 
+                  value={form.size_tier} 
+                  onValueChange={(value) => setForm({ ...form, size_tier: value })}
+                >
+                  <div className="flex flex-col space-y-3">
+                    <div className="flex items-start space-x-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors">
+                      <RadioGroupItem value="tiny" id="tiny" className="mt-1" />
+                      <div className="flex-1">
+                        <Label htmlFor="tiny" className="font-semibold cursor-pointer">
+                          Tiny change (free)
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          One typo, one sentence, or one image swap.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors">
+                      <RadioGroupItem value="small" id="small" className="mt-1" />
+                      <div className="flex-1">
+                        <Label htmlFor="small" className="font-semibold cursor-pointer">
+                          Small change ($50)
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          One section or block needs updating.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors">
+                      <RadioGroupItem value="medium" id="medium" className="mt-1" />
+                      <div className="flex-1">
+                        <Label htmlFor="medium" className="font-semibold cursor-pointer">
+                          Medium change ($100)
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          A whole page or a new section needs work.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors">
+                      <RadioGroupItem value="large" id="large" className="mt-1" />
+                      <div className="flex-1">
+                        <Label htmlFor="large" className="font-semibold cursor-pointer">
+                          Not sure / probably bigger
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          This might be a bigger update or you are not sure.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <Card className="bg-muted/30">
+                <CardContent className="pt-6">
+                  <div className="space-y-2">
+                    <div className="text-2xl font-semibold text-primary">
+                      Estimated cost: {getQuoteDisplay(form.size_tier).price}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {getQuoteDisplay(form.size_tier).message}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
 
               <div className="space-y-3">
                 <Label>Priority</Label>

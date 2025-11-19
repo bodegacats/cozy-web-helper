@@ -26,6 +26,8 @@ interface UpdateRequest {
   title: string;
   status: string;
   created_at: string;
+  size_tier: string;
+  quoted_price_cents: number | null;
 }
 
 interface RequestLimits {
@@ -73,7 +75,7 @@ const PortalHome = () => {
 
     const { data: requestsData } = await supabase
       .from('update_requests')
-      .select('id, title, status, created_at')
+      .select('id, title, status, created_at, size_tier, quoted_price_cents')
       .eq('client_id', clientData.id)
       .order('created_at', { ascending: false })
       .limit(10);
@@ -104,6 +106,12 @@ const PortalHome = () => {
 
     const config = variants[status] || { variant: "outline", label: status };
     return <Badge variant={config.variant}>{config.label}</Badge>;
+  };
+
+  const formatQuotedPrice = (sizeTier: string, quotedPriceCents: number | null) => {
+    if (sizeTier === 'tiny') return 'Free';
+    if (sizeTier === 'large' || quotedPriceCents === null) return 'Quote pending';
+    return formatCurrency(quotedPriceCents);
   };
 
   const handleLogout = async () => {

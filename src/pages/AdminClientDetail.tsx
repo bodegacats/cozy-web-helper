@@ -44,6 +44,8 @@ interface UpdateRequest {
   estimated_minutes: number | null;
   actual_minutes: number | null;
   internal_notes: string | null;
+  size_tier: string;
+  quoted_price_cents: number | null;
 }
 
 const AdminClientDetail = () => {
@@ -82,6 +84,7 @@ const AdminClientDetail = () => {
     description: "",
     priority: "normal",
     estimated_minutes: 15,
+    size_tier: "small",
   });
 
   useEffect(() => {
@@ -200,6 +203,22 @@ const AdminClientDetail = () => {
     }
   };
 
+  const calculateQuotedPrice = (sizeTier: string): number | null => {
+    switch (sizeTier) {
+      case 'tiny': return 0;
+      case 'small': return 5000;
+      case 'medium': return 10000;
+      case 'large': return null;
+      default: return 5000;
+    }
+  };
+
+  const formatQuotedPrice = (sizeTier: string, quotedPriceCents: number | null) => {
+    if (sizeTier === 'tiny') return 'Free';
+    if (sizeTier === 'large' || quotedPriceCents === null) return 'Quote pending';
+    return formatCurrency(quotedPriceCents);
+  };
+
   const handleAddRequest = async () => {
     const { error } = await supabase.from('update_requests').insert({
       client_id: id,
@@ -207,6 +226,8 @@ const AdminClientDetail = () => {
       description: newRequestForm.description,
       priority: newRequestForm.priority,
       estimated_minutes: newRequestForm.estimated_minutes,
+      size_tier: newRequestForm.size_tier,
+      quoted_price_cents: calculateQuotedPrice(newRequestForm.size_tier),
       status: 'new',
     });
 
@@ -220,6 +241,7 @@ const AdminClientDetail = () => {
         description: "",
         priority: "normal",
         estimated_minutes: 15,
+        size_tier: "small",
       });
       loadClientData();
     }
@@ -420,6 +442,7 @@ const AdminClientDetail = () => {
                         <TableHead>Title</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Priority</TableHead>
+                        <TableHead>Price</TableHead>
                         <TableHead>Created</TableHead>
                         <TableHead>Completed</TableHead>
                         <TableHead className="text-right">Est. min</TableHead>
@@ -436,6 +459,9 @@ const AdminClientDetail = () => {
                           <TableCell className="font-medium">{request.title}</TableCell>
                           <TableCell>{getStatusBadge(request.status)}</TableCell>
                           <TableCell>{getPriorityBadge(request.priority)}</TableCell>
+                          <TableCell className="text-sm text-muted-foreground">
+                            {formatQuotedPrice(request.size_tier, request.quoted_price_cents)}
+                          </TableCell>
                           <TableCell className="whitespace-nowrap">
                             {format(new Date(request.created_at), "MMM d, yyyy")}
                           </TableCell>
@@ -470,6 +496,18 @@ const AdminClientDetail = () => {
               <div>
                 <Label>Description</Label>
                 <p className="text-sm text-muted-foreground whitespace-pre-wrap">{selectedRequest.description}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Size tier</Label>
+                  <p className="text-sm capitalize">{selectedRequest.size_tier}</p>
+                </div>
+                <div>
+                  <Label>Quoted price</Label>
+                  <p className="text-sm font-medium">
+                    {formatQuotedPrice(selectedRequest.size_tier, selectedRequest.quoted_price_cents)}
+                  </p>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -558,6 +596,23 @@ const AdminClientDetail = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
+                <Label htmlFor="new_size_tier">Size</Label>
+                <Select
+                  value={newRequestForm.size_tier}
+                  onValueChange={(value) => setNewRequestForm({ ...newRequestForm, size_tier: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="tiny">Tiny (Free)</SelectItem>
+                    <SelectItem value="small">Small ($50)</SelectItem>
+                    <SelectItem value="medium">Medium ($100)</SelectItem>
+                    <SelectItem value="large">Large (Manual quote)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
                 <Label htmlFor="new_priority">Priority</Label>
                 <Select
                   value={newRequestForm.priority}
@@ -573,17 +628,17 @@ const AdminClientDetail = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Label htmlFor="estimated_minutes">Estimated minutes</Label>
-                <Input
-                  id="estimated_minutes"
-                  type="number"
-                  value={newRequestForm.estimated_minutes}
-                  onChange={(e) =>
-                    setNewRequestForm({ ...newRequestForm, estimated_minutes: parseInt(e.target.value) || 0 })
-                  }
-                />
-              </div>
+            </div>
+            <div>
+              <Label htmlFor="estimated_minutes">Estimated minutes</Label>
+              <Input
+                id="estimated_minutes"
+                type="number"
+                value={newRequestForm.estimated_minutes}
+                onChange={(e) =>
+                  setNewRequestForm({ ...newRequestForm, estimated_minutes: parseInt(e.target.value) || 0 })
+                }
+              />
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setAddRequestOpen(false)}>
