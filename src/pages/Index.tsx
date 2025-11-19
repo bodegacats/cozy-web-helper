@@ -77,11 +77,14 @@ const Index = () => {
       {/* Hero Section */}
       <header className="min-h-[85vh] flex items-center justify-center bg-gradient-to-b from-background via-muted/20 to-background px-4 py-16">
         <div className="max-w-3xl mx-auto text-center space-y-8">
+          <p className="text-sm md:text-base font-medium text-primary uppercase tracking-wide">
+            One person website service
+          </p>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight">
-            Simple websites for real work.
+            A simple website, built by a real person, not a platform
           </h1>
           <p className="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-2xl mx-auto">
-            I build 5-7 page sites for small businesses, solo professionals, artists, nonprofits, and creative projects. Clean, functional, and done in a few weeks.
+            I build 5 to 7 page sites for small businesses, solo professionals, artists, nonprofits, and creative projects. I talk to you, build it, launch it, and help with changes if you want. No long contract, no dashboard to figure out.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Button size="lg" onClick={scrollToChecklist} className="shadow-base">
