@@ -19,9 +19,21 @@ const contactFormSchema = z.object({
     .max(500, "Description is too long"),
   websiteUrl: z
     .string()
-    .url("Invalid URL")
     .optional()
-    .or(z.literal("")),
+    .transform((val) => {
+      // Allow empty strings
+      if (!val || val.trim() === "") return "";
+      
+      // Add https:// if no protocol is present
+      const trimmed = val.trim();
+      if (!/^https?:\/\//i.test(trimmed)) {
+        return `https://${trimmed}`;
+      }
+      return trimmed;
+    })
+    .pipe(
+      z.string().url("Please enter a valid URL").or(z.literal(""))
+    ),
   wish: z
     .string()
     .min(1, "Please share what you wish your website did better")
