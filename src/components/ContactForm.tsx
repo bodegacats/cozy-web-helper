@@ -85,9 +85,15 @@ export const ContactForm = () => {
   };
 
   return (
-    <Card>
-      <CardContent className="pt-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <Card className="max-w-2xl mx-auto shadow-soft-xl border-2">
+      <CardContent className="p-10">
+        <div className="space-y-3 mb-8 text-center">
+          <h2 className="text-3xl font-semibold">Want to talk it through?</h2>
+          <p className="text-base text-muted-foreground max-w-lg mx-auto">
+            Tell me about your work or project. I will read this and get back to you within one or two days.
+          </p>
+        </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input
@@ -156,7 +162,12 @@ export const ContactForm = () => {
             )}
           </div>
 
-          <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
+          <Button 
+            type="submit" 
+            className="w-full mt-6 h-12 text-base" 
+            size="lg"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Sending..." : "Send this to me"}
           </Button>
         </form>
