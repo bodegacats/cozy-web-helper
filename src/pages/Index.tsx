@@ -99,8 +99,103 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Simple Website Sanity Checklist */}
+      <section id="checklist" className="bg-muted px-6 py-20">
+        <div className="mx-auto max-w-4xl">
+          <h2 className="mb-8 text-center text-4xl font-bold text-foreground">Simple Website Sanity Checklist</h2>
+          <p className="mb-12 text-center text-lg leading-relaxed text-foreground">
+            If you already have a website but are not sure if it is helping or hurting, run it through this quick sanity check.
+            <br />
+            <br />
+            No tools. No scores. Just 7 honest questions.
+          </p>
+
+          <Card className="mb-12">
+            <CardContent className="pt-6">
+              <ol className="space-y-4 text-lg">
+                <li className="flex gap-3">
+                  <span className="font-bold text-primary">1.</span>
+                  <span>When someone lands on your homepage, is it clear what you or your project do in 5 seconds or less?</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="font-bold text-primary">2.</span>
+                  <span>Is it obvious how to contact you or take the next step?</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="font-bold text-primary">3.</span>
+                  <span>Does your site look decent on a phone?</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="font-bold text-primary">4.</span>
+                  <span>Do you clearly say where you are based or what area you serve, if that matters?</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="font-bold text-primary">5.</span>
+                  <span>Do you show at least one real review, testimonial, or sign of credibility?</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="font-bold text-primary">6.</span>
+                  <span>Do you tell people what you want them to do next (call, email, apply, request info, book, invest, etc)?</span>
+                </li>
+                <li className="flex gap-3">
+                  <span className="font-bold text-primary">7.</span>
+                  <span>Are you not embarrassed to send your site to someone right now?</span>
+                </li>
+              </ol>
+            </CardContent>
+          </Card>
+
+          <div className="mb-12 grid gap-6 md:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl">If you answered 'yes' to 6 or 7</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Your site is probably fine. You might want a facelift, but you do not need to panic or spend a ton of money.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl">If you answered 'yes' to 3 to 5</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Your website is doing some things well but is leaving trust and opportunities on the table. A simple rebuild or refresh could help.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl">If you answered 'yes' fewer than 3 times</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Your website is probably confusing people or making you look less serious than you are. It might be easier to start fresh.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center">
+            <p className="mb-6 text-lg leading-relaxed text-foreground">
+              If your score feels low and you are tired of messing with this, send me a quick note.
+              <br />
+              <br />
+              Tell me what you do or what your project is, and drop your site link. I will tell you honestly if you should fix it yourself, stay where you are, or have me rebuild it.
+            </p>
+            <Button size="lg" onClick={() => scrollToSection("contact")}>
+              Talk to me about my site
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* What You Actually Get */}
-      <section className="bg-muted px-6 py-20">
+      <section className="px-6 py-20">
         <div className="mx-auto max-w-4xl">
           <h2 className="mb-12 text-center text-4xl font-bold text-foreground">What you actually get</h2>
           <Card>
@@ -308,101 +403,6 @@ const Index = () => {
                 </p>
               </CardContent>
             </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Simple Website Sanity Checklist */}
-      <section id="checklist" className="bg-muted px-6 py-20">
-        <div className="mx-auto max-w-4xl">
-          <h2 className="mb-8 text-center text-4xl font-bold text-foreground">Simple Website Sanity Checklist</h2>
-          <p className="mb-12 text-center text-lg leading-relaxed text-foreground">
-            If you already have a website but are not sure if it is helping or hurting, run it through this quick sanity check.
-            <br />
-            <br />
-            No tools. No scores. Just 7 honest questions.
-          </p>
-
-          <Card className="mb-12">
-            <CardContent className="pt-6">
-              <ol className="space-y-4 text-lg">
-                <li className="flex gap-3">
-                  <span className="font-bold text-primary">1.</span>
-                  <span>When someone lands on your homepage, is it clear what you do in 5 seconds or less?</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="font-bold text-primary">2.</span>
-                  <span>Is it obvious how to contact you?</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="font-bold text-primary">3.</span>
-                  <span>Does your site look decent on a phone?</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="font-bold text-primary">4.</span>
-                  <span>Do you clearly say where you are based?</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="font-bold text-primary">5.</span>
-                  <span>Do you show at least one real review or testimonial?</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="font-bold text-primary">6.</span>
-                  <span>Do you tell people what you want them to do next (call, book, request quote)?</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="font-bold text-primary">7.</span>
-                  <span>Are you not embarrassed to send your site to someone right now?</span>
-                </li>
-              </ol>
-            </CardContent>
-          </Card>
-
-          <div className="mb-12 grid gap-6 md:grid-cols-3">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">If you answered 'yes' to 6 or 7</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Your site is probably fine. You might want a facelift, but you do not need to panic or spend a ton of money.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">If you answered 'yes' to 3 to 5</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Your website is doing some things well but is leaving trust and money on the table. A simple rebuild or refresh could help.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">If you answered 'yes' fewer than 3 times</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Your website is probably confusing people or making you look less serious than you are. It might be easier to start fresh.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="text-center">
-            <p className="mb-6 text-lg leading-relaxed text-foreground">
-              If your score feels low and you are tired of messing with this, send me a quick note.
-              <br />
-              <br />
-              Tell me what you do and drop your site link. I will tell you honestly if you should fix it yourself, stay where you are, or have me rebuild it.
-            </p>
-            <Button size="lg" onClick={() => scrollToSection("contact")}>
-              Talk to me about my site
-            </Button>
           </div>
         </div>
       </section>
