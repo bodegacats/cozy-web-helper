@@ -203,6 +203,55 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Simple Site Checkup */}
+        <section className="py-16 md:py-24 px-4">
+          <div className="max-w-3xl mx-auto text-center space-y-8">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight">
+              Not sure if you even need a new site?
+            </h2>
+            
+            <div className="space-y-4">
+              <p className="text-base leading-relaxed text-muted-foreground">
+                Before you decide on a full rebuild, you might just want an honest, simple opinion on what you already have.
+              </p>
+              <p className="text-base leading-relaxed text-muted-foreground">
+                That's what this is for.
+              </p>
+            </div>
+
+            <Card className="shadow-lg border-2">
+              <CardContent className="p-8 space-y-6">
+                <h3 className="text-2xl font-semibold">$50 Simple Site Checkup</h3>
+                
+                <ul className="space-y-3 text-left">
+                  {[
+                    "A 5–7 minute personal video walkthrough of your current website",
+                    "3–5 concrete things you can fix yourself",
+                    "My honest take on whether you should keep what you have, use a cheaper DIY option, or have me rebuild it"
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-base leading-relaxed">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <p className="text-sm text-muted-foreground">
+                  If you hire me for a new site within 30 days, I put the $50 toward your project fee.
+                </p>
+
+                <Button size="lg" onClick={scrollToContact}>
+                  Get a $50 site checkup
+                </Button>
+
+                <p className="text-sm text-muted-foreground">
+                  When you write to me, just mention "checkup" so I know you want the $50 video review.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
         {/* What You Get */}
         <section className="py-16 md:py-24 px-4">
           <div className="max-w-4xl mx-auto">
@@ -467,30 +516,100 @@ const Index = () => {
 
         {/* Pricing */}
         <section className="py-16 md:py-24 px-4 bg-muted/30">
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">Pricing</h2>
-            <Card className="shadow-lg border-2">
-              <CardContent className="p-8 text-center space-y-6">
-                <div>
-                  <div className="text-5xl font-semibold text-primary mb-2">$1,500</div>
-                  <p className="text-lg leading-relaxed text-muted-foreground">One-time project fee</p>
-                </div>
-                <div className="border-t-2 border-border pt-6 space-y-4 text-left">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-4">
+              Simple, flat project pricing
+            </h2>
+            <p className="text-base leading-relaxed text-muted-foreground text-center max-w-3xl mx-auto mb-12">
+              No contracts, no subscriptions. Just one clear price for the kind of site you need.
+            </p>
+            
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              {/* Card 1: $500 */}
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  <h3 className="text-xl font-semibold">Single-page starter</h3>
+                  <div>
+                    <div className="text-4xl font-semibold text-primary">$500</div>
+                    <p className="text-sm text-muted-foreground">one-time</p>
+                  </div>
                   <p className="text-base leading-relaxed">
-                    This covers design, development, revisions, and launch. You own the site completely.
+                    For when you just need something simple on the web that explains who you are and how to reach you.
                   </p>
+                  <ul className="space-y-2 pt-2">
+                    {[
+                      "One clean, scrolling page",
+                      "You provide the words and images, I tidy and place them",
+                      "1 round of revisions",
+                      "About 1–2 weeks after your content is ready"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+
+              {/* Card 2: $1,000 */}
+              <Card className="border-primary">
+                <CardContent className="p-6 space-y-4">
+                  <h3 className="text-xl font-semibold">Small website</h3>
+                  <div>
+                    <div className="text-4xl font-semibold text-primary">$1,000</div>
+                    <p className="text-sm text-muted-foreground">one-time</p>
+                  </div>
                   <p className="text-base leading-relaxed">
-                    Hosting and domain registration are separate (usually $100-200/year through your own provider).
+                    For a small but complete website that feels put together without getting complicated.
                   </p>
+                  <ul className="space-y-2 pt-2">
+                    {[
+                      "Up to 4 pages (for example: Home, About, Services or Work, Contact)",
+                      "I help organize and lightly edit your content",
+                      "2 rounds of revisions",
+                      "About 2–3 weeks after your content is ready"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+
+              {/* Card 3: $1,500 */}
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  <h3 className="text-xl font-semibold">Full simple site</h3>
+                  <div>
+                    <div className="text-4xl font-semibold text-primary">$1,500</div>
+                    <p className="text-sm text-muted-foreground">one-time</p>
+                  </div>
                   <p className="text-base leading-relaxed">
-                    If you need ongoing updates or maintenance, we can discuss a simple retainer or per-update pricing.
+                    For when you want me more in your corner shaping what the site says as well as how it looks.
                   </p>
-                </div>
-                <Button size="lg" onClick={scrollToContact} className="mt-4">
-                  Start a conversation
-                </Button>
-              </CardContent>
-            </Card>
+                  <ul className="space-y-2 pt-2">
+                    {[
+                      "Up to 6–7 pages",
+                      "Help shaping structure and wording (light copy support)",
+                      "3 rounds of revisions",
+                      "About 3–4 weeks after your content is ready"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm leading-relaxed">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+
+            <p className="text-sm text-muted-foreground text-center max-w-3xl mx-auto">
+              Hosting and your domain are paid directly to your provider (usually around $100–$200 per year). If you want ongoing help after launch, we can keep things simple and talk about a small, separate maintenance arrangement.
+            </p>
           </div>
         </section>
 
