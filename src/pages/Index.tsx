@@ -118,7 +118,7 @@ const Index = () => {
                   <div className="text-4xl font-semibold text-primary">2</div>
                   <h3 className="text-xl font-semibold">I build your site</h3>
                   <p className="text-base leading-relaxed text-muted-foreground">
-                    I design and build your site, check in with you as I go, and make revisions based on your feedback.
+                    I design and build your site, check in with you as I go, and make revisions based on your feedback. Once I have what I need from you, I usually build and launch your site in under a week.
                   </p>
                 </CardContent>
               </Card>
@@ -541,7 +541,7 @@ const Index = () => {
                       "One clean, scrolling page",
                       "You provide the words and images, I tidy and place them",
                       "1 round of revisions",
-                      "About 1–2 weeks after your content is ready"
+                      "Usually ready within a few days after your content is ready"
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
                         <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
@@ -568,7 +568,7 @@ const Index = () => {
                       "Up to 4 pages (for example: Home, About, Services or Work, Contact)",
                       "I help organize and lightly edit your content",
                       "2 rounds of revisions",
-                      "About 2–3 weeks after your content is ready"
+                      "Usually ready within about a week after your content is ready"
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
                         <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
@@ -595,7 +595,7 @@ const Index = () => {
                       "Up to 6–7 pages",
                       "Help shaping structure and wording (light copy support)",
                       "3 rounds of revisions",
-                      "About 3–4 weeks after your content is ready"
+                      "Usually ready within about a week once your content is ready and you can respond to reviews"
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
                         <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
@@ -650,7 +650,7 @@ const Index = () => {
                   <span className="text-lg leading-relaxed font-medium">What platform do you use?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed text-muted-foreground">
-                  I use modern tools behind the scenes, but you do not have to log in or learn a new system. You own the finished site and we can export it if you ever want to move it somewhere else.
+                  I use Lovable, a modern builder that lets me move fast without writing code. You do not have to log in or learn anything new. You own the finished site, and we can export or move it later if you ever want to change where it lives.
                 </AccordionContent>
               </AccordionItem>
 
