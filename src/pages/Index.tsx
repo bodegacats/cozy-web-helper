@@ -269,7 +269,7 @@ const Index = () => {
               <Card>
                 <CardContent className="p-6 space-y-4">
                   <img 
-                    src="/project-rufflife.jpg" 
+                    src="https://i.imgur.com/7rAmj6S.jpeg" 
                     alt="RuffLife Jersey City website screenshot" 
                     className="w-full h-56 object-cover rounded-lg" 
                   />
@@ -287,7 +287,7 @@ const Index = () => {
               <Card>
                 <CardContent className="p-6 space-y-4">
                   <img 
-                    src="/project-cats-tours.jpg" 
+                    src="https://i.imgur.com/vuJkqLu.jpeg" 
                     alt="Cats About Town Tours website screenshot" 
                     className="w-full h-56 object-cover rounded-lg" 
                   />
@@ -305,7 +305,7 @@ const Index = () => {
               <Card>
                 <CardContent className="p-6 space-y-4">
                   <img 
-                    src="/project-bodega-cats.jpg" 
+                    src="https://i.imgur.com/9Kcx0Dp.jpeg" 
                     alt="Bodega Cats of New York website screenshot" 
                     className="w-full h-56 object-cover rounded-lg" 
                   />
@@ -323,7 +323,7 @@ const Index = () => {
               <Card>
                 <CardContent className="p-6 space-y-4">
                   <img 
-                    src="/project-pencils-pecs.jpg" 
+                    src="https://i.imgur.com/HptFEBB.jpeg" 
                     alt="Pencils & Pecs website screenshot" 
                     className="w-full h-56 object-cover rounded-lg" 
                   />
