@@ -155,6 +155,8 @@ export type Database = {
           id: string
           internal_notes: string | null
           priority: string
+          quoted_price_cents: number | null
+          size_tier: string
           status: string
           title: string
           updated_at: string | null
@@ -169,6 +171,8 @@ export type Database = {
           id?: string
           internal_notes?: string | null
           priority?: string
+          quoted_price_cents?: number | null
+          size_tier?: string
           status?: string
           title: string
           updated_at?: string | null
@@ -183,6 +187,8 @@ export type Database = {
           id?: string
           internal_notes?: string | null
           priority?: string
+          quoted_price_cents?: number | null
+          size_tier?: string
           status?: string
           title?: string
           updated_at?: string | null

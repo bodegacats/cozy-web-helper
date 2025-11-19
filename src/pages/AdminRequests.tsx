@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ExternalLink } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 interface UpdateRequest {
   id: string;
@@ -24,6 +25,8 @@ interface UpdateRequest {
   updated_at: string;
   completed_at: string | null;
   internal_notes: string | null;
+  size_tier: string;
+  quoted_price_cents: number | null;
   clients: {
     name: string;
     email: string;
@@ -144,6 +147,12 @@ const AdminRequests = () => {
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
+  const formatQuotedPrice = (sizeTier: string, quotedPriceCents: number | null) => {
+    if (sizeTier === 'tiny') return 'Free';
+    if (sizeTier === 'large' || quotedPriceCents === null) return 'Quote pending';
+    return formatCurrency(quotedPriceCents);
+  };
+
   const getPriorityBadge = (priority: string) => {
     const variants: Record<string, { variant: "default" | "secondary" | "destructive"; label: string }> = {
       low: { variant: "secondary", label: "Low" },
@@ -240,6 +249,7 @@ const AdminRequests = () => {
                       <th className="p-4 font-semibold">Title</th>
                       <th className="p-4 font-semibold">Status</th>
                       <th className="p-4 font-semibold">Priority</th>
+                      <th className="p-4 font-semibold">Quoted Price</th>
                       <th className="p-4 font-semibold">Created</th>
                       <th className="p-4"></th>
                     </tr>
@@ -255,6 +265,9 @@ const AdminRequests = () => {
                         <td className="p-4">{request.title}</td>
                         <td className="p-4">{getStatusBadge(request.status)}</td>
                         <td className="p-4">{getPriorityBadge(request.priority)}</td>
+                        <td className="p-4 text-sm text-muted-foreground">
+                          {formatQuotedPrice(request.size_tier, request.quoted_price_cents)}
+                        </td>
                         <td className="p-4 text-muted-foreground">
                           {format(new Date(request.created_at), 'MMM d, yyyy')}
                         </td>
@@ -313,6 +326,19 @@ const AdminRequests = () => {
                   <div>
                     <Label>Priority</Label>
                     <div className="mt-1">{getPriorityBadge(selectedRequest.priority)}</div>
+                  </div>
+                  <div>
+                    <Label>Size</Label>
+                    <p className="mt-1 capitalize">{selectedRequest.size_tier}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Quoted price</Label>
+                    <p className="mt-1 font-medium">
+                      {formatQuotedPrice(selectedRequest.size_tier, selectedRequest.quoted_price_cents)}
+                    </p>
                   </div>
                   <div>
                     <Label>Created</Label>
