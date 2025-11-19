@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { CheckCircle2 } from "lucide-react";
+import { useState } from "react";
+import { ContactForm } from "@/components/ContactForm";
 
 const Index = () => {
   const scrollToSection = (id: string) => {
@@ -469,19 +471,20 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Contact */}
-      <section id="contact" className="bg-muted px-6 py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="mb-6 text-4xl font-bold text-foreground">Ready to talk about your site?</h2>
-          <p className="mb-8 text-lg text-muted-foreground">
-            Send me a note at{" "}
-            <a href="mailto:hello@example.com" className="font-medium text-primary hover:underline">
-              hello@example.com
-            </a>
-          </p>
-          <p className="text-sm text-muted-foreground">
-            I usually respond within a day. Sometimes faster if I am at my desk.
-          </p>
+      {/* Contact Section */}
+      <section id="contact" className="py-20 px-4">
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-6">Want to talk it through?</h2>
+            <p className="text-xl mb-4">
+              If you are even a little curious, send me a note.
+            </p>
+            <p className="text-lg text-muted-foreground">
+              Tell me what you do or what your project is, and what you think you need from a website. I will tell you if this is a good fit or if you are better off with a cheaper DIY option or something more advanced.
+            </p>
+          </div>
+          
+          <ContactForm />
         </div>
       </section>
     </div>
