@@ -6,6 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Check, X } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const Index = () => {
   const [checklistAnswers, setChecklistAnswers] = useState<Record<number, string>>({});
@@ -268,18 +269,22 @@ const Index = () => {
               {/* Project 1: RuffLife */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  <a href="https://rufflifejc.com/" target="_blank" rel="noopener noreferrer" className="grid grid-cols-2 gap-4">
-                    <img 
-                      src="https://i.imgur.com/7rAmj6S.jpeg" 
-                      alt="RuffLife Jersey City website hero" 
-                      className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
-                    />
-                    <img 
-                      src="https://i.imgur.com/K49QVdg.jpeg" 
-                      alt="RuffLife Jersey City full page screenshot" 
-                      className="w-full h-56 object-cover object-top rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
-                    />
-                  </a>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <img 
+                        src="https://i.imgur.com/7rAmj6S.jpeg" 
+                        alt="RuffLife Jersey City website hero" 
+                        className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
+                      />
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+                      <img 
+                        src="https://i.imgur.com/K49QVdg.jpeg" 
+                        alt="RuffLife Jersey City full page screenshot" 
+                        className="w-full h-auto"
+                      />
+                    </DialogContent>
+                  </Dialog>
                   <h3 className="text-xl font-semibold">RuffLife: Jersey City</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     Dog walking and pet sitting service in Jersey City.
@@ -301,18 +306,22 @@ const Index = () => {
               {/* Project 2: Cats About Town Tours */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  <a href="https://catsabouttowntours.com/" target="_blank" rel="noopener noreferrer" className="grid grid-cols-2 gap-4">
-                    <img 
-                      src="https://i.imgur.com/vuJkqLu.jpeg" 
-                      alt="Cats About Town Tours website hero" 
-                      className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
-                    />
-                    <img 
-                      src="https://i.imgur.com/hJGImR8.jpeg" 
-                      alt="Cats About Town Tours full page screenshot" 
-                      className="w-full h-56 object-cover object-top rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
-                    />
-                  </a>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <img 
+                        src="https://i.imgur.com/vuJkqLu.jpeg" 
+                        alt="Cats About Town Tours website hero" 
+                        className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
+                      />
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+                      <img 
+                        src="https://i.imgur.com/hJGImR8.jpeg" 
+                        alt="Cats About Town Tours full page screenshot" 
+                        className="w-full h-auto"
+                      />
+                    </DialogContent>
+                  </Dialog>
                   <h3 className="text-xl font-semibold">Cats About Town Tours</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     NYC walking tours with a cat-history twist.
@@ -334,18 +343,22 @@ const Index = () => {
               {/* Project 3: Bodega Cats of New York */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  <a href="https://bodegacatsofnewyork.com/" target="_blank" rel="noopener noreferrer" className="grid grid-cols-2 gap-4">
-                    <img 
-                      src="https://i.imgur.com/9Kcx0Dp.jpeg" 
-                      alt="Bodega Cats of New York website hero" 
-                      className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
-                    />
-                    <img 
-                      src="https://i.imgur.com/hOL1GCg.jpeg" 
-                      alt="Bodega Cats of New York full page screenshot" 
-                      className="w-full h-56 object-cover object-top rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
-                    />
-                  </a>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <img 
+                        src="https://i.imgur.com/9Kcx0Dp.jpeg" 
+                        alt="Bodega Cats of New York website hero" 
+                        className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
+                      />
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+                      <img 
+                        src="https://i.imgur.com/hOL1GCg.jpeg" 
+                        alt="Bodega Cats of New York full page screenshot" 
+                        className="w-full h-auto"
+                      />
+                    </DialogContent>
+                  </Dialog>
                   <h3 className="text-xl font-semibold">Bodega Cats of New York</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     Advocacy, stories, and community around NYC's shop cats.
@@ -367,18 +380,22 @@ const Index = () => {
               {/* Project 4: Pencils & Pecs */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  <a href="http://pencilsandpecs.com/" target="_blank" rel="noopener noreferrer" className="grid grid-cols-2 gap-4">
-                    <img 
-                      src="https://i.imgur.com/HptFEBB.jpeg" 
-                      alt="Pencils & Pecs website hero" 
-                      className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
-                    />
-                    <img 
-                      src="https://i.imgur.com/4dLGWQt.jpeg" 
-                      alt="Pencils & Pecs full page screenshot" 
-                      className="w-full h-56 object-cover object-top rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
-                    />
-                  </a>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <img 
+                        src="https://i.imgur.com/HptFEBB.jpeg" 
+                        alt="Pencils & Pecs website hero" 
+                        className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
+                      />
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+                      <img 
+                        src="https://i.imgur.com/4dLGWQt.jpeg" 
+                        alt="Pencils & Pecs full page screenshot" 
+                        className="w-full h-auto"
+                      />
+                    </DialogContent>
+                  </Dialog>
                   <h3 className="text-xl font-semibold">Pencils & Pecs</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     Pop-up life drawing experience for events and celebrations.
