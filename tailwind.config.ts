@@ -13,6 +13,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -84,6 +87,14 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in-up": "fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+        "scale-in": "scale-in 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+      },
+      boxShadow: {
+        'soft-sm': '0 1px 2px 0 rgba(0, 0, 0, 0.03)',
+        'soft-base': '0 2px 8px 0 rgba(40, 30, 20, 0.06)',
+        'soft-md': '0 4px 16px 0 rgba(40, 30, 20, 0.08)',
+        'soft-lg': '0 8px 24px 0 rgba(40, 30, 20, 0.10)',
       },
     },
   },
