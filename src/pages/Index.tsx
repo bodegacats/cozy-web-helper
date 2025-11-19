@@ -253,82 +253,9 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Sample Layouts */}
-        <section className="py-16 md:py-24 px-4 bg-muted/30">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-4">
-              Sample layouts
-            </h2>
-            <p className="text-base leading-relaxed text-muted-foreground text-center max-w-2xl mx-auto mb-12">
-              Here are a few examples of the kind of simple, clean sites I build. These are generic layouts. Your content and details would be tailored to your work.
-            </p>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Layout 1: Service Business */}
-              <Card>
-                <CardContent className="p-6 space-y-4">
-                  {/* 
-                    PLACEHOLDER IMAGE: Replace with actual screenshot
-                    Recommended size: 600x400px or similar aspect ratio
-                    Upload to /public folder (e.g., /public/layout-service.jpg)
-                    Then replace this div with:
-                    <img src="/layout-service.jpg" alt="Service business layout example" className="w-full h-48 object-cover rounded-lg" />
-                  */}
-                  <div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center">
-                    <span className="text-sm text-muted-foreground">Screenshot placeholder</span>
-                  </div>
-                  <h3 className="text-lg font-semibold">Service business layout</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    Straightforward home, about, services, and contact.
-                  </p>
-                </CardContent>
-              </Card>
-
-              {/* Layout 2: Creative Portfolio */}
-              <Card>
-                <CardContent className="p-6 space-y-4">
-                  {/* 
-                    PLACEHOLDER IMAGE: Replace with actual screenshot
-                    Recommended size: 600x400px or similar aspect ratio
-                    Upload to /public folder (e.g., /public/layout-portfolio.jpg)
-                    Then replace this div with:
-                    <img src="/layout-portfolio.jpg" alt="Creative portfolio layout example" className="w-full h-48 object-cover rounded-lg" />
-                  */}
-                  <div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center">
-                    <span className="text-sm text-muted-foreground">Screenshot placeholder</span>
-                  </div>
-                  <h3 className="text-lg font-semibold">Creative portfolio layout</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    Project focused layout with clear visuals and simple navigation.
-                  </p>
-                </CardContent>
-              </Card>
-
-              {/* Layout 3: Nonprofit */}
-              <Card>
-                <CardContent className="p-6 space-y-4">
-                  {/* 
-                    PLACEHOLDER IMAGE: Replace with actual screenshot
-                    Recommended size: 600x400px or similar aspect ratio
-                    Upload to /public folder (e.g., /public/layout-nonprofit.jpg)
-                    Then replace this div with:
-                    <img src="/layout-nonprofit.jpg" alt="Nonprofit layout example" className="w-full h-48 object-cover rounded-lg" />
-                  */}
-                  <div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center">
-                    <span className="text-sm text-muted-foreground">Screenshot placeholder</span>
-                  </div>
-                  <h3 className="text-lg font-semibold">Nonprofit layout</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    Mission focused with clear calls to action and simple structure.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
 
         {/* Recent Projects */}
-        <section className="py-16 md:py-24 px-4">
+        <section className="py-16 md:py-24 px-4 bg-muted/30">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-4">
               Recent projects
@@ -341,16 +268,11 @@ const Index = () => {
               {/* Project 1: RuffLife */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  {/* 
-                    PLACEHOLDER IMAGE: Replace with actual screenshot of rufflifejc.com
-                    Recommended size: 800x500px or similar aspect ratio
-                    Upload to /public folder (e.g., /public/project-rufflife.jpg)
-                    Then replace this div with:
-                    <img src="/project-rufflife.jpg" alt="RuffLife Jersey City website screenshot" className="w-full h-56 object-cover rounded-lg" />
-                  */}
-                  <div className="w-full h-56 bg-muted rounded-lg flex items-center justify-center">
-                    <span className="text-sm text-muted-foreground">RuffLife screenshot placeholder</span>
-                  </div>
+                  <img 
+                    src="/project-rufflife.jpg" 
+                    alt="RuffLife Jersey City website screenshot" 
+                    className="w-full h-56 object-cover rounded-lg" 
+                  />
                   <h3 className="text-xl font-semibold">RuffLife: Jersey City</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     Dog walking and pet sitting service in Jersey City.
@@ -364,16 +286,11 @@ const Index = () => {
               {/* Project 2: Cats About Town Tours */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  {/* 
-                    PLACEHOLDER IMAGE: Replace with actual screenshot of catsabouttowntours.com
-                    Recommended size: 800x500px or similar aspect ratio
-                    Upload to /public folder (e.g., /public/project-cats-tours.jpg)
-                    Then replace this div with:
-                    <img src="/project-cats-tours.jpg" alt="Cats About Town Tours website screenshot" className="w-full h-56 object-cover rounded-lg" />
-                  */}
-                  <div className="w-full h-56 bg-muted rounded-lg flex items-center justify-center">
-                    <span className="text-sm text-muted-foreground">Cats About Town screenshot placeholder</span>
-                  </div>
+                  <img 
+                    src="/project-cats-tours.jpg" 
+                    alt="Cats About Town Tours website screenshot" 
+                    className="w-full h-56 object-cover rounded-lg" 
+                  />
                   <h3 className="text-xl font-semibold">Cats About Town Tours</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     NYC walking tours with a cat-history twist.
@@ -387,16 +304,11 @@ const Index = () => {
               {/* Project 3: Bodega Cats of New York */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  {/* 
-                    PLACEHOLDER IMAGE: Replace with actual screenshot of bodegacatsofnewyork.com
-                    Recommended size: 800x500px or similar aspect ratio
-                    Upload to /public folder (e.g., /public/project-bodega-cats.jpg)
-                    Then replace this div with:
-                    <img src="/project-bodega-cats.jpg" alt="Bodega Cats of New York website screenshot" className="w-full h-56 object-cover rounded-lg" />
-                  */}
-                  <div className="w-full h-56 bg-muted rounded-lg flex items-center justify-center">
-                    <span className="text-sm text-muted-foreground">Bodega Cats screenshot placeholder</span>
-                  </div>
+                  <img 
+                    src="/project-bodega-cats.jpg" 
+                    alt="Bodega Cats of New York website screenshot" 
+                    className="w-full h-56 object-cover rounded-lg" 
+                  />
                   <h3 className="text-xl font-semibold">Bodega Cats of New York</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     Advocacy, stories, and community around NYC's shop cats.
@@ -410,16 +322,11 @@ const Index = () => {
               {/* Project 4: Pencils & Pecs */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  {/* 
-                    PLACEHOLDER IMAGE: Replace with actual screenshot of pencilsandpecs.com
-                    Recommended size: 800x500px or similar aspect ratio
-                    Upload to /public folder (e.g., /public/project-pencils-pecs.jpg)
-                    Then replace this div with:
-                    <img src="/project-pencils-pecs.jpg" alt="Pencils & Pecs website screenshot" className="w-full h-56 object-cover rounded-lg" />
-                  */}
-                  <div className="w-full h-56 bg-muted rounded-lg flex items-center justify-center">
-                    <span className="text-sm text-muted-foreground">Pencils & Pecs screenshot placeholder</span>
-                  </div>
+                  <img 
+                    src="/project-pencils-pecs.jpg" 
+                    alt="Pencils & Pecs website screenshot" 
+                    className="w-full h-56 object-cover rounded-lg" 
+                  />
                   <h3 className="text-xl font-semibold">Pencils & Pecs</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     Pop-up life drawing experience for events and celebrations.
@@ -434,7 +341,7 @@ const Index = () => {
         </section>
 
         {/* Who This Is For */}
-        <section className="py-16 md:py-24 px-4 bg-muted/30">
+        <section className="py-16 md:py-24 px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">
               Who this is for (and not for)
@@ -482,7 +389,7 @@ const Index = () => {
         </section>
 
         {/* Pricing */}
-        <section className="py-16 md:py-24 px-4">
+        <section className="py-16 md:py-24 px-4 bg-muted/30">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">Pricing</h2>
             <Card className="shadow-lg border-2">
