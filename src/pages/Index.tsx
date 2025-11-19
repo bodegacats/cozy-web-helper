@@ -67,12 +67,12 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="section-animate hero-section min-h-[85vh] flex items-center justify-center bg-gradient-to-b from-background via-surface to-background px-4 py-16">
+      <section className="min-h-[85vh] flex items-center justify-center bg-gradient-to-b from-background via-muted/20 to-background px-4 py-16">
         <div className="max-w-3xl mx-auto text-center space-y-8">
-          <h1 className="hero-headline">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight">
             Simple websites for real work.
           </h1>
-          <p className="hero-subtext mx-auto">
+          <p className="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-2xl mx-auto">
             I build 5-7 page sites for small businesses, solo professionals, artists, nonprofits, and creative projects. Clean, functional, and done in a few weeks.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
@@ -87,15 +87,15 @@ const Index = () => {
       </section>
 
       {/* How This Works */}
-      <section className="section-animate page-section">
-        <div className="container-standard">
-          <h2 className="section-heading text-center mb-12">How this works</h2>
+      <section className="py-16 md:py-24 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">How this works</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <Card>
               <CardContent className="p-6 space-y-3">
                 <div className="text-4xl font-semibold text-primary">1</div>
                 <h3 className="text-xl font-semibold">You tell me what you need</h3>
-                <p className="body-base text-foreground-muted">
+                <p className="text-base leading-relaxed text-muted-foreground">
                   We talk through your project, goals, and content. I'll let you know if this service is a good fit.
                 </p>
               </CardContent>
@@ -104,7 +104,7 @@ const Index = () => {
               <CardContent className="p-6 space-y-3">
                 <div className="text-4xl font-semibold text-primary">2</div>
                 <h3 className="text-xl font-semibold">I build your site</h3>
-                <p className="body-base text-foreground-muted">
+                <p className="text-base leading-relaxed text-muted-foreground">
                   I design and build your site, check in with you as I go, and make revisions based on your feedback.
                 </p>
               </CardContent>
@@ -113,7 +113,7 @@ const Index = () => {
               <CardContent className="p-6 space-y-3">
                 <div className="text-4xl font-semibold text-primary">3</div>
                 <h3 className="text-xl font-semibold">Your site goes live</h3>
-                <p className="body-base text-foreground-muted">
+                <p className="text-base leading-relaxed text-muted-foreground">
                   I launch your site, show you how to update it, and make sure everything works smoothly.
                 </p>
               </CardContent>
@@ -123,11 +123,11 @@ const Index = () => {
       </section>
 
       {/* Checklist Section */}
-      <section id="checklist" className="section-animate page-section bg-surface">
-        <div className="container-narrow">
+      <section id="checklist" className="py-16 md:py-24 px-4 bg-muted/30">
+        <div className="max-w-2xl mx-auto">
           <div className="space-y-3 mb-8 text-center">
-            <h2 className="section-heading">Simple Website Sanity Checklist</h2>
-            <p className="section-subheading">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight">Simple Website Sanity Checklist</h2>
+            <p className="text-lg md:text-xl leading-relaxed text-muted-foreground">
               Answer these 7 questions to see if this service is right for your project.
             </p>
           </div>
@@ -140,7 +140,7 @@ const Index = () => {
                     key={question.id}
                     className="p-4 rounded-lg bg-muted/50 hover:bg-accent/50 transition-colors"
                   >
-                    <p className="body-base font-medium mb-3">{question.text}</p>
+                    <p className="text-base leading-relaxed font-medium mb-3">{question.text}</p>
                     <RadioGroup
                       value={checklistAnswers[question.id]}
                       onValueChange={(value) => {
@@ -177,7 +177,7 @@ const Index = () => {
                   className="mt-8 p-6 rounded-xl bg-primary/5 border-2 border-primary/20 animate-fadeInUp"
                 >
                   <h3 className="text-xl font-semibold mb-3">{result.title}</h3>
-                  <p className="body-base mb-4">{result.message}</p>
+                  <p className="text-base leading-relaxed mb-4">{result.message}</p>
                   {result.cta && (
                     <Button onClick={scrollToContact} size="lg">
                       Talk to me about my site
@@ -191,9 +191,9 @@ const Index = () => {
       </section>
 
       {/* What You Get */}
-      <section className="section-animate page-section">
-        <div className="container-standard">
-          <h2 className="section-heading text-center mb-12">What you get</h2>
+      <section className="py-16 md:py-24 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">What you get</h2>
           <div className="grid md:grid-cols-2 gap-8">
             <Card>
               <CardContent className="p-6 space-y-4">
@@ -210,7 +210,7 @@ const Index = () => {
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="body-base">{item}</span>
+                      <span className="text-base leading-relaxed">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -231,7 +231,7 @@ const Index = () => {
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="body-base">{item}</span>
+                      <span className="text-base leading-relaxed">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -242,23 +242,23 @@ const Index = () => {
       </section>
 
       {/* Pricing */}
-      <section className="section-animate page-section bg-surface">
-        <div className="container-narrow">
-          <h2 className="section-heading text-center mb-12">Pricing</h2>
+      <section className="py-16 md:py-24 px-4 bg-muted/30">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">Pricing</h2>
           <Card className="shadow-lg border-2">
             <CardContent className="p-8 text-center space-y-6">
               <div>
                 <div className="text-5xl font-semibold text-primary mb-2">$1,500</div>
-                <p className="body-lg text-foreground-muted">One-time project fee</p>
+                <p className="text-lg leading-relaxed text-muted-foreground">One-time project fee</p>
               </div>
               <div className="border-t-2 border-border pt-6 space-y-4 text-left">
-                <p className="body-base">
+                <p className="text-base leading-relaxed">
                   This covers design, development, revisions, and launch. You own the site completely.
                 </p>
-                <p className="body-base">
+                <p className="text-base leading-relaxed">
                   Hosting and domain registration are separate (usually $100-200/year through your own provider).
                 </p>
-                <p className="body-base">
+                <p className="text-base leading-relaxed">
                   If you need ongoing updates or maintenance, we can discuss a simple retainer or per-update pricing.
                 </p>
               </div>
@@ -271,9 +271,9 @@ const Index = () => {
       </section>
 
       {/* FAQ */}
-      <section className="section-animate page-section">
-        <div className="container-narrow">
-          <h2 className="section-heading text-center mb-12">Common questions</h2>
+      <section className="py-16 md:py-24 px-4">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">Common questions</h2>
           <Accordion type="single" collapsible className="space-y-4">
             <AccordionItem value="item-1" className="border-2 rounded-lg px-6 bg-card">
               <AccordionTrigger className="text-left hover:no-underline">
@@ -333,15 +333,15 @@ const Index = () => {
       </section>
 
       {/* Contact */}
-      <section id="contact" className="section-animate page-section bg-surface">
-        <div className="container-narrow">
+      <section id="contact" className="py-16 md:py-24 px-4 bg-muted/30">
+        <div className="max-w-2xl mx-auto">
           <ContactForm />
         </div>
       </section>
 
       {/* Footer */}
       <footer className="py-8 text-center border-t-2 border-border">
-        <p className="caption">
+        <p className="text-sm text-muted-foreground">
           © {new Date().getFullYear()} Simple websites for real work. Built with care.
         </p>
       </footer>
