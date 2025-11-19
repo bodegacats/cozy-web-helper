@@ -12,6 +12,7 @@ import PortalRequest from "./pages/PortalRequest";
 import AdminClients from "./pages/AdminClients";
 import AdminClientDetail from "./pages/AdminClientDetail";
 import AdminRequests from "./pages/AdminRequests";
+import AdminPipeline from "./pages/AdminPipeline";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 
@@ -58,6 +59,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <AdminRequests />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/pipeline"
+            element={
+              <ProtectedRoute>
+                <AdminPipeline />
               </ProtectedRoute>
             }
           />

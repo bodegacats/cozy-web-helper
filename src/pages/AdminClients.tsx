@@ -72,8 +72,11 @@ const AdminClients = () => {
             </p>
           </div>
           <div className="flex gap-2">
+            <Button variant="outline" onClick={() => navigate('/admin/pipeline')}>
+              Pipeline
+            </Button>
             <Button variant="outline" onClick={() => navigate('/admin/submissions')}>
-              View submissions
+              Submissions
             </Button>
             <Button variant="outline" onClick={() => supabase.auth.signOut()}>
               Log out
