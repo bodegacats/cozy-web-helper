@@ -268,11 +268,16 @@ const Index = () => {
               {/* Project 1: RuffLife */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  <a href="https://rufflifejc.com/" target="_blank" rel="noopener noreferrer">
+                  <a href="https://rufflifejc.com/" target="_blank" rel="noopener noreferrer" className="grid grid-cols-2 gap-4">
                     <img 
                       src="https://i.imgur.com/7rAmj6S.jpeg" 
-                      alt="RuffLife Jersey City website screenshot" 
+                      alt="RuffLife Jersey City website hero" 
                       className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
+                    />
+                    <img 
+                      src="https://i.imgur.com/K49QVdg.jpeg" 
+                      alt="RuffLife Jersey City full page screenshot" 
+                      className="w-full h-56 object-cover object-top rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
                     />
                   </a>
                   <h3 className="text-xl font-semibold">RuffLife: Jersey City</h3>
@@ -296,11 +301,16 @@ const Index = () => {
               {/* Project 2: Cats About Town Tours */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  <a href="https://catsabouttowntours.com/" target="_blank" rel="noopener noreferrer">
+                  <a href="https://catsabouttowntours.com/" target="_blank" rel="noopener noreferrer" className="grid grid-cols-2 gap-4">
                     <img 
                       src="https://i.imgur.com/vuJkqLu.jpeg" 
-                      alt="Cats About Town Tours website screenshot" 
+                      alt="Cats About Town Tours website hero" 
                       className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
+                    />
+                    <img 
+                      src="https://i.imgur.com/hJGImR8.jpeg" 
+                      alt="Cats About Town Tours full page screenshot" 
+                      className="w-full h-56 object-cover object-top rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
                     />
                   </a>
                   <h3 className="text-xl font-semibold">Cats About Town Tours</h3>
@@ -324,11 +334,16 @@ const Index = () => {
               {/* Project 3: Bodega Cats of New York */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  <a href="https://bodegacatsofnewyork.com/" target="_blank" rel="noopener noreferrer">
+                  <a href="https://bodegacatsofnewyork.com/" target="_blank" rel="noopener noreferrer" className="grid grid-cols-2 gap-4">
                     <img 
                       src="https://i.imgur.com/9Kcx0Dp.jpeg" 
-                      alt="Bodega Cats of New York website screenshot" 
+                      alt="Bodega Cats of New York website hero" 
                       className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
+                    />
+                    <img 
+                      src="https://i.imgur.com/hOL1GCg.jpeg" 
+                      alt="Bodega Cats of New York full page screenshot" 
+                      className="w-full h-56 object-cover object-top rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
                     />
                   </a>
                   <h3 className="text-xl font-semibold">Bodega Cats of New York</h3>
@@ -352,11 +367,16 @@ const Index = () => {
               {/* Project 4: Pencils & Pecs */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  <a href="http://pencilsandpecs.com/" target="_blank" rel="noopener noreferrer">
+                  <a href="http://pencilsandpecs.com/" target="_blank" rel="noopener noreferrer" className="grid grid-cols-2 gap-4">
                     <img 
                       src="https://i.imgur.com/HptFEBB.jpeg" 
-                      alt="Pencils & Pecs website screenshot" 
+                      alt="Pencils & Pecs website hero" 
                       className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
+                    />
+                    <img 
+                      src="https://i.imgur.com/4dLGWQt.jpeg" 
+                      alt="Pencils & Pecs full page screenshot" 
+                      className="w-full h-56 object-cover object-top rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
                     />
                   </a>
                   <h3 className="text-xl font-semibold">Pencils & Pecs</h3>
