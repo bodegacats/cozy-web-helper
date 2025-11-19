@@ -81,17 +81,17 @@ const Index = () => {
             One person website service
           </p>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight">
-            A simple website, built by a real person, not a platform
+            Simple websites for small businesses and solo projects
           </h1>
           <p className="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-2xl mx-auto">
-            I build 5 to 7 page sites for small businesses, solo professionals, artists, nonprofits, and creative projects. I talk to you, build it, launch it, and help with changes if you want. No long contract, no dashboard to figure out.
+            I build straightforward websites for small businesses, solo professionals, artists, nonprofits, and creative projects. We talk through what you need, I build and launch it, and I am around for small changes if you want. No long contract, no new software for you to learn.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Button size="lg" onClick={scrollToChecklist} className="shadow-base">
-              Take the 7-question checklist
+              Take the 7 question checklist
             </Button>
             <Button size="lg" variant="outline" onClick={scrollToContact} className="border-2">
-              Talk to me about my site
+              Talk to me about your site
             </Button>
           </div>
         </div>
@@ -212,7 +212,7 @@ const Index = () => {
                   <h3 className="text-xl font-semibold">Included in every site</h3>
                   <ul className="space-y-3">
                     {[
-                      "5-7 pages (Home, About, Services/Work, Contact, etc.)",
+                      "Most sites end up between 4 and 7 pages (Home, About, Services or Work, Contact, plus anything else you truly need).",
                       "Mobile-friendly responsive design",
                       "Fast loading and clean code",
                       "Basic SEO setup",
@@ -253,8 +253,82 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Who This Is For */}
+        {/* Sample Layouts */}
         <section className="py-16 md:py-24 px-4 bg-muted/30">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-4">
+              Sample layouts
+            </h2>
+            <p className="text-base leading-relaxed text-muted-foreground text-center max-w-2xl mx-auto mb-12">
+              Here are a few examples of the kind of simple, clean sites I build. These are generic layouts. Your content and details would be tailored to your work.
+            </p>
+            
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Layout 1: Service Business */}
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  {/* 
+                    PLACEHOLDER IMAGE: Replace with actual screenshot
+                    Recommended size: 600x400px or similar aspect ratio
+                    Upload to /public folder (e.g., /public/layout-service.jpg)
+                    Then replace this div with:
+                    <img src="/layout-service.jpg" alt="Service business layout example" className="w-full h-48 object-cover rounded-lg" />
+                  */}
+                  <div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center">
+                    <span className="text-sm text-muted-foreground">Screenshot placeholder</span>
+                  </div>
+                  <h3 className="text-lg font-semibold">Service business layout</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    Straightforward home, about, services, and contact.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Layout 2: Creative Portfolio */}
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  {/* 
+                    PLACEHOLDER IMAGE: Replace with actual screenshot
+                    Recommended size: 600x400px or similar aspect ratio
+                    Upload to /public folder (e.g., /public/layout-portfolio.jpg)
+                    Then replace this div with:
+                    <img src="/layout-portfolio.jpg" alt="Creative portfolio layout example" className="w-full h-48 object-cover rounded-lg" />
+                  */}
+                  <div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center">
+                    <span className="text-sm text-muted-foreground">Screenshot placeholder</span>
+                  </div>
+                  <h3 className="text-lg font-semibold">Creative portfolio layout</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    Project focused layout with clear visuals and simple navigation.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Layout 3: Nonprofit */}
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  {/* 
+                    PLACEHOLDER IMAGE: Replace with actual screenshot
+                    Recommended size: 600x400px or similar aspect ratio
+                    Upload to /public folder (e.g., /public/layout-nonprofit.jpg)
+                    Then replace this div with:
+                    <img src="/layout-nonprofit.jpg" alt="Nonprofit layout example" className="w-full h-48 object-cover rounded-lg" />
+                  */}
+                  <div className="w-full h-48 bg-muted rounded-lg flex items-center justify-center">
+                    <span className="text-sm text-muted-foreground">Screenshot placeholder</span>
+                  </div>
+                  <h3 className="text-lg font-semibold">Nonprofit layout</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    Mission focused with clear calls to action and simple structure.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Who This Is For */}
+        <section className="py-16 md:py-24 px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">
               Who this is for (and not for)
