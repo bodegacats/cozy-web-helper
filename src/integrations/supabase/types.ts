@@ -26,8 +26,10 @@ export type Database = {
           name: string
           notes: string | null
           phone: string | null
+          pipeline_stage: string
           plan_type: string
           setup_fee_cents: number | null
+          source_submission_id: string | null
           website_url: string | null
         }
         Insert: {
@@ -41,8 +43,10 @@ export type Database = {
           name: string
           notes?: string | null
           phone?: string | null
+          pipeline_stage?: string
           plan_type?: string
           setup_fee_cents?: number | null
+          source_submission_id?: string | null
           website_url?: string | null
         }
         Update: {
@@ -56,11 +60,21 @@ export type Database = {
           name?: string
           notes?: string | null
           phone?: string | null
+          pipeline_stage?: string
           plan_type?: string
           setup_fee_cents?: number | null
+          source_submission_id?: string | null
           website_url?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "clients_source_submission_id_fkey"
+            columns: ["source_submission_id"]
+            isOneToOne: false
+            referencedRelation: "contact_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contact_submissions: {
         Row: {
@@ -69,6 +83,7 @@ export type Database = {
           id: string
           name: string
           project_description: string
+          status: string
           website_url: string | null
           wish: string
         }
@@ -78,6 +93,7 @@ export type Database = {
           id?: string
           name: string
           project_description: string
+          status?: string
           website_url?: string | null
           wish: string
         }
@@ -87,6 +103,7 @@ export type Database = {
           id?: string
           name?: string
           project_description?: string
+          status?: string
           website_url?: string | null
           wish?: string
         }
