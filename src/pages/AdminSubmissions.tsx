@@ -67,9 +67,14 @@ const AdminSubmissions = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Contact Submissions</CardTitle>
-            <Button onClick={handleLogout} variant="outline">
-              Log Out
-            </Button>
+            <div className="flex gap-2">
+              <Button onClick={() => window.location.href = '/admin/clients'} variant="outline">
+                View clients
+              </Button>
+              <Button onClick={handleLogout} variant="outline">
+                Log Out
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             {submissions.length === 0 ? (
