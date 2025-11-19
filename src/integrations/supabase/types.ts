@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      clients: {
+        Row: {
+          business_name: string | null
+          created_at: string | null
+          email: string
+          id: string
+          monthly_included_minutes: number
+          name: string
+          notes: string | null
+          phone: string | null
+          plan_type: string
+          website_url: string | null
+        }
+        Insert: {
+          business_name?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+          monthly_included_minutes?: number
+          name: string
+          notes?: string | null
+          phone?: string | null
+          plan_type?: string
+          website_url?: string | null
+        }
+        Update: {
+          business_name?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          monthly_included_minutes?: number
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          plan_type?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       contact_submissions: {
         Row: {
           created_at: string | null
@@ -44,15 +83,95 @@ export type Database = {
         }
         Relationships: []
       }
+      update_requests: {
+        Row: {
+          actual_minutes: number | null
+          client_id: string
+          completed_at: string | null
+          created_at: string | null
+          description: string
+          estimated_minutes: number | null
+          id: string
+          internal_notes: string | null
+          priority: string
+          status: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          actual_minutes?: number | null
+          client_id: string
+          completed_at?: string | null
+          created_at?: string | null
+          description: string
+          estimated_minutes?: number | null
+          id?: string
+          internal_notes?: string | null
+          priority?: string
+          status?: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          actual_minutes?: number | null
+          client_id?: string
+          completed_at?: string | null
+          created_at?: string | null
+          description?: string
+          estimated_minutes?: number | null
+          id?: string
+          internal_notes?: string | null
+          priority?: string
+          status?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "update_requests_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "client"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -179,6 +298,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "client"],
+    },
   },
 } as const

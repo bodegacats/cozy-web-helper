@@ -568,6 +568,10 @@ const Index = () => {
       <footer className="py-8 text-center border-t-2 border-border">
         <p className="text-sm text-muted-foreground">
           © {new Date().getFullYear()} Simple websites for real work. Built with care.
+          {" • "}
+          <a href="/portal" className="hover:text-foreground transition-colors">
+            Client portal
+          </a>
         </p>
       </footer>
     </div>

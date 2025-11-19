@@ -6,6 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import AdminSubmissions from "./pages/AdminSubmissions";
+import Portal from "./pages/Portal";
+import AdminClients from "./pages/AdminClients";
+import AdminClientDetail from "./pages/AdminClientDetail";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 
@@ -20,11 +23,28 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/portal" element={<Portal />} />
           <Route
             path="/admin/submissions"
             element={
               <ProtectedRoute>
                 <AdminSubmissions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/clients"
+            element={
+              <ProtectedRoute>
+                <AdminClients />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/clients/:id"
+            element={
+              <ProtectedRoute>
+                <AdminClientDetail />
               </ProtectedRoute>
             }
           />
