@@ -13,13 +13,13 @@ const Index = () => {
   const [showResult, setShowResult] = useState(false);
 
   const checklistQuestions = [
-    { id: 1, text: "Do you have a clear idea of what pages your site needs?" },
-    { id: 2, text: "Do you have most of your text content ready or can you write it?" },
-    { id: 3, text: "Do you have photos or graphics, or know where to get them?" },
-    { id: 4, text: "Are you okay with a simple, clean design rather than highly custom graphics?" },
-    { id: 5, text: "Is your project a service, portfolio, informational site, or creative project?" },
-    { id: 6, text: "Do you NOT need ecommerce or real estate listings?" },
-    { id: 7, text: "Are you ready to launch within a few weeks?" },
+    { id: 1, text: "Do you want a website that simply explains who you are, what you do, and how to contact you?" },
+    { id: 2, text: "Is your work something like a service, portfolio, nonprofit, event, or creative project, not an online store or real estate listings?" },
+    { id: 3, text: "Are you happy with a small, simple site instead of a big, complex one with lots of custom features?" },
+    { id: 4, text: "Does it sound good to have one person plan, design, and build the whole site with you?" },
+    { id: 5, text: "Do you either have some words and photos already, or feel like you can pull them together with a bit of guidance?" },
+    { id: 6, text: "Are you okay with a clean, calm design rather than heavy custom graphics or wild animations?" },
+    { id: 7, text: "Would it feel good to have your site live in the next few weeks, not months?" },
   ];
 
   const handleChecklistSubmit = () => {
@@ -32,22 +32,22 @@ const Index = () => {
   const noCount = Object.values(checklistAnswers).filter(a => a === "no").length;
 
   const getResultMessage = () => {
-    if (yesCount >= 6) {
+    if (yesCount >= 5) {
       return {
-        title: "This service is probably a great fit.",
-        message: "You're ready to go. Let's talk about your project.",
+        title: "If you said yes to most questions",
+        message: "This service is probably a strong match. You want a clear, honest site, built by one person, without a long process. That is exactly what I do.",
         cta: true
       };
-    } else if (yesCount >= 4) {
+    } else if (yesCount >= 3) {
       return {
-        title: "This might work, but let's talk first.",
-        message: "A few things to sort out, but we can probably make this happen.",
+        title: "If you had a mix of yes and no",
+        message: "You might still be a good fit. It just means we should talk through your project and see what makes sense. Some things we can keep simple. Some things might need a different plan.",
         cta: true
       };
     } else {
       return {
-        title: "This might not be the right fit yet.",
-        message: "You might need more prep time, or a different kind of service. But feel free to reach out if you want to talk through it.",
+        title: "If you said no to most questions",
+        message: "You may need a bigger team, a fully custom build, or a different type of website. If you want to share what you are working on, I am happy to point you toward a better option, even if that is not me.",
         cta: false
       };
     }
@@ -139,9 +139,9 @@ const Index = () => {
         <section id="checklist" className="py-16 md:py-24 px-4 bg-muted/30">
           <div className="max-w-2xl mx-auto">
             <div className="space-y-3 mb-8 text-center">
-              <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight">Simple Website Sanity Checklist</h2>
+              <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight">Simple website fit check</h2>
               <p className="text-lg md:text-xl leading-relaxed text-muted-foreground">
-                Answer these 7 questions to see if this service is right for your project.
+                These questions are not a test. They just help us see if this service matches what you need. Pick yes or no for each one.
               </p>
             </div>
 
