@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.portal-ai-chat]
 verify_jwt = true
+
+[functions.classify-edit-request]
+verify_jwt = false

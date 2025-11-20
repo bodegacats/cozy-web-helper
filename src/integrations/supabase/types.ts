@@ -227,6 +227,10 @@ export type Database = {
       update_requests: {
         Row: {
           actual_minutes: number | null
+          ai_confidence: string | null
+          ai_explanation: string | null
+          ai_price_cents: number | null
+          ai_type: string | null
           attachments: Json | null
           client_id: string
           completed_at: string | null
@@ -244,6 +248,10 @@ export type Database = {
         }
         Insert: {
           actual_minutes?: number | null
+          ai_confidence?: string | null
+          ai_explanation?: string | null
+          ai_price_cents?: number | null
+          ai_type?: string | null
           attachments?: Json | null
           client_id: string
           completed_at?: string | null
@@ -261,6 +269,10 @@ export type Database = {
         }
         Update: {
           actual_minutes?: number | null
+          ai_confidence?: string | null
+          ai_explanation?: string | null
+          ai_price_cents?: number | null
+          ai_type?: string | null
           attachments?: Json | null
           client_id?: string
           completed_at?: string | null
