@@ -4,11 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { ExternalLink, ArrowLeft } from "lucide-react";
+import { ExternalLink, ArrowLeft, Trash2 } from "lucide-react";
 
 interface Client {
   id: string;
@@ -105,6 +103,23 @@ const Portal = () => {
         toast.error(error.message);
       }
     }
+  };
+
+  const handleCancelRequest = async (requestId: string) => {
+    if (!confirm("Are you sure you want to cancel this request?")) return;
+
+    const { error } = await supabase
+      .from('update_requests')
+      .update({ status: 'cancelled' })
+      .eq('id', requestId);
+
+    if (error) {
+      toast.error("Could not cancel request");
+      return;
+    }
+
+    toast.success("Request cancelled");
+    loadClientData();
   };
 
 
@@ -266,9 +281,21 @@ const Portal = () => {
                         {new Date(request.created_at).toLocaleDateString()}
                       </p>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeClass(request.status)}`}>
-                      {getStatusLabel(request.status)}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeClass(request.status)}`}>
+                        {getStatusLabel(request.status)}
+                      </span>
+                      {request.status === 'new' && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleCancelRequest(request.id)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>

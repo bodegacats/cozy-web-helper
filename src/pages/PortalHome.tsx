@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Trash2 } from "lucide-react";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 interface Client {
   id: string;
@@ -88,6 +89,25 @@ const PortalHome = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/portal');
+  };
+
+  const handleCancelRequest = async (requestId: string) => {
+    if (!confirm("Are you sure you want to cancel this request?")) return;
+
+    const { error } = await supabase
+      .from('update_requests')
+      .update({ status: 'cancelled' })
+      .eq('id', requestId);
+
+    if (error) {
+      toast.error("Could not cancel request");
+      return;
+    }
+
+    toast.success("Request cancelled");
+    if (user?.email) {
+      await loadClientData(user.email);
+    }
   };
 
   if (loading) {
@@ -182,7 +202,19 @@ const PortalHome = () => {
                         {format(new Date(request.created_at), 'MMM d, yyyy')}
                       </p>
                     </div>
-                    {getStatusBadge(request.status)}
+                    <div className="flex items-center gap-2">
+                      {getStatusBadge(request.status)}
+                      {request.status === 'new' && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleCancelRequest(request.id)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
