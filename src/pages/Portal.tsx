@@ -16,8 +16,6 @@ interface Client {
   business_name: string | null;
   email: string;
   website_url: string | null;
-  plan_type: string;
-  monthly_included_minutes: number;
 }
 
 interface UpdateRequest {
@@ -36,12 +34,6 @@ const Portal = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [client, setClient] = useState<Client | null>(null);
   const [requests, setRequests] = useState<UpdateRequest[]>([]);
-  const [requestForm, setRequestForm] = useState({
-    title: "",
-    location: "",
-    description: "",
-    urgency: "normal"
-  });
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -115,32 +107,6 @@ const Portal = () => {
     }
   };
 
-  const handleSubmitRequest = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!client) return;
-
-    const priority = requestForm.urgency === "Urgent" ? "high" : 
-                     requestForm.urgency === "Soon is nice" ? "normal" : "low";
-
-    const { error } = await supabase
-      .from('update_requests')
-      .insert({
-        client_id: client.id,
-        title: requestForm.title,
-        description: `Location: ${requestForm.location}\n\n${requestForm.description}`,
-        priority
-      });
-
-    if (error) {
-      toast.error("Could not send request");
-      return;
-    }
-
-    toast.success("Got it. I will review this and get back to you.");
-    setRequestForm({ title: "", location: "", description: "", urgency: "normal" });
-    loadClientData();
-  };
 
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
@@ -280,9 +246,6 @@ const Portal = () => {
                 Log out
               </Button>
             </div>
-            <CardDescription className="text-base mt-4">
-              Care plan: {client.plan_type.replace(/_/g, ' ')}. Included minutes each month: {client.monthly_included_minutes}.
-            </CardDescription>
           </CardHeader>
         </Card>
 
@@ -315,58 +278,22 @@ const Portal = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Send a new change request</CardTitle>
+            <CardTitle>What would you like to do?</CardTitle>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmitRequest} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Short title</Label>
-                <Input
-                  id="title"
-                  placeholder="e.g., Update homepage hero"
-                  value={requestForm.title}
-                  onChange={(e) => setRequestForm({ ...requestForm, title: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="location">Where on the site is this?</Label>
-                <Input
-                  id="location"
-                  placeholder="e.g., Contact page"
-                  value={requestForm.location}
-                  onChange={(e) => setRequestForm({ ...requestForm, location: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">What do you want changed?</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Describe what you would like updated..."
-                  value={requestForm.description}
-                  onChange={(e) => setRequestForm({ ...requestForm, description: e.target.value })}
-                  required
-                  className="min-h-[120px]"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="urgency">How urgent is this?</Label>
-                <Select value={requestForm.urgency} onValueChange={(value) => setRequestForm({ ...requestForm, urgency: value })}>
-                  <SelectTrigger id="urgency">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Not urgent">Not urgent</SelectItem>
-                    <SelectItem value="Soon is nice">Soon is nice</SelectItem>
-                    <SelectItem value="Urgent">Urgent</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button type="submit" className="w-full">
-                Send this request
-              </Button>
-            </form>
+          <CardContent className="flex flex-col sm:flex-row gap-4">
+            <Button 
+              onClick={() => navigate("/portal/request")}
+              className="flex-1"
+            >
+              Submit a new request
+            </Button>
+            <Button 
+              onClick={() => navigate("/portal/chat")}
+              variant="outline"
+              className="flex-1"
+            >
+              Chat with AI
+            </Button>
           </CardContent>
         </Card>
       </div>
