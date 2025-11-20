@@ -10,10 +10,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { ArrowLeft, Upload, X } from "lucide-react";
 import { getCurrentMonthStart } from "@/lib/utils";
+import { PortalNav } from "@/components/PortalNav";
 
 interface Client {
   id: string;
   name: string;
+  business_name: string | null;
 }
 
 const PortalRequest = () => {
@@ -45,7 +47,7 @@ const PortalRequest = () => {
 
     const { data: clientData } = await supabase
       .from('clients')
-      .select('id, name')
+      .select('id, name, business_name')
       .eq('email', session.user.email!)
       .maybeSingle();
 
@@ -252,16 +254,9 @@ const PortalRequest = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate('/portal/home')}
-          className="mb-4"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to home
-        </Button>
+    <div className="min-h-screen bg-muted/30">
+      <PortalNav currentPage="request" client={client} />
+      <div className="max-w-2xl mx-auto py-8 px-4">
 
         <Card>
           <CardHeader>
