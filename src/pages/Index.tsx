@@ -17,9 +17,9 @@ const Index = () => {
     { id: 2, text: "Is your work something like a service, portfolio, nonprofit, event, or creative project, not an online store or real estate listings?" },
     { id: 3, text: "Are you happy with a small, simple site instead of a big, complex one with lots of custom features?" },
     { id: 4, text: "Does it sound good to have one person plan, design, and build the whole site with you?" },
-    { id: 5, text: "Do you either have some words and photos already, or feel like you can pull them together with a bit of guidance?" },
+    { id: 5, text: "Do you already have some text and photos, or feel like you can pull them together with a bit of guidance?" },
     { id: 6, text: "Are you okay with a clean, calm design rather than heavy custom graphics or wild animations?" },
-    { id: 7, text: "Would it feel good to have your site live in the next few weeks, not months?" },
+    { id: 7, text: "Is your timeline closer to a few weeks than a few months?" },
   ];
 
   const handleChecklistSubmit = () => {
@@ -281,7 +281,7 @@ const Index = () => {
 
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  <h3 className="text-xl font-semibold">Simple sites this works for</h3>
+                  <h3 className="text-xl font-semibold">Types of sites this works for</h3>
                   <ul className="space-y-3">
                     {[
                       "Service businesses (consultants, therapists, contractors)",
