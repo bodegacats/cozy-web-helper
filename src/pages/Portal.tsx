@@ -114,12 +114,11 @@ const Portal = () => {
     const { error } = await supabase
       .from('update_requests')
       .update({ status: 'cancelled' })
-      .eq('id', requestToCancel.id)
-      .eq('status', 'new'); // Only cancel if still new
+      .eq('id', requestToCancel.id);
 
     if (error) {
       console.error('Cancel error:', error);
-      toast.error("Could not cancel request. It may have already been started.");
+      toast.error(error.message || "Could not cancel request.");
       return;
     }
 
