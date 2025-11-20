@@ -458,6 +458,18 @@ const Index = () => {
           </div>
         </section>
 
+        {/* About Me Section */}
+        <section className="py-16 md:py-24 px-4">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-8">About Me</h2>
+            <div className="prose prose-lg mx-auto">
+              <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
+                I've spent nearly a decade helping people get clear, functional websites without the usual stress or tech learning curve. I've worked with hundreds of small businesses, solo professionals, artists, tour companies, nonprofits, and local service providers. My strength is taking scattered ideas and turning them into calm, readable websites that explain what you do and help people reach you. I keep things simple, fast, and organized so you can focus on your real work.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Who This Is For */}
         <section className="py-16 md:py-24 px-4">
           <div className="max-w-4xl mx-auto">
