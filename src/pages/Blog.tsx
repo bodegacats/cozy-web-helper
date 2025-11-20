@@ -47,11 +47,20 @@ export default function Blog() {
   return (
     <>
       <Helmet>
-        <title>Blog - Web Design & Development Insights</title>
+        <title>Blog - Web Design & Development Insights | Build Me a Simple Site</title>
         <meta 
           name="description" 
           content="Expert insights on web design, development, SEO, and digital strategy. Learn best practices and stay updated with the latest trends." 
         />
+        <link rel="canonical" href="https://buildmeasimplesite.com/blog" />
+        <meta property="og:title" content="Blog - Web Design & Development Insights | Build Me a Simple Site" />
+        <meta property="og:description" content="Expert insights on web design, development, SEO, and digital strategy. Learn best practices and stay updated with the latest trends." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://buildmeasimplesite.com/blog" />
+        <meta property="og:site_name" content="Build Me a Simple Site" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Blog - Web Design & Development Insights | Build Me a Simple Site" />
+        <meta name="twitter:description" content="Expert insights on web design, development, SEO, and digital strategy. Learn best practices and stay updated with the latest trends." />
       </Helmet>
 
       <main className="min-h-screen bg-background">
@@ -100,6 +109,9 @@ export default function Blog() {
                           src={post.featured_image_url}
                           alt={post.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                          width="800"
+                          height="450"
                         />
                       </div>
                     )}

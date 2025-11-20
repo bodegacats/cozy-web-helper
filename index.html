@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index, follow" />
     
     <!-- 
       SEO & SOCIAL SHARING SETUP
@@ -11,14 +12,16 @@
     <title>Build Me a Simple Site | Simple websites for small businesses and solo projects</title>
     <meta name="description" content="One person website service that builds 5–7 page sites for small businesses and solo projects in about a week. Flat pricing, clear scope, and tiny fixes included." />
     <meta name="author" content="Dan" />
+    <link rel="canonical" href="https://buildmeasimplesite.com/" />
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Schema.org Structured Data -->
     <script type="application/ld+json">
-    {
+    [{
       "@context": "https://schema.org",
       "@type": "ProfessionalService",
       "name": "Build Me a Simple Site",
@@ -28,18 +31,26 @@
         "@type": "Person",
         "name": "Dan Mulé"
       }
-    }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Build Me a Simple Site",
+      "url": "https://buildmeasimplesite.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://buildmeasimplesite.com/blog?search={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }]
     </script>
 
     <!-- Open Graph / Social Sharing Meta Tags -->
     <meta property="og:title" content="Build Me a Simple Site | Simple websites for small businesses and solo projects" />
     <meta property="og:description" content="One person website service that builds 5–7 page sites for small businesses and solo projects in about a week. Flat pricing, clear scope, and tiny fixes included." />
     <meta property="og:type" content="website" />
-    <!-- 
-      TODO: Replace with your actual domain when deployed
-      Example: https://yourdomain.com
-    -->
     <meta property="og:url" content="https://buildmeasimplesite.com" />
+    <meta property="og:site_name" content="Build Me a Simple Site" />
     <!-- 
       TODO: Add your social sharing image here
       1. Create an image at 1200x630px (recommended size for social sharing)
@@ -51,6 +62,8 @@
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Build Me a Simple Site | Simple websites for small businesses and solo projects" />
+    <meta name="twitter:description" content="One person website service that builds 5–7 page sites for small businesses and solo projects in about a week. Flat pricing, clear scope, and tiny fixes included." />
     <meta name="twitter:image" content="/placeholder-og-image.jpg" />
   </head>
 

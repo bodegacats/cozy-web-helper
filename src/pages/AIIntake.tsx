@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
+import { Helmet } from "react-helmet";
 
 interface Message {
   role: "user" | "assistant";
@@ -134,6 +135,17 @@ const AIIntake = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Website Intake Assistant | Build Me a Simple Site</title>
+        <meta name="description" content="Use our AI intake assistant to quickly determine if a simple website project is right for your needs. Answer a few questions to get started." />
+        <link rel="canonical" href="https://buildmeasimplesite.com/start" />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="Website Intake Assistant | Build Me a Simple Site" />
+        <meta property="og:description" content="Use our AI intake assistant to quickly determine if a simple website project is right for your needs. Answer a few questions to get started." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://buildmeasimplesite.com/start" />
+        <meta property="og:site_name" content="Build Me a Simple Site" />
+      </Helmet>
       <div className="container mx-auto px-6 py-16 max-w-4xl">
         {/* Back Button */}
         <Button
