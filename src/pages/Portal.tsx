@@ -114,7 +114,8 @@ const Portal = () => {
     const { error } = await supabase
       .from('update_requests')
       .update({ status: 'cancelled' })
-      .eq('id', requestToCancel.id);
+      .eq('id', requestToCancel.id)
+      .eq('status', 'new');
 
     if (error) {
       console.error('Cancel error:', error);

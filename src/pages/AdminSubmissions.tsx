@@ -37,9 +37,7 @@ const AdminSubmissions = () => {
     email: "",
     website_url: "",
     notes: "",
-    plan_type: "build_only",
     setup_fee_dollars: 1500,
-    monthly_fee_dollars: 0,
   });
 
   useEffect(() => {
@@ -74,9 +72,7 @@ const AdminSubmissions = () => {
       email: submission.email,
       website_url: submission.website_url || "",
       notes: `${submission.project_description}\n\n${submission.wish}`,
-      plan_type: "build_only",
       setup_fee_dollars: 1500,
-      monthly_fee_dollars: 0,
     });
     setConvertDialogOpen(true);
   };
@@ -96,15 +92,12 @@ const AdminSubmissions = () => {
       return;
     }
 
-    // Create client
     const { error } = await supabase.from("clients").insert({
       name: clientForm.name,
       email: clientForm.email,
       website_url: clientForm.website_url || null,
       notes: clientForm.notes,
-      plan_type: clientForm.plan_type,
       setup_fee_cents: dollarsToCents(clientForm.setup_fee_dollars),
-      monthly_fee_cents: dollarsToCents(clientForm.monthly_fee_dollars),
       pipeline_stage: "lead",
       source_submission_id: selectedSubmission.id,
     });
@@ -308,42 +301,14 @@ const AdminSubmissions = () => {
                 className="min-h-[120px]"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="plan_type">Plan type*</Label>
-                <Select
-                  value={clientForm.plan_type}
-                  onValueChange={(value) => setClientForm({ ...clientForm, plan_type: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="build_only">Build only</SelectItem>
-                    <SelectItem value="care_plan">Care plan</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="setup_fee">Setup fee ($)</Label>
-                <Input
-                  id="setup_fee"
-                  type="number"
-                  value={clientForm.setup_fee_dollars}
-                  onChange={(e) =>
-                    setClientForm({ ...clientForm, setup_fee_dollars: parseFloat(e.target.value) || 0 })
-                  }
-                />
-              </div>
-            </div>
             <div>
-              <Label htmlFor="monthly_fee">Monthly fee ($)</Label>
+              <Label htmlFor="setup_fee">Setup fee ($)</Label>
               <Input
-                id="monthly_fee"
+                id="setup_fee"
                 type="number"
-                value={clientForm.monthly_fee_dollars}
+                value={clientForm.setup_fee_dollars}
                 onChange={(e) =>
-                  setClientForm({ ...clientForm, monthly_fee_dollars: parseFloat(e.target.value) || 0 })
+                  setClientForm({ ...clientForm, setup_fee_dollars: parseFloat(e.target.value) || 0 })
                 }
               />
             </div>
