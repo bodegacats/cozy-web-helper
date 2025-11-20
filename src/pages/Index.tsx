@@ -29,7 +29,11 @@ const Index = () => {
         <div className="max-w-3xl mx-auto text-center space-y-8">
           
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight">
-            I will build you a simple website.              
+            I will build you a simple website without a subscription.
+
+
+
+                      
           </h1>
           <p className="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-2xl mx-auto">
             I build small, focused websites for people who have real work to do and never wanted to learn a website platform. You tell me what you need, I build it, launch it, and handle small fixes. Most sites are done in under a week. 
