@@ -94,6 +94,9 @@ const Index = () => {
             <Button size="lg" onClick={scrollToChecklist} className="shadow-base">
               Take the 7 question checklist
             </Button>
+            <Button size="lg" variant="outline" onClick={() => window.location.href = '/start'} className="border-2">
+              Talk to the intake assistant
+            </Button>
             <Button size="lg" variant="outline" onClick={scrollToContact} className="border-2">
               Talk to me about your site
             </Button>
