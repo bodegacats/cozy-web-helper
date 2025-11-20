@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Loader2, Send, Bot, User, ArrowLeft } from "lucide-react";
+import { Loader2, Send, Bot, User, Paperclip, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
+import { PortalNav } from "@/components/PortalNav";
 
 interface Message {
   role: "user" | "assistant";
@@ -17,6 +18,7 @@ interface Client {
   id: string;
   name: string;
   email: string;
+  business_name: string | null;
 }
 
 const PortalAIChat = () => {
@@ -27,6 +29,7 @@ const PortalAIChat = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -51,7 +54,7 @@ const PortalAIChat = () => {
 
     const { data: clientData } = await supabase
       .from('clients')
-      .select('id, name, email')
+      .select('id, name, email, business_name')
       .eq('email', session.user.email!)
       .maybeSingle();
 
@@ -96,6 +99,27 @@ const PortalAIChat = () => {
     if (!client) return;
 
     try {
+      // Upload files if any
+      const attachmentUrls: string[] = [];
+      
+      for (const file of uploadedFiles) {
+        const filePath = `${client.id}/${Date.now()}_${file.name}`;
+        const { error: uploadError } = await supabase.storage
+          .from('request-attachments')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          toast.error(`Failed to upload ${file.name}`);
+          return;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('request-attachments')
+          .getPublicUrl(filePath);
+
+        attachmentUrls.push(publicUrl);
+      }
+
       const { error } = await supabase
         .from('update_requests')
         .insert({
@@ -105,7 +129,12 @@ const PortalAIChat = () => {
           size_tier: requestData.size_tier,
           priority: requestData.priority,
           quoted_price_cents: requestData.quoted_price_cents,
-          status: 'new'
+          status: 'new',
+          attachments: attachmentUrls.map((url, index) => ({
+            url,
+            name: uploadedFiles[index].name,
+            size: uploadedFiles[index].size
+          }))
         });
 
       if (error) throw error;
@@ -118,10 +147,27 @@ const PortalAIChat = () => {
     }
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setUploadedFiles([...uploadedFiles, ...Array.from(e.target.files)]);
+    }
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setUploadedFiles(uploadedFiles.filter((_, i) => i !== index));
+  };
+
   const handleSend = async () => {
     if (!input.trim() || isLoading || !client) return;
 
     const userMessage = input.trim();
+    let contextMessage = userMessage;
+    
+    // Add file context if files are attached
+    if (uploadedFiles.length > 0) {
+      contextMessage += `\n\n[User has attached ${uploadedFiles.length} file(s): ${uploadedFiles.map(f => f.name).join(', ')}]`;
+    }
+
     setInput("");
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setIsLoading(true);
@@ -129,7 +175,7 @@ const PortalAIChat = () => {
     try {
       const { data, error } = await supabase.functions.invoke("portal-ai-chat", {
         body: {
-          messages: [...messages, { role: "user", content: userMessage }],
+          messages: [...messages, { role: "user", content: contextMessage }],
           clientName: client.name,
         },
       });
@@ -170,16 +216,8 @@ const PortalAIChat = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-6 py-16 max-w-4xl">
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/portal/home")}
-          className="mb-6"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Portal
-        </Button>
-
+      {client && <PortalNav currentPage="chat" client={client} />}
+      <div className="container mx-auto px-6 py-8 max-w-4xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-semibold mb-4">
             Chat about website updates
@@ -246,27 +284,63 @@ const PortalAIChat = () => {
             </div>
 
             {!isComplete && (
-              <div className="flex gap-2">
-                <Input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Type your message..."
-                  disabled={isLoading}
-                  className="flex-1"
-                />
-                <Button
-                  onClick={handleSend}
-                  disabled={isLoading || !input.trim()}
-                  size="icon"
-                >
-                  {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Send className="w-4 h-4" />
-                  )}
-                </Button>
-              </div>
+              <>
+                {uploadedFiles.length > 0 && (
+                  <div className="space-y-2 mb-4">
+                    <p className="text-sm text-muted-foreground">Attached files:</p>
+                    {uploadedFiles.map((file, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-muted/30 rounded-lg">
+                        <span className="text-sm truncate flex-1">{file.name}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveFile(index)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="flex gap-2">
+                  <input
+                    id="file-upload"
+                    type="file"
+                    multiple
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => document.getElementById('file-upload')?.click()}
+                    disabled={isLoading}
+                  >
+                    <Paperclip className="w-4 h-4" />
+                  </Button>
+                  <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Type your message..."
+                    disabled={isLoading}
+                    className="flex-1"
+                  />
+                  <Button
+                    onClick={handleSend}
+                    disabled={isLoading || !input.trim()}
+                    size="icon"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
+                  </Button>
+                </div>
+              </>
             )}
 
             {isComplete && (
