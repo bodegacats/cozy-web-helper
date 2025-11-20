@@ -21,13 +21,10 @@ export type Database = {
           created_at: string | null
           email: string
           id: string
-          monthly_fee_cents: number | null
-          monthly_included_minutes: number
           name: string
           notes: string | null
           phone: string | null
           pipeline_stage: string
-          plan_type: string
           setup_fee_cents: number | null
           source_submission_id: string | null
           website_url: string | null
@@ -38,13 +35,10 @@ export type Database = {
           created_at?: string | null
           email: string
           id?: string
-          monthly_fee_cents?: number | null
-          monthly_included_minutes?: number
           name: string
           notes?: string | null
           phone?: string | null
           pipeline_stage?: string
-          plan_type?: string
           setup_fee_cents?: number | null
           source_submission_id?: string | null
           website_url?: string | null
@@ -55,13 +49,10 @@ export type Database = {
           created_at?: string | null
           email?: string
           id?: string
-          monthly_fee_cents?: number | null
-          monthly_included_minutes?: number
           name?: string
           notes?: string | null
           phone?: string | null
           pipeline_stage?: string
-          plan_type?: string
           setup_fee_cents?: number | null
           source_submission_id?: string | null
           website_url?: string | null
@@ -182,41 +173,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "project_intakes_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "clients"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      request_limits: {
-        Row: {
-          client_id: string
-          created_at: string | null
-          id: string
-          included_requests: number | null
-          month: string
-          used_requests: number | null
-        }
-        Insert: {
-          client_id: string
-          created_at?: string | null
-          id?: string
-          included_requests?: number | null
-          month: string
-          used_requests?: number | null
-        }
-        Update: {
-          client_id?: string
-          created_at?: string | null
-          id?: string
-          included_requests?: number | null
-          month?: string
-          used_requests?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "request_limits_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"

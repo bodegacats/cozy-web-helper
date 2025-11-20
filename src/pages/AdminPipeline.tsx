@@ -7,7 +7,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { ArrowLeft, ExternalLink } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
 
 interface Client {
   id: string;
@@ -15,8 +14,6 @@ interface Client {
   business_name: string | null;
   email: string;
   website_url: string | null;
-  plan_type: string;
-  monthly_fee_cents: number;
   pipeline_stage: string;
   open_requests_count?: number;
 }
@@ -262,18 +259,6 @@ const ClientCard = ({ client, onClick }: ClientCardProps) => {
             >
               Website <ExternalLink className="w-3 h-3" />
             </a>
-          )}
-        </div>
-
-        <div className="flex items-center justify-between pt-2 border-t">
-          <Badge variant="outline" className="text-xs">
-            {client.plan_type.replace(/_/g, " ")}
-          </Badge>
-          
-          {client.monthly_fee_cents > 0 && (
-            <span className="text-xs font-medium">
-              {formatCurrency(client.monthly_fee_cents)}/mo
-            </span>
           )}
         </div>
 

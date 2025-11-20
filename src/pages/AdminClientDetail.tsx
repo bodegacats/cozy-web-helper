@@ -24,10 +24,7 @@ interface Client {
   email: string;
   phone: string | null;
   website_url: string | null;
-  plan_type: string;
-  monthly_fee_cents: number;
   setup_fee_cents: number;
-  monthly_included_minutes: number;
   active: boolean;
   pipeline_stage: string;
   notes: string | null;
@@ -68,10 +65,7 @@ const AdminClientDetail = () => {
     email: "",
     phone: "",
     website_url: "",
-    plan_type: "build_only",
     setup_fee_dollars: 0,
-    monthly_fee_dollars: 0,
-    monthly_included_minutes: 30,
     active: true,
     notes: "",
   });
@@ -123,10 +117,7 @@ const AdminClientDetail = () => {
       email: clientData.email,
       phone: clientData.phone || "",
       website_url: clientData.website_url || "",
-      plan_type: clientData.plan_type,
       setup_fee_dollars: clientData.setup_fee_cents / 100,
-      monthly_fee_dollars: clientData.monthly_fee_cents / 100,
-      monthly_included_minutes: clientData.monthly_included_minutes,
       active: clientData.active,
       notes: clientData.notes || "",
     });
@@ -150,10 +141,7 @@ const AdminClientDetail = () => {
         email: clientForm.email,
         phone: clientForm.phone || null,
         website_url: clientForm.website_url || null,
-        plan_type: clientForm.plan_type,
         setup_fee_cents: dollarsToCents(clientForm.setup_fee_dollars),
-        monthly_fee_cents: dollarsToCents(clientForm.monthly_fee_dollars),
-        monthly_included_minutes: clientForm.monthly_included_minutes,
         active: clientForm.active,
         notes: clientForm.notes || null,
       })
