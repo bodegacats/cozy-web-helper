@@ -13,19 +13,10 @@ const Index = () => {
   const [pageCount, setPageCount] = useState<number>(1);
 
   const calculatePrice = (pages: number): number => {
-    let price = 500; // First page
-    
-    if (pages >= 2) {
-      const pages2to4 = Math.min(pages - 1, 3); // Pages 2, 3, 4
-      price += pages2to4 * 150;
-    }
-    
-    if (pages >= 5) {
-      const pages5to7 = pages - 4; // Pages 5, 6, 7
-      price += pages5to7 * 100;
-    }
-    
-    return price;
+    if (pages === 1) return 500;
+    if (pages >= 2 && pages <= 4) return 1000;
+    if (pages >= 5 && pages <= 7) return 1500;
+    return 1500; // max
   };
 
   const currentPrice = calculatePrice(pageCount);
@@ -100,14 +91,6 @@ const Index = () => {
       </Helmet>
       <Navbar />
       
-      {/* 
-        SEMANTIC STRUCTURE:
-        - Single <h1> in hero for main heading
-        - Section headings use <h2>
-        - Subsection headings use <h3>
-        - Wrapped in <header>, <main>, <footer> for accessibility and SEO
-       */}
-      
       {/* Hero Section */}
       <header className="min-h-[85vh] flex items-center justify-center bg-gradient-to-b from-background via-muted/20 to-background px-4 py-16">
         <div className="max-w-3xl mx-auto text-center space-y-8">
@@ -116,10 +99,11 @@ const Index = () => {
             I will build you a simple website without a subscription.
           </h1>
           <p className="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-2xl mx-auto">
-            I build small, focused websites for people who have real work to do and never wanted to learn a website platform. You tell me what you need, I build it, launch it, and handle small fixes. Most sites are done in under a week. 
+            No WordPress subscriptions, no monthly fees to pay a platform. I build it, hand you the keys, 
+            and you're done — unless you need updates later (then you just ask). Most sites launch in 5–7 business days.
           </p>
           <p className="text-sm md:text-base text-muted-foreground/80 max-w-xl mx-auto italic">
-            Not sure you even need a new site? Start with a <a href="#pricing" className="text-primary hover:underline">$50 site checkup</a>.
+            Not sure you even need a new site? Get a <strong>$50 site checkup</strong> — a short written audit covering what's working, what isn't, and what I'd change. <a href="#contact" className="text-primary hover:underline">Contact me to get started.</a>
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <div className="flex flex-col items-center gap-2">
@@ -127,7 +111,7 @@ const Index = () => {
                 Talk to the intake AI
               </Button>
               <p className="text-xs text-muted-foreground max-w-[200px] text-center">
-                Fast, guided questions that help you figure out what you need.
+                Quick questions. Helps you figure out what you need.
               </p>
             </div>
             <div className="flex flex-col items-center gap-2">
@@ -144,11 +128,11 @@ const Index = () => {
 
       <main>
         {/* How This Works */}
-        <section id="how-it-works" className="py-16 md:py-24 px-4">
+        <section id="how-it-works" className="py-20 md:py-28 px-4">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">How this works</h2>
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-16">How This Works</h2>
             <div className="grid md:grid-cols-3 gap-6">
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-6 space-y-3">
                   <div className="text-4xl font-semibold text-primary">1</div>
                   <h3 className="text-xl font-semibold">You tell me what you need</h3>
@@ -157,7 +141,7 @@ const Index = () => {
                   </p>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-6 space-y-3">
                   <div className="text-4xl font-semibold text-primary">2</div>
                   <h3 className="text-xl font-semibold">I build your site</h3>
@@ -166,7 +150,7 @@ const Index = () => {
                   </p>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-6 space-y-3">
                   <div className="text-4xl font-semibold text-primary">3</div>
                   <h3 className="text-xl font-semibold">Your site goes live</h3>
@@ -179,13 +163,12 @@ const Index = () => {
           </div>
         </section>
 
-
         {/* What You Get */}
-        <section className="py-16 md:py-24 px-4">
+        <section className="py-20 md:py-28 px-4 bg-muted/30">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">What you get</h2>
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-16">What You Get</h2>
             <div className="grid md:grid-cols-2 gap-8">
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-xl font-semibold">Included in every site</h3>
                   <ul className="space-y-3">
@@ -199,7 +182,7 @@ const Index = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-xl font-semibold">Types of sites this works for</h3>
                   <ul className="space-y-3">
@@ -216,20 +199,19 @@ const Index = () => {
           </div>
         </section>
 
-
         {/* Recent Projects */}
-        <section id="projects" className="py-16 md:py-24 px-4 bg-muted/30">
+        <section id="projects" className="py-20 md:py-28 px-4">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-4">
-              Recent projects
+              Recent Projects
             </h2>
             <p className="text-base leading-relaxed text-muted-foreground text-center max-w-3xl mx-auto mb-12">
-              Here are a few projects I've built or helped shape. Some are client sites, some are my own work. All were built with the same process I use today.
+              Here are a few projects I've built or helped shape. Some are client sites, some are my own work — all built with the same process I use today.
             </p>
             
             <div className="grid md:grid-cols-2 gap-8">
               {/* Project 1: RuffLife */}
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
@@ -253,7 +235,7 @@ const Index = () => {
               </Card>
 
               {/* Project 2: Cats About Town Tours */}
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
@@ -277,7 +259,7 @@ const Index = () => {
               </Card>
 
               {/* Project 3: Bodega Cats of New York */}
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
@@ -301,7 +283,7 @@ const Index = () => {
               </Card>
 
               {/* Project 4: Pencils & Pecs */}
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
@@ -327,18 +309,18 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Who This Is For - Simple website fit check */}
-        <section className="py-16 md:py-24 px-4">
+        {/* Simple Website Fit Check */}
+        <section className="py-20 md:py-28 px-4 bg-muted/30">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">
-              Simple website fit check
+              Simple Website Fit Check
             </h2>
             <div className="grid md:grid-cols-2 gap-8">
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-6 space-y-4">
-                  <h3 className="text-xl font-semibold">This is a good fit if you:</h3>
+                  <h3 className="text-xl font-semibold">✅ Good fit if you...</h3>
                   <ul className="space-y-3">
-                    {["Want a simple 5 to 7 page site that looks clean and professional", "Do not want to learn a website platform or deal with a big agency", "Have a real business, practice, or project you are ready to share", "Are fine with straightforward, non fancy design that is clear and easy to read"].map((item, i) => (
+                    {["Have clear content or can provide it", "Need a professional, working site—not a marketing masterpiece", "Want something that loads fast and works on phones", "Don't want to learn WordPress, Squarespace, or Webflow", "Need ~1–7 pages (most common: 3–5)"].map((item, i) => (
                       <li key={i} className="flex items-start gap-3">
                         <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-base leading-relaxed">{item}</span>
@@ -348,11 +330,11 @@ const Index = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="shadow-sm">
                 <CardContent className="p-6 space-y-4">
-                  <h3 className="text-xl font-semibold">This is not a good fit if you:</h3>
+                  <h3 className="text-xl font-semibold">❌ Not a fit if you...</h3>
                   <ul className="space-y-3">
-                    {["Need ecommerce, online courses, or complex booking systems", "Need a large custom web app or portal", "Want endless rounds of design changes", "Expect a full marketing agency, SEO campaign, or ad management"].map((item, i) => (
+                    {["Need e-commerce (Shopify is better)", "Want a membership site or complex user logins", "Need heavy custom integrations or APIs", "Want to edit content yourself constantly (then use a CMS)", "Need 20+ pages or a content-heavy blog"].map((item, i) => (
                       <li key={i} className="flex items-start gap-3">
                         <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
                         <span className="text-base leading-relaxed">{item}</span>
@@ -362,29 +344,40 @@ const Index = () => {
                 </CardContent>
               </Card>
             </div>
-          </div>
-        </section>
-
-        {/* About Me Section */}
-        <section className="py-16 md:py-24 px-4">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-8">About Me</h2>
-            <div className="prose prose-lg mx-auto">
-              <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
-                I build clear, simple websites for people who have real work to do. I've spent nearly a decade helping people get clear, functional websites without the usual stress or tech learning curve. I've worked with hundreds of small businesses, solo professionals, artists, tour companies, nonprofits, and local service providers. My strength is taking scattered ideas and turning them into calm, readable websites that explain what you do and help people reach you. I keep things simple, fast, and organized so you can focus on your real work. I scope every project honestly and only take on work that fits this simple-build model.
+            
+            <div className="text-center mt-8">
+              <p className="text-muted-foreground mb-4">
+                Still not sure? The AI intake can help you decide.
               </p>
+              <Button asChild size="lg">
+                <a href="/start">Start the intake conversation</a>
+              </Button>
             </div>
           </div>
         </section>
 
+        {/* About Me Section */}
+        <section className="py-20 md:py-28 px-4">
+          <div className="max-w-3xl mx-auto text-center space-y-6">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight">About Me</h2>
+            <p className="text-lg leading-relaxed text-muted-foreground">
+              I build simple, clear websites for people who have real work to do and never wanted to learn a website platform. 
+              You tell me what you need, I build it, launch it, and handle small fixes afterward. Most sites launch in 5–7 business days once I have your content.
+            </p>
+          </div>
+        </section>
+
         {/* Instant Quote */}
-        <section id="pricing" className="py-16 md:py-24 px-4 bg-muted/30">
+        <section id="pricing" className="py-20 md:py-28 px-4 bg-muted/30">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-4">
               Instant Quote
             </h2>
+            <p className="text-center text-muted-foreground mb-12">
+              Your instant price based on how many pages you need.
+            </p>
             
-            <div className="bg-card border-2 rounded-lg p-8 md:p-12 space-y-8">
+            <div className="bg-card border-2 rounded-lg p-8 md:p-12 space-y-8 shadow-lg">
               {/* Slider Section */}
               <div className="space-y-6">
                 <label className="block text-lg font-medium text-center">
@@ -414,25 +407,22 @@ const Index = () => {
                   ${currentPrice.toLocaleString()}
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Estimated price updates instantly based on the number of pages.
+                  Price updates instantly based on the number of pages.
                 </p>
               </div>
 
               {/* Included List */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-center">What's included:</h3>
-                <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
-                  <li>• Design and build of your website</li>
-                  <li>• Mobile-friendly layout</li>
-                  <li>• Fast hosting</li>
-                  <li>• SSL security</li>
-                  <li>• Automatic backups</li>
-                  <li>• Speed optimization</li>
-                  <li>• Clean, modern design</li>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li>• Custom, simple design</li>
+                  <li>• Clean code</li>
+                  <li>• Mobile optimization</li>
+                  <li>• Fast loading</li>
+                  <li>• Hosting & security handled</li>
                   <li>• Contact form setup</li>
-                  <li>• Clear navigation</li>
-                  <li>• Launch support</li>
-                  <li className="md:col-span-2 text-center font-medium">• 2 rounds of revisions</li>
+                  <li>• Up to 2 revision rounds</li>
+                  <li>• Clear instructions for updates</li>
                 </ul>
               </div>
 
@@ -444,24 +434,22 @@ const Index = () => {
               {/* CTA Button */}
               <div className="text-center pt-4">
                 <Button asChild size="lg">
-                  <a href="/start">Talk to the intake AI for a more detailed quote</a>
+                  <a href="/start">Talk to the intake AI</a>
                 </Button>
               </div>
             </div>
+
+            {/* Maintenance Note */}
+            <p className="text-center text-sm text-muted-foreground mt-8 max-w-2xl mx-auto">
+              If you want ongoing help after launch, most people choose a simple monthly maintenance arrangement ($50–150/month) depending on how much support they need.
+            </p>
           </div>
         </section>
 
-        {/* Trust Statement */}
-        <div className="py-8 px-4">
-          <p className="text-sm text-muted-foreground text-center max-w-2xl mx-auto">
-            You will always see a full scoped quote before any work begins.
-          </p>
-        </div>
-
         {/* FAQ */}
-        <section id="faq" className="py-16 md:py-24 px-4">
+        <section id="faq" className="py-20 md:py-28 px-4">
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">Common questions</h2>
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">Frequently Asked Questions</h2>
             <Accordion type="single" collapsible className="space-y-4">
               <AccordionItem value="item-1" className="border-2 rounded-lg px-6 bg-card">
                 <AccordionTrigger className="text-left hover:no-underline">
@@ -521,8 +509,11 @@ const Index = () => {
         </section>
 
         {/* Contact Form */}
-        <section id="contact" className="py-16 md:py-24 px-4">
+        <section id="contact" className="py-20 md:py-28 px-4 bg-muted/30">
           <div className="max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">
+              Get In Touch
+            </h2>
             <ContactForm />
           </div>
         </section>
