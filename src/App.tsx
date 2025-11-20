@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import AIIntake from "./pages/AIIntake";
-import Estimate from "./pages/Estimate";
 import AdminSubmissions from "./pages/AdminSubmissions";
 import Portal from "./pages/Portal";
 import PortalHome from "./pages/PortalHome";
@@ -36,7 +35,6 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
             <Route path="/start" element={<AIIntake />} />
-            <Route path="/estimate" element={<Estimate />} />
             <Route path="/login" element={<Login />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />

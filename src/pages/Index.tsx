@@ -91,13 +91,13 @@ const Index = () => {
         <div className="max-w-3xl mx-auto text-center space-y-8">
           
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight text-center">
-            I'm Dan Rimada. I will build you a simple website without a subscription.
+            I will build you a simple website without a subscription.
           </h1>
           <p className="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-2xl mx-auto">
             I build small, focused websites for people who have real work to do and never wanted to learn a website platform. You tell me what you need, I build it, launch it, and handle small fixes. Most sites are done in under a week. 
           </p>
           <p className="text-sm md:text-base text-muted-foreground/80 max-w-xl mx-auto italic">
-            Not sure you even need a new site? Start with a $50 site checkup.
+            Not sure you even need a new site? Start with a <a href="#pricing" className="text-primary hover:underline">$50 site checkup</a>.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <div className="flex flex-col items-center gap-2">
@@ -117,9 +117,6 @@ const Index = () => {
               </p>
             </div>
           </div>
-          <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-            Or <a href="#pricing" className="text-primary hover:underline">view pricing</a>.
-          </p>
         </div>
       </header>
 
@@ -352,7 +349,7 @@ const Index = () => {
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-8">About Me</h2>
             <div className="prose prose-lg mx-auto">
               <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
-                I'm Dan Rimada, and I build clear, simple websites for people who have real work to do. I've spent nearly a decade helping people get clear, functional websites without the usual stress or tech learning curve. I've worked with hundreds of small businesses, solo professionals, artists, tour companies, nonprofits, and local service providers. My strength is taking scattered ideas and turning them into calm, readable websites that explain what you do and help people reach you. I keep things simple, fast, and organized so you can focus on your real work. I scope every project honestly and only take on work that fits this simple-build model.
+                I build clear, simple websites for people who have real work to do. I've spent nearly a decade helping people get clear, functional websites without the usual stress or tech learning curve. I've worked with hundreds of small businesses, solo professionals, artists, tour companies, nonprofits, and local service providers. My strength is taking scattered ideas and turning them into calm, readable websites that explain what you do and help people reach you. I keep things simple, fast, and organized so you can focus on your real work. I scope every project honestly and only take on work that fits this simple-build model.
               </p>
             </div>
           </div>
@@ -365,39 +362,50 @@ const Index = () => {
               Simple website pricing
             </h2>
             <p className="text-base leading-relaxed text-muted-foreground text-center max-w-3xl mx-auto mb-8">
-              Pricing stays simple. Most small websites fall into one of three ranges depending on pages, content readiness, and features.
+              Your price is based on the number of pages, how much help you want with wording, and whether you need optional features like a portfolio or blog.
             </p>
             
-            <p className="text-base text-muted-foreground text-center max-w-3xl mx-auto mb-6">
-              For exact numbers, you can use the estimator or talk to the intake AI.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
-              <Button asChild size="lg">
-                <a href="/estimate">Use the guided estimator</a>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <a href="/start">Talk to the intake AI</a>
-              </Button>
-            </div>
+            <div className="max-w-3xl mx-auto space-y-8">
+              {/* Pricing explanation */}
+              <div className="text-center space-y-4">
+                <div className="border-2 rounded-lg p-6 bg-card text-left">
+                  <h3 className="text-lg font-semibold mb-3">How pricing works</h3>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li>• First page: $500</li>
+                    <li>• Pages 2-4: +$150 each</li>
+                    <li>• Pages 5-7: +$100 each</li>
+                    <li>• Light editing (I tidy your wording): +$150</li>
+                    <li>• Help shaping/rewriting: +$300</li>
+                    <li>• Portfolio/gallery page: +$100</li>
+                    <li>• Blog setup: +$150</li>
+                    <li>• Rush timeline (48-72 hours): +$200</li>
+                  </ul>
+                </div>
+              </div>
 
-            <p className="text-sm text-muted-foreground text-center max-w-3xl mx-auto mt-8">
-              Hosting and your domain are paid directly to your provider (usually around $100–$200 per year). If you want ongoing help after launch, most people choose a simple maintenance arrangement ($50–150 per month depending on needs).
-            </p>
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <Button asChild size="lg">
+                  <a href="/start">Talk to the intake AI</a>
+                </Button>
+                <Button size="lg" variant="outline" onClick={scrollToContact}>
+                  Talk to me directly
+                </Button>
+              </div>
 
-            <div className="max-w-2xl mx-auto mt-12 p-6 bg-card border-2 rounded-lg">
-              <h3 className="text-xl font-semibold mb-3">$50 Site Checkup</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                A quick, practical review of your current site. You get a short written audit covering what's working, what isn't, and the exact fixes I'd recommend. Delivered within 24 hours. No jargon, no upsells.
+              {/* Hosting/maintenance note */}
+              <p className="text-sm text-muted-foreground text-center">
+                Hosting and your domain are paid directly to your provider (usually around $100–$200 per year). If you want ongoing help after launch, most people choose a simple maintenance plan ($50–150/month) depending on how much support they need.
               </p>
-            </div>
 
-            <p className="text-base text-muted-foreground text-center max-w-3xl mx-auto mt-6">
-              You have three ways to get pricing clarity:<br />
-              • The guided estimator — fast, self-serve estimate using the same pricing I use.<br />
-              • The intake AI — describe your project and it will scope it using the unified pricing engine.<br />
-              • The contact form — if you prefer to speak with me directly.
-            </p>
+              {/* $50 Site Checkup */}
+              <div className="p-6 bg-card border-2 rounded-lg">
+                <h3 className="text-xl font-semibold mb-3">$50 Site Checkup</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  A quick written audit of your existing website. I tell you what's working, what's not, and what I'd fix. Delivered within 24 hours.
+                </p>
+              </div>
+            </div>
           </div>
         </section>
 
