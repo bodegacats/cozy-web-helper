@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Upload, X } from "lucide-react";
 import { getCurrentMonthStart } from "@/lib/utils";
 
 interface Client {
@@ -22,6 +22,8 @@ const PortalRequest = () => {
   const [loading, setLoading] = useState(true);
   const [canSubmit, setCanSubmit] = useState(false);
   const [openRequestsCount, setOpenRequestsCount] = useState(0);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -103,6 +105,16 @@ const PortalRequest = () => {
     }
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setUploadedFiles([...uploadedFiles, ...Array.from(e.target.files)]);
+    }
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setUploadedFiles(uploadedFiles.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -111,6 +123,30 @@ const PortalRequest = () => {
     if (!canSubmit) {
       toast.error("You already have two active requests");
       return;
+    }
+
+    setUploading(true);
+
+    // Upload files to storage
+    const attachmentUrls: string[] = [];
+    
+    for (const file of uploadedFiles) {
+      const filePath = `${client.id}/${Date.now()}_${file.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from('request-attachments')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        toast.error(`Failed to upload ${file.name}`);
+        setUploading(false);
+        return;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('request-attachments')
+        .getPublicUrl(filePath);
+
+      attachmentUrls.push(publicUrl);
     }
 
     const { error: requestError } = await supabase
@@ -122,11 +158,17 @@ const PortalRequest = () => {
         priority: form.priority,
         size_tier: form.size_tier,
         quoted_price_cents: calculateQuotedPrice(form.size_tier),
-        status: 'new'
+        status: 'new',
+        attachments: attachmentUrls.map((url, index) => ({
+          url,
+          name: uploadedFiles[index].name,
+          size: uploadedFiles[index].size
+        }))
       });
 
     if (requestError) {
       toast.error("Could not send request");
+      setUploading(false);
       return;
     }
 
@@ -157,6 +199,7 @@ const PortalRequest = () => {
     }
 
     toast.success("Got it. I will review this and get back to you.");
+    setUploading(false);
     navigate('/portal/home');
   };
 
@@ -252,6 +295,46 @@ const PortalRequest = () => {
                 />
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="files">Upload files (optional)</Label>
+                <div 
+                  className="border-2 border-dashed rounded-lg p-6 text-center hover:bg-muted/50 transition-colors cursor-pointer"
+                  onClick={() => document.getElementById('file-input')?.click()}
+                >
+                  <Upload className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+                  <p className="text-sm text-muted-foreground">
+                    Click to upload or drag and drop
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Multiple files supported
+                  </p>
+                </div>
+                <input
+                  id="file-input"
+                  type="file"
+                  multiple
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+                {uploadedFiles.length > 0 && (
+                  <div className="space-y-2 mt-3">
+                    {uploadedFiles.map((file, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-muted/30 rounded-lg">
+                        <span className="text-sm truncate flex-1">{file.name}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveFile(index)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className="space-y-3">
                 <Label>How big is this change?</Label>
                 <RadioGroup 
@@ -341,8 +424,8 @@ const PortalRequest = () => {
                 </RadioGroup>
               </div>
 
-              <Button type="submit" className="w-full">
-                Send this request
+              <Button type="submit" className="w-full" disabled={uploading}>
+                {uploading ? "Uploading files..." : "Send this request"}
               </Button>
             </form>
           </CardContent>

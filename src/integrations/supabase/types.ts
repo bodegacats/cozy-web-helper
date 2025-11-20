@@ -227,6 +227,7 @@ export type Database = {
       update_requests: {
         Row: {
           actual_minutes: number | null
+          attachments: Json | null
           client_id: string
           completed_at: string | null
           created_at: string | null
@@ -243,6 +244,7 @@ export type Database = {
         }
         Insert: {
           actual_minutes?: number | null
+          attachments?: Json | null
           client_id: string
           completed_at?: string | null
           created_at?: string | null
@@ -259,6 +261,7 @@ export type Database = {
         }
         Update: {
           actual_minutes?: number | null
+          attachments?: Json | null
           client_id?: string
           completed_at?: string | null
           created_at?: string | null
