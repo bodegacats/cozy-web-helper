@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,8 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { ArrowLeft, Upload, X } from "lucide-react";
+import { ArrowLeft, Upload, X, Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import { getCurrentMonthStart } from "@/lib/utils";
 import { PortalNav } from "@/components/PortalNav";
 
@@ -16,6 +17,13 @@ interface Client {
   id: string;
   name: string;
   business_name: string | null;
+}
+
+interface AIClassification {
+  type: "free" | "paid";
+  confidence: "high" | "medium" | "low";
+  explanation: string;
+  recommended_price: number;
 }
 
 const PortalRequest = () => {
@@ -26,6 +34,9 @@ const PortalRequest = () => {
   const [openRequestsCount, setOpenRequestsCount] = useState(0);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [aiClassification, setAiClassification] = useState<AIClassification | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [priceApproved, setPriceApproved] = useState(false);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -36,6 +47,44 @@ const PortalRequest = () => {
   useEffect(() => {
     checkAuth();
   }, []);
+
+  // Debounced AI classification
+  useEffect(() => {
+    if (form.description.length < 20) {
+      setAiClassification(null);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      classifyRequest(form.description);
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, [form.description]);
+
+  const classifyRequest = async (description: string) => {
+    setAiLoading(true);
+    setPriceApproved(false);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('classify-edit-request', {
+        body: { description }
+      });
+
+      if (error) {
+        console.error('Classification error:', error);
+        setAiClassification(null);
+        return;
+      }
+
+      setAiClassification(data);
+    } catch (err) {
+      console.error('Classification exception:', err);
+      setAiClassification(null);
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -165,7 +214,11 @@ const PortalRequest = () => {
           url,
           name: uploadedFiles[index].name,
           size: uploadedFiles[index].size
-        }))
+        })),
+        ai_type: aiClassification?.type || null,
+        ai_price_cents: aiClassification ? aiClassification.recommended_price * 100 : null,
+        ai_explanation: aiClassification?.explanation || null,
+        ai_confidence: aiClassification?.confidence || null
       });
 
     if (requestError) {
@@ -288,6 +341,88 @@ const PortalRequest = () => {
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                 />
+                
+                {/* AI Classification UI */}
+                {aiLoading && (
+                  <Card className="bg-muted/30 border-muted">
+                    <CardContent className="pt-4 flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                      <span className="text-sm text-muted-foreground">Analyzing your request...</span>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {!aiLoading && aiClassification && aiClassification.type === "free" && (
+                  <Card className="bg-green-500/10 border-green-500/30">
+                    <CardContent className="pt-4">
+                      <div className="flex items-start gap-2">
+                        <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                        <div className="space-y-1">
+                          <p className="font-semibold text-green-900 dark:text-green-100">
+                            This looks like a free edit.
+                          </p>
+                          <p className="text-sm text-green-800 dark:text-green-200">
+                            {aiClassification.explanation}
+                          </p>
+                          <p className="text-sm text-green-700 dark:text-green-300 mt-2">
+                            No charge for this kind of change.
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {!aiLoading && aiClassification && aiClassification.type === "paid" && aiClassification.confidence !== "low" && (
+                  <Card className="bg-blue-500/10 border-blue-500/30">
+                    <CardContent className="pt-4">
+                      <div className="space-y-3">
+                        <div>
+                          <p className="font-semibold text-lg text-blue-900 dark:text-blue-100">
+                            Estimated cost: ${aiClassification.recommended_price}
+                          </p>
+                          <p className="text-sm text-blue-800 dark:text-blue-200 mt-1">
+                            {aiClassification.explanation}
+                          </p>
+                          <p className="text-sm text-blue-700 dark:text-blue-300 mt-2">
+                            This is only charged if you choose to submit this request.
+                          </p>
+                        </div>
+                        <div className="flex items-start space-x-2 pt-2 border-t border-blue-500/20">
+                          <Checkbox 
+                            id="price-approval" 
+                            checked={priceApproved}
+                            onCheckedChange={(checked) => setPriceApproved(checked as boolean)}
+                          />
+                          <Label htmlFor="price-approval" className="cursor-pointer text-sm leading-tight">
+                            I approve this estimated cost
+                          </Label>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {!aiLoading && aiClassification && aiClassification.confidence === "low" && (
+                  <Card className="bg-orange-500/10 border-orange-500/30">
+                    <CardContent className="pt-4">
+                      <div className="flex items-start gap-2">
+                        <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5" />
+                        <div className="space-y-1">
+                          <p className="font-semibold text-orange-900 dark:text-orange-100">
+                            Can you describe this a bit more so I can give you an accurate quote?
+                          </p>
+                          <p className="text-sm text-orange-800 dark:text-orange-200">
+                            {aiClassification.explanation}
+                          </p>
+                          <p className="text-sm text-orange-700 dark:text-orange-300 mt-2">
+                            Please add more details above.
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -419,9 +554,29 @@ const PortalRequest = () => {
                 </RadioGroup>
               </div>
 
-              <Button type="submit" className="w-full" disabled={uploading}>
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={
+                  uploading || 
+                  (aiClassification?.type === "paid" && !priceApproved) ||
+                  (aiClassification?.confidence === "low")
+                }
+              >
                 {uploading ? "Uploading files..." : "Send this request"}
               </Button>
+              
+              {aiClassification?.type === "paid" && !priceApproved && (
+                <p className="text-sm text-center text-muted-foreground">
+                  Please approve the estimated cost above to continue
+                </p>
+              )}
+              
+              {aiClassification?.confidence === "low" && (
+                <p className="text-sm text-center text-muted-foreground">
+                  Please add more details to your request to continue
+                </p>
+              )}
             </form>
           </CardContent>
         </Card>

@@ -46,6 +46,10 @@ interface UpdateRequest {
   internal_notes: string | null;
   size_tier: string;
   quoted_price_cents: number | null;
+  ai_type: string | null;
+  ai_price_cents: number | null;
+  ai_explanation: string | null;
+  ai_confidence: string | null;
 }
 
 const AdminClientDetail = () => {
@@ -497,6 +501,47 @@ const AdminClientDetail = () => {
                 <Label>Description</Label>
                 <p className="text-sm text-muted-foreground whitespace-pre-wrap">{selectedRequest.description}</p>
               </div>
+              
+              {selectedRequest.ai_type && (
+                <Card className="bg-muted/20">
+                  <CardContent className="pt-4">
+                    <Label className="text-sm font-semibold">AI Classification</Label>
+                    <div className="mt-2 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Type:</span>
+                        <Badge variant={selectedRequest.ai_type === "free" ? "secondary" : "default"}>
+                          {selectedRequest.ai_type?.toUpperCase()}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">AI Estimated Price:</span>
+                        <span className="font-medium">
+                          {selectedRequest.ai_price_cents 
+                            ? formatCurrency(selectedRequest.ai_price_cents)
+                            : "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Confidence:</span>
+                        <Badge variant={
+                          selectedRequest.ai_confidence === "high" ? "default" : 
+                          selectedRequest.ai_confidence === "medium" ? "secondary" : 
+                          "outline"
+                        }>
+                          {selectedRequest.ai_confidence?.toUpperCase()}
+                        </Badge>
+                      </div>
+                      {selectedRequest.ai_explanation && (
+                        <div className="pt-2 border-t">
+                          <p className="text-sm text-muted-foreground italic">
+                            "{selectedRequest.ai_explanation}"
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Size tier</Label>
