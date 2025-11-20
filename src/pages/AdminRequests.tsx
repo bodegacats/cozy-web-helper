@@ -30,6 +30,7 @@ interface UpdateRequest {
   clients: {
     name: string;
     email: string;
+    business_name: string | null;
     website_url: string | null;
   };
 }
@@ -72,6 +73,7 @@ const AdminRequests = () => {
         clients (
           name,
           email,
+          business_name,
           website_url
         )
       `)
@@ -261,7 +263,14 @@ const AdminRequests = () => {
                         className="border-b last:border-0 hover:bg-muted/50 cursor-pointer"
                         onClick={() => handleOpenRequest(request)}
                       >
-                        <td className="p-4">{request.clients.name}</td>
+                        <td className="p-4">
+                          <div>
+                            <div className="font-medium">{request.clients.business_name || request.clients.name}</div>
+                            {request.clients.business_name && (
+                              <div className="text-sm text-muted-foreground">{request.clients.name}</div>
+                            )}
+                          </div>
+                        </td>
                         <td className="p-4">{request.title}</td>
                         <td className="p-4">{getStatusBadge(request.status)}</td>
                         <td className="p-4">{getPriorityBadge(request.priority)}</td>
@@ -293,6 +302,9 @@ const AdminRequests = () => {
                 <div className="space-y-3 p-4 bg-muted/30 rounded-lg">
                   <div>
                     <p className="text-sm text-muted-foreground">Client</p>
+                    {selectedRequest.clients.business_name && (
+                      <p className="font-semibold text-lg">{selectedRequest.clients.business_name}</p>
+                    )}
                     <p className="font-medium">{selectedRequest.clients.name}</p>
                     <a href={`mailto:${selectedRequest.clients.email}`} className="text-sm text-primary hover:underline">
                       {selectedRequest.clients.email}
