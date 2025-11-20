@@ -12,6 +12,7 @@ import { Slider } from "@/components/ui/slider";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+
 const Index = () => {
   const scrollToContact = () => {
     const element = document.getElementById('contact');
@@ -34,7 +35,9 @@ const Index = () => {
     features,
     timeline
   });
-  return <div className="min-h-screen bg-background">
+
+  return (
+    <div className="min-h-screen bg-background">
       <Helmet>
         <script type="application/ld+json">
           {JSON.stringify({
@@ -124,8 +127,11 @@ const Index = () => {
               Talk to me about your site
             </Button>
           </div>
+          <p className="text-xs text-muted-foreground pt-2">
+            The assistant gives a quick, structured scope. The form goes directly to me.
+          </p>
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-            Not sure you even need a new site? You can start with a $50 site checkup or <a href="#pricing" className="text-primary hover:underline">view pricing</a>.
+            Or <a href="#pricing" className="text-primary hover:underline">view pricing</a>.
           </p>
         </div>
       </header>
@@ -177,10 +183,12 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-xl font-semibold">Included in every site</h3>
                   <ul className="space-y-3">
-                    {["Most sites end up between 4 and 7 pages (Home, About, Services or Work, Contact, plus anything else you truly need).", "Mobile-friendly responsive design", "Fast loading and clean code", "Basic SEO setup", "Contact form that works", "Simple, clear navigation", "Instructions for making updates"].map((item, i) => <li key={i} className="flex items-start gap-3">
+                    {["Most sites end up between 4 and 7 pages (Home, About, Services or Work, Contact, plus anything else you truly need).", "Mobile-friendly responsive design", "Fast loading and clean code", "Basic SEO setup", "Contact form that works", "Simple, clear navigation", "Instructions for making updates"].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
                         <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-base leading-relaxed">{item}</span>
-                      </li>)}
+                      </li>
+                    ))}
                   </ul>
                 </CardContent>
               </Card>
@@ -189,10 +197,12 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-xl font-semibold">Types of sites this works for</h3>
                   <ul className="space-y-3">
-                    {["Service businesses (consultants, therapists, contractors)", "Portfolios (artists, photographers, writers)", "Nonprofits and community organizations", "Creative projects (films, books, events)", "Solo professionals (coaches, educators, speakers)", "Small retail or local businesses (no ecommerce)"].map((item, i) => <li key={i} className="flex items-start gap-3">
+                    {["Service businesses (consultants, therapists, contractors)", "Portfolios (artists, photographers, writers)", "Nonprofits and community organizations", "Creative projects (films, books, events)", "Solo professionals (coaches, educators, speakers)", "Small retail or local businesses (no ecommerce)"].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
                         <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-base leading-relaxed">{item}</span>
-                      </li>)}
+                      </li>
+                    ))}
                   </ul>
                 </CardContent>
               </Card>
@@ -311,19 +321,7 @@ const Index = () => {
           </div>
         </section>
 
-        {/* About Me Section */}
-        <section className="py-16 md:py-24 px-4">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-8">About Me</h2>
-            <div className="prose prose-lg mx-auto">
-              <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
-                I've spent nearly a decade helping people get clear, functional websites without the usual stress or tech learning curve. I've worked with hundreds of small businesses, solo professionals, artists, tour companies, nonprofits, and local service providers. My strength is taking scattered ideas and turning them into calm, readable websites that explain what you do and help people reach you. I keep things simple, fast, and organized so you can focus on your real work.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Who This Is For */}
+        {/* Who This Is For - Simple website fit check */}
         <section className="py-16 md:py-24 px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">
@@ -334,10 +332,12 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-xl font-semibold">This is a good fit if you:</h3>
                   <ul className="space-y-3">
-                    {["Want a simple 5 to 7 page site that looks clean and professional", "Do not want to learn a website platform or deal with a big agency", "Have a real business, practice, or project you are ready to share", "Are fine with straightforward, non fancy design that is clear and easy to read"].map((item, i) => <li key={i} className="flex items-start gap-3">
+                    {["Want a simple 5 to 7 page site that looks clean and professional", "Do not want to learn a website platform or deal with a big agency", "Have a real business, practice, or project you are ready to share", "Are fine with straightforward, non fancy design that is clear and easy to read"].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
                         <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-base leading-relaxed">{item}</span>
-                      </li>)}
+                      </li>
+                    ))}
                   </ul>
                 </CardContent>
               </Card>
@@ -346,13 +346,27 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-xl font-semibold">This is not a good fit if you:</h3>
                   <ul className="space-y-3">
-                    {["Need ecommerce, online courses, or complex booking systems", "Need a large custom web app or portal", "Want endless rounds of design changes", "Expect a full marketing agency, SEO campaign, or ad management"].map((item, i) => <li key={i} className="flex items-start gap-3">
+                    {["Need ecommerce, online courses, or complex booking systems", "Need a large custom web app or portal", "Want endless rounds of design changes", "Expect a full marketing agency, SEO campaign, or ad management"].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3">
                         <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
                         <span className="text-base leading-relaxed">{item}</span>
-                      </li>)}
+                      </li>
+                    ))}
                   </ul>
                 </CardContent>
               </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* About Me Section */}
+        <section className="py-16 md:py-24 px-4">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-8">About Me</h2>
+            <div className="prose prose-lg mx-auto">
+              <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
+                I've spent nearly a decade helping people get clear, functional websites without the usual stress or tech learning curve. I've worked with hundreds of small businesses, solo professionals, artists, tour companies, nonprofits, and local service providers. My strength is taking scattered ideas and turning them into calm, readable websites that explain what you do and help people reach you. I keep things simple, fast, and organized so you can focus on your real work. I scope every project honestly and only take on work that fits this simple-build model.
+              </p>
             </div>
           </div>
         </section>
@@ -464,26 +478,13 @@ const Index = () => {
                 {/* Price Output */}
                 <Card className="bg-muted/50 p-6 space-y-3 border-2">
                   <div className="text-2xl font-semibold text-primary">
-                    Estimated price: ${estimate.total.toLocaleString()}
+                    ${estimate.total.toLocaleString()}
                   </div>
-                  
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between text-muted-foreground">
-                      <span>Base site ({pageCount} page{pageCount > 1 ? 's' : ''})</span>
-                      <span>${estimate.breakdown.base}</span>
-                    </div>
-                    
-                    {Object.keys(estimate.breakdown.addOns).length > 0 && (
-                      <>
-                        <div className="text-xs font-semibold text-muted-foreground pt-2">Add-ons:</div>
-                        {Object.entries(estimate.breakdown.addOns).map(([name, price]) => (
-                          <div key={name} className="flex justify-between text-muted-foreground pl-2">
-                            <span>• {name}</span>
-                            <span>+${price}</span>
-                          </div>
-                        ))}
-                      </>
-                    )}
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    <div>Base ({pageCount} page{pageCount > 1 ? 's' : ''}): ${estimate.breakdown.base}</div>
+                    {Object.entries(estimate.breakdown.addOns).map(([name, price]) => (
+                      <div key={name}>{name}: +${price}</div>
+                    ))}
                   </div>
 
                   <p className="text-xs text-muted-foreground pt-2">
@@ -493,10 +494,16 @@ const Index = () => {
 
                 {/* Subtle Link to Full Estimator */}
                 <p className="text-sm text-muted-foreground text-center pt-2">
-                  Want the full quote?{" "}
+                  Prefer a fast estimate?{" "}
                   <a href="/estimate" className="text-primary hover:underline">
                     Try the guided estimate →
                   </a>
+                  <br />
+                  Or talk to the{" "}
+                  <a href="/start" className="text-primary hover:underline">
+                    intake assistant
+                  </a>
+                  {" "}— it can scope your project and explain pricing.
                 </p>
               </Card>
             </div>
@@ -504,8 +511,22 @@ const Index = () => {
             <p className="text-sm text-muted-foreground text-center max-w-3xl mx-auto mt-8">
               Hosting and your domain are paid directly to your provider (usually around $100–$200 per year). If you want ongoing help after launch, we can keep things simple and talk about a small, separate maintenance arrangement.
             </p>
+
+            <p className="text-base text-muted-foreground text-center max-w-3xl mx-auto mt-6">
+              You have three ways to get pricing clarity:<br />
+              • The guided estimate — fast, self-serve estimate using the same pricing I use.<br />
+              • The intake assistant — describe your project and it will scope it using the unified pricing engine.<br />
+              • The contact form — if you prefer to speak with me directly.
+            </p>
           </div>
         </section>
+
+        {/* Trust Statement */}
+        <div className="py-8 px-4">
+          <p className="text-sm text-muted-foreground text-center max-w-2xl mx-auto">
+            You will always see a full scoped quote before any work begins.
+          </p>
+        </div>
 
         {/* FAQ */}
         <section id="faq" className="py-16 md:py-24 px-4">
@@ -517,25 +538,25 @@ const Index = () => {
                   <span className="text-lg leading-relaxed font-medium">How long does it take?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed text-muted-foreground">
-                  Most sites take about 2 to 4 weeks once I have your content and we have done a kickoff call. I will give you a realistic timeline before we start and keep you updated as I go.
+                  Once I have your content (text, images, links), most sites launch within a week. Some take a bit longer depending on how much back and forth we need. If you are slow to send materials or give feedback, that adds time.
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-2" className="border-2 rounded-lg px-6 bg-card">
                 <AccordionTrigger className="text-left hover:no-underline">
-                  <span className="text-lg leading-relaxed font-medium">What if I don't have all my content ready?</span>
+                  <span className="text-lg leading-relaxed font-medium">What if I don't have content ready?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed text-muted-foreground">
-                  That is common. We can start with what you have. I will give you a simple checklist for the rest and we will fill it in together. The clearer your answers are, the better the site will feel.
+                  I can help organize and edit what you have, but I don't write copy from scratch. You provide the words, I make them clear and place them well.
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-3" className="border-2 rounded-lg px-6 bg-card">
                 <AccordionTrigger className="text-left hover:no-underline">
-                  <span className="text-lg leading-relaxed font-medium">Can I update the site myself after it's done?</span>
+                  <span className="text-lg leading-relaxed font-medium">Can I update the site myself later?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed text-muted-foreground">
-                  If you want to, yes. I will show you the basics and give you a short written guide for simple text or image updates. If you would rather not touch it, I can handle changes for you.
+                  Yes. I build on platforms that let you log in and change text or images without touching code. I show you how everything works before we launch.
                 </AccordionContent>
               </AccordionItem>
 
@@ -544,33 +565,33 @@ const Index = () => {
                   <span className="text-lg leading-relaxed font-medium">What platform do you use?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed text-muted-foreground">
-                  I use Lovable, a modern builder that lets me move fast without code. You don't have to log in or learn anything. You own the final site, and we can export or move it later if you ever want to.
+                  I use whatever makes sense for your project (usually Webflow, Wix, or WordPress). You own the site and login credentials.
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-5" className="border-2 rounded-lg px-6 bg-card">
                 <AccordionTrigger className="text-left hover:no-underline">
-                  <span className="text-lg leading-relaxed font-medium">Do you do ecommerce or real estate sites?</span>
+                  <span className="text-lg leading-relaxed font-medium">What happens after launch?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed text-muted-foreground">
-                  No. I focus on simple service, portfolio, nonprofit, and project sites. If you need full ecommerce or complex real estate listings, I am not the right fit and I can point you toward better options.
+                  The site is yours. You can update it yourself or ask me for help. Small fixes (broken link, typo, image swap) are included for the first 30 days. After that, I charge hourly for updates.
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="item-6" className="border-2 rounded-lg px-6 bg-card">
                 <AccordionTrigger className="text-left hover:no-underline">
-                  <span className="text-lg leading-relaxed font-medium">What if I need changes after the site launches?</span>
+                  <span className="text-lg leading-relaxed font-medium">What if my project is bigger than this?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed text-muted-foreground">
-                  Small changes are easy to handle. We can either set up a simple monthly arrangement for ongoing edits, or I can price changes as one off updates. You will always know the cost before I do the work.
+                  If you need something more complex (custom features, integrations, or ongoing work), I'll tell you upfront and we can talk through other options or I can refer you to someone better suited.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
           </div>
         </section>
 
-        {/* Contact */}
-        <section id="contact" className="py-16 md:py-24 px-4 bg-muted/30">
+        {/* Contact Form */}
+        <section id="contact" className="py-16 md:py-24 px-4">
           <div className="max-w-2xl mx-auto">
             <ContactForm />
           </div>
@@ -578,15 +599,16 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="py-8 text-center border-t-2 border-border">
-        <p className="text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Build me a simple site. Built with care.
-          {" • "}
-          <a href="/portal" className="hover:text-foreground transition-colors">
-            Client portal
-          </a>
-        </p>
+      <footer className="py-8 px-4 border-t">
+        <div className="max-w-6xl mx-auto text-center text-sm text-muted-foreground">
+          <p>&copy; 2024 Build Me a Simple Site. All rights reserved.</p>
+          <p className="mt-2">
+            <a href="/portal" className="text-primary hover:underline">Client Portal</a>
+          </p>
+        </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;

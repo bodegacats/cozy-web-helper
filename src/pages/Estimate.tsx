@@ -355,6 +355,11 @@ Estimate Request:
                     <span>Total</span>
                     <span>${total}</span>
                   </div>
+                  {pageCount[0] >= 7 && (
+                    <p className="text-xs text-muted-foreground pt-2">
+                      (7 pages is the max included in this pricing model.)
+                    </p>
+                  )}
                 </div>
 
                 {/* Contact Form */}
