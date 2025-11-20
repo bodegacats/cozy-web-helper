@@ -89,14 +89,18 @@ Estimate Request:
     `.trim();
 
     try {
+      // Calculate estimate range (90%-110%)
+      const estimateLow = Math.round(total * 0.9);
+      const estimateHigh = Math.round(total * 1.1);
+
       const { error } = await supabase.from("contact_submissions").insert({
         name,
         email,
         project_description: projectDescription,
         wish: "Estimate request",
         selected_options: selectedOptions,
-        estimate_low: total,
-        estimate_high: total,
+        estimate_low: estimateLow,
+        estimate_high: estimateHigh,
         notes: notes || null,
         status: "new",
       });
@@ -259,7 +263,7 @@ Estimate Request:
               <CardHeader>
                 <CardTitle>How many pages?</CardTitle>
                 <CardDescription>
-                  Pricing tiers: 1 page ($500), 2-4 pages ($1000), 5-7 pages ($1500)
+                  First page: $500. Pages 2-4: +$150 each. Pages 5-7: +$100 each.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -321,9 +325,12 @@ Estimate Request:
               <CardContent className="space-y-6">
                 {/* Price Total */}
                 <div className="text-center py-6 bg-primary/5 rounded-lg">
-                  <div className="text-sm text-muted-foreground mb-2">Estimated total</div>
+                  <div className="text-sm text-muted-foreground mb-2">Estimated range</div>
                   <div className="text-3xl font-bold text-primary">
-                    {formatPrice(total)}
+                    {formatPrice(Math.round(total * 0.9))} - {formatPrice(Math.round(total * 1.1))}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    (Exact: {formatPrice(total)})
                   </div>
                 </div>
 

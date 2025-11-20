@@ -383,13 +383,12 @@ const Index = () => {
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>{pageCount} page{pageCount > 1 ? 's' : ''}</span>
                     <span>
-                      Base price: ${
-                        pageCount === 1 ? '500' : 
-                        pageCount <= 4 ? '1,000' : 
-                        '1,500'
-                      }
+                      Base price: ${estimate.breakdown.base.toLocaleString()}
                     </span>
                   </div>
+                  <p className="text-xs text-muted-foreground">
+                    First page: $500. Pages 2-4: +$150 each. Pages 5-7: +$100 each.
+                  </p>
                 </div>
 
                 {/* Content Readiness */}
