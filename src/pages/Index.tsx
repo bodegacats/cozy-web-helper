@@ -138,10 +138,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <img src="https://i.imgur.com/7rAmj6S.jpeg" alt="RuffLife Jersey City website hero" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
+                      <img src="https://i.imgur.com/7rAmj6S.jpeg" alt="Dog walking and pet sitting small business website in Jersey City" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-                      <img src="https://i.imgur.com/K49QVdg.jpeg" alt="RuffLife Jersey City full page screenshot" className="w-full h-auto" />
+                      <img src="https://i.imgur.com/K49QVdg.jpeg" alt="Dog walking and pet sitting small business website in Jersey City" className="w-full h-auto" />
                     </DialogContent>
                   </Dialog>
                   <h3 className="text-xl font-semibold">RuffLife: Jersey City</h3>
@@ -162,10 +162,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <img src="https://i.imgur.com/vuJkqLu.jpeg" alt="Cats About Town Tours website hero" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
+                      <img src="https://i.imgur.com/vuJkqLu.jpeg" alt="NYC walking tour website for Cats About Town Tours" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-                      <img src="https://i.imgur.com/hJGImR8.jpeg" alt="Cats About Town Tours full page screenshot" className="w-full h-auto" />
+                      <img src="https://i.imgur.com/hJGImR8.jpeg" alt="NYC walking tour website for Cats About Town Tours" className="w-full h-auto" />
                     </DialogContent>
                   </Dialog>
                   <h3 className="text-xl font-semibold">Cats About Town Tours</h3>
@@ -186,10 +186,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <img src="https://i.imgur.com/9Kcx0Dp.jpeg" alt="Bodega Cats of New York website hero" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
+                      <img src="https://i.imgur.com/9Kcx0Dp.jpeg" alt="Advocacy and storytelling website for New York bodega cats" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-                      <img src="https://i.imgur.com/hOL1GCg.jpeg" alt="Bodega Cats of New York full page screenshot" className="w-full h-auto" />
+                      <img src="https://i.imgur.com/hOL1GCg.jpeg" alt="Advocacy and storytelling website for New York bodega cats" className="w-full h-auto" />
                     </DialogContent>
                   </Dialog>
                   <h3 className="text-xl font-semibold">Bodega Cats of New York</h3>
@@ -210,10 +210,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <img src="https://i.imgur.com/HptFEBB.jpeg" alt="Pencils & Pecs website hero" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
+                      <img src="https://i.imgur.com/HptFEBB.jpeg" alt="Pop up life drawing event website for Pencils & Pecs" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-                      <img src="https://i.imgur.com/4dLGWQt.jpeg" alt="Pencils & Pecs full page screenshot" className="w-full h-auto" />
+                      <img src="https://i.imgur.com/4dLGWQt.jpeg" alt="Pop up life drawing event website for Pencils & Pecs" className="w-full h-auto" />
                     </DialogContent>
                   </Dialog>
                   <h3 className="text-xl font-semibold">Pencils & Pecs</h3>
@@ -248,7 +248,7 @@ const Index = () => {
         <section className="py-16 md:py-24 px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">
-              Who this is for (and not for)
+              Simple website fit check
             </h2>
             <div className="grid md:grid-cols-2 gap-8">
               <Card>
@@ -282,7 +282,7 @@ const Index = () => {
         <section id="pricing" className="py-16 md:py-24 px-4 bg-muted/30">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-4">
-              Simple, flat project pricing
+              Simple website pricing
             </h2>
             <p className="text-base leading-relaxed text-muted-foreground text-center max-w-3xl mx-auto mb-12">
               No contracts, no subscriptions. Just one clear price for the kind of site you need.
