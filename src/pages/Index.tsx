@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ContactForm } from "@/components/ContactForm";
@@ -7,11 +6,6 @@ import { Check, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Navbar from "@/components/Navbar";
 import { Helmet } from "react-helmet";
-import { calculateEstimate } from "@/lib/pricingEngine";
-import { Slider } from "@/components/ui/slider";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 
 const Index = () => {
   const scrollToContact = () => {
@@ -21,20 +15,6 @@ const Index = () => {
       block: 'start'
     });
   };
-
-  // State for interactive pricing calculator
-  const [pageCount, setPageCount] = useState(1);
-  const [contentReadiness, setContentReadiness] = useState<'ready' | 'light_editing' | 'heavy_shaping'>('ready');
-  const [features, setFeatures] = useState({ gallery: false, blog: false });
-  const [timeline, setTimeline] = useState<'normal' | 'rush'>('normal');
-
-  // Calculate estimate reactively
-  const estimate = calculateEstimate({
-    pageCount,
-    contentReadiness,
-    features,
-    timeline
-  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -377,135 +357,23 @@ const Index = () => {
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-4">
               Simple website pricing
             </h2>
-            <p className="text-base leading-relaxed text-muted-foreground text-center max-w-3xl mx-auto mb-12">
+            <p className="text-base leading-relaxed text-muted-foreground text-center max-w-3xl mx-auto mb-8">
               No contracts, no subscriptions — your price adjusts based on what you need.
             </p>
             
-            <div className="max-w-2xl mx-auto">
-              <Card className="p-8 space-y-6">
-                {/* Page Count Slider */}
-                <div className="space-y-3">
-                  <Label className="text-sm font-medium">How many pages?</Label>
-                  <Slider
-                    value={[pageCount]}
-                    onValueChange={(value) => setPageCount(value[0])}
-                    min={1}
-                    max={7}
-                    step={1}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>{pageCount} page{pageCount > 1 ? 's' : ''}</span>
-                    <span>
-                      Base price: ${estimate.breakdown.base.toLocaleString()}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    First page: $500. Pages 2-4: +$150 each. Pages 5-7: +$100 each.
-                  </p>
-                </div>
-
-                {/* Content Readiness */}
-                <div className="space-y-3">
-                  <Label className="text-sm font-medium">Content readiness</Label>
-                  <ToggleGroup 
-                    type="single" 
-                    value={contentReadiness}
-                    onValueChange={(value) => value && setContentReadiness(value as any)}
-                    className="justify-start flex-wrap"
-                  >
-                    <ToggleGroupItem value="ready" className="text-sm">
-                      I'll write everything
-                    </ToggleGroupItem>
-                    <ToggleGroupItem value="light_editing" className="text-sm">
-                      Light editing <span className="text-xs text-muted-foreground ml-1">+$150</span>
-                    </ToggleGroupItem>
-                    <ToggleGroupItem value="heavy_shaping" className="text-sm">
-                      Help shaping wording <span className="text-xs text-muted-foreground ml-1">+$300</span>
-                    </ToggleGroupItem>
-                  </ToggleGroup>
-                </div>
-
-                {/* Features Checkboxes */}
-                <div className="space-y-3">
-                  <Label className="text-sm font-medium">Features</Label>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="gallery"
-                        checked={features.gallery}
-                        onCheckedChange={(checked) => 
-                          setFeatures(prev => ({ ...prev, gallery: checked as boolean }))
-                        }
-                      />
-                      <label htmlFor="gallery" className="text-sm cursor-pointer">
-                        Gallery/portfolio <span className="text-xs text-muted-foreground">+$100</span>
-                      </label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="blog"
-                        checked={features.blog}
-                        onCheckedChange={(checked) => 
-                          setFeatures(prev => ({ ...prev, blog: checked as boolean }))
-                        }
-                      />
-                      <label htmlFor="blog" className="text-sm cursor-pointer">
-                        Blog setup <span className="text-xs text-muted-foreground">+$150</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Timeline */}
-                <div className="space-y-3">
-                  <Label className="text-sm font-medium">Timeline</Label>
-                  <ToggleGroup 
-                    type="single" 
-                    value={timeline}
-                    onValueChange={(value) => value && setTimeline(value as any)}
-                    className="justify-start"
-                  >
-                    <ToggleGroupItem value="normal" className="text-sm">
-                      Normal
-                    </ToggleGroupItem>
-                    <ToggleGroupItem value="rush" className="text-sm">
-                      Rush <span className="text-xs text-muted-foreground ml-1">+$200</span>
-                    </ToggleGroupItem>
-                  </ToggleGroup>
-                </div>
-
-                {/* Price Output */}
-                <Card className="bg-muted/50 p-6 space-y-3 border-2">
-                  <div className="text-2xl font-semibold text-primary">
-                    ${estimate.total.toLocaleString()}
-                  </div>
-                  <div className="text-xs text-muted-foreground space-y-1">
-                    <div>Base ({pageCount} page{pageCount > 1 ? 's' : ''}): ${estimate.breakdown.base}</div>
-                    {Object.entries(estimate.breakdown.addOns).map(([name, price]) => (
-                      <div key={name}>{name}: +${price}</div>
-                    ))}
-                  </div>
-
-                  <p className="text-xs text-muted-foreground pt-2">
-                    Based on the same engine used in the guided estimate.
-                  </p>
-                </Card>
-
-                {/* Subtle Link to Full Estimator */}
-                <p className="text-sm text-muted-foreground text-center pt-2">
-                  Prefer a fast estimate?{" "}
-                  <a href="/estimate" className="text-primary hover:underline">
-                    Try the guided estimate →
-                  </a>
-                  <br />
-                  Or talk to the{" "}
-                  <a href="/start" className="text-primary hover:underline">
-                    intake assistant
-                  </a>
-                  {" "}— it can scope your project and explain pricing.
-                </p>
-              </Card>
+            <div className="max-w-2xl mx-auto text-center space-y-6">
+              <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+                Your price is based on the number of pages, how much help you want with wording, and whether you need optional features like a portfolio or blog.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
+                <Button asChild size="lg">
+                  <a href="/estimate">Use the guided estimate</a>
+                </Button>
+                <Button asChild size="lg" variant="outline">
+                  <a href="/start">Talk to the intake AI</a>
+                </Button>
+              </div>
             </div>
 
             <p className="text-sm text-muted-foreground text-center max-w-3xl mx-auto mt-8">
