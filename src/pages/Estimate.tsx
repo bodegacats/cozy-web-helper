@@ -189,7 +189,7 @@ Estimate Request:
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Pricing Estimator</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Answer a few questions to get an instant price estimate for your website project.
+            This calculator gives you a structured price range. If you prefer a conversation-based quote, you can talk to the intake AI instead.
           </p>
         </div>
 
@@ -213,13 +213,13 @@ Estimate Request:
                   <div className="flex items-center space-x-2 mb-3">
                     <RadioGroupItem value="light_editing" id="light_editing" />
                     <Label htmlFor="light_editing" className="font-normal cursor-pointer">
-                      Light editing <span className="text-muted-foreground">(+$150)</span>
+                      Light editing — I tidy your wording and fix clarity issues <span className="text-muted-foreground">(+$150)</span>
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="heavy_shaping" id="heavy_shaping" />
                     <Label htmlFor="heavy_shaping" className="font-normal cursor-pointer">
-                      Help shaping the wording <span className="text-muted-foreground">(+$300)</span>
+                      Shaping/rewriting — I rewrite or reshape sections that aren't working <span className="text-muted-foreground">(+$300)</span>
                     </Label>
                   </div>
                 </RadioGroup>

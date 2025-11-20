@@ -160,11 +160,10 @@ const AIIntake = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-semibold mb-4">
-            Talk through your site with an intake assistant
+            Website Intake Assistant
           </h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Instead of a long form or discovery call, answer a few questions here. 
-            This helps me see if I'm the right fit and what kind of site you need.
+            Answer a few questions here to see if we're a good fit. This gives you a structured scope and estimate. If you prefer a calculator, use the guided estimator instead.
           </p>
         </div>
 
