@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ContactForm } from "@/components/ContactForm";
@@ -6,6 +7,11 @@ import { Check, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Navbar from "@/components/Navbar";
 import { Helmet } from "react-helmet";
+import { calculateEstimate } from "@/lib/pricingEngine";
+import { Slider } from "@/components/ui/slider";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 const Index = () => {
   const scrollToContact = () => {
     const element = document.getElementById('contact');
@@ -14,6 +20,20 @@ const Index = () => {
       block: 'start'
     });
   };
+
+  // State for interactive pricing calculator
+  const [pageCount, setPageCount] = useState(1);
+  const [contentReadiness, setContentReadiness] = useState<'ready' | 'light_editing' | 'heavy_shaping'>('ready');
+  const [features, setFeatures] = useState({ gallery: false, blog: false });
+  const [timeline, setTimeline] = useState<'normal' | 'rush'>('normal');
+
+  // Calculate estimate reactively
+  const estimate = calculateEstimate({
+    pageCount,
+    contentReadiness,
+    features,
+    timeline
+  });
   return <div className="min-h-screen bg-background">
       <Helmet>
         <script type="application/ld+json">
@@ -344,80 +364,146 @@ const Index = () => {
               Simple website pricing
             </h2>
             <p className="text-base leading-relaxed text-muted-foreground text-center max-w-3xl mx-auto mb-12">
-              No contracts, no subscriptions. Just one clear price for the kind of site you need.
+              No contracts, no subscriptions — your price adjusts based on what you need.
             </p>
             
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              {/* Card 1: $500 */}
-              <Card>
-                <CardContent className="p-6 space-y-4">
-                  <h3 className="text-xl font-semibold">Single-page starter</h3>
-                  <div>
-                    <div className="text-4xl font-semibold text-primary">$500</div>
-                    <p className="text-sm text-muted-foreground">one-time</p>
+            <div className="max-w-2xl mx-auto">
+              <Card className="p-8 space-y-6">
+                {/* Page Count Slider */}
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium">How many pages?</Label>
+                  <Slider
+                    value={[pageCount]}
+                    onValueChange={(value) => setPageCount(value[0])}
+                    min={1}
+                    max={7}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>{pageCount} page{pageCount > 1 ? 's' : ''}</span>
+                    <span>
+                      Base price: ${
+                        pageCount === 1 ? '500' : 
+                        pageCount <= 4 ? '1,000' : 
+                        '1,500'
+                      }
+                    </span>
                   </div>
-                  <p className="text-base leading-relaxed">
-                    For when you just need something simple on the web that explains who you are and how to reach you.
-                  </p>
-                  <ul className="space-y-2 pt-2">
-                    {["One clean, scrolling page", "You provide the words and images, I tidy and place them", "1 round of revisions", "Usually ready within a few days"].map((item, i) => <li key={i} className="flex items-start gap-2">
-                        <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm leading-relaxed">{item}</span>
-                      </li>)}
-                  </ul>
-                </CardContent>
-              </Card>
+                </div>
 
-              {/* Card 2: $1,000 */}
-              <Card className="border-primary">
-                <CardContent className="p-6 space-y-4">
-                  <h3 className="text-xl font-semibold">Small website</h3>
-                  <div>
-                    <div className="text-4xl font-semibold text-primary">$1,000</div>
-                    <p className="text-sm text-muted-foreground">one-time</p>
-                  </div>
-                  <p className="text-base leading-relaxed">
-                    For a small but complete website that feels put together without getting complicated.
-                  </p>
-                  <ul className="space-y-2 pt-2">
-                    {["Up to 4 pages (for example: Home, About, Services or Work, Contact)", "I help organize and lightly edit your content", "2 rounds of revisions", "Usually ready within a week"].map((item, i) => <li key={i} className="flex items-start gap-2">
-                        <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm leading-relaxed">{item}</span>
-                      </li>)}
-                  </ul>
-                </CardContent>
-              </Card>
+                {/* Content Readiness */}
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium">Content readiness</Label>
+                  <ToggleGroup 
+                    type="single" 
+                    value={contentReadiness}
+                    onValueChange={(value) => value && setContentReadiness(value as any)}
+                    className="justify-start flex-wrap"
+                  >
+                    <ToggleGroupItem value="ready" className="text-sm">
+                      I'll write everything
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="light_editing" className="text-sm">
+                      Light editing <span className="text-xs text-muted-foreground ml-1">+$150</span>
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="heavy_shaping" className="text-sm">
+                      Help shaping wording <span className="text-xs text-muted-foreground ml-1">+$300</span>
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+                </div>
 
-              {/* Card 3: $1,500 */}
-              <Card>
-                <CardContent className="p-6 space-y-4">
-                  <h3 className="text-xl font-semibold">Full simple site</h3>
-                  <div>
-                    <div className="text-4xl font-semibold text-primary">$1,500</div>
-                    <p className="text-sm text-muted-foreground">one-time</p>
+                {/* Features Checkboxes */}
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium">Features</Label>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="gallery"
+                        checked={features.gallery}
+                        onCheckedChange={(checked) => 
+                          setFeatures(prev => ({ ...prev, gallery: checked as boolean }))
+                        }
+                      />
+                      <label htmlFor="gallery" className="text-sm cursor-pointer">
+                        Gallery/portfolio <span className="text-xs text-muted-foreground">+$100</span>
+                      </label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="blog"
+                        checked={features.blog}
+                        onCheckedChange={(checked) => 
+                          setFeatures(prev => ({ ...prev, blog: checked as boolean }))
+                        }
+                      />
+                      <label htmlFor="blog" className="text-sm cursor-pointer">
+                        Blog setup <span className="text-xs text-muted-foreground">+$150</span>
+                      </label>
+                    </div>
                   </div>
-                  <p className="text-base leading-relaxed">
-                    For when you want me more in your corner shaping what the site says as well as how it looks.
+                </div>
+
+                {/* Timeline */}
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium">Timeline</Label>
+                  <ToggleGroup 
+                    type="single" 
+                    value={timeline}
+                    onValueChange={(value) => value && setTimeline(value as any)}
+                    className="justify-start"
+                  >
+                    <ToggleGroupItem value="normal" className="text-sm">
+                      Normal
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="rush" className="text-sm">
+                      Rush <span className="text-xs text-muted-foreground ml-1">+$200</span>
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+                </div>
+
+                {/* Price Output */}
+                <Card className="bg-muted/50 p-6 space-y-3 border-2">
+                  <div className="text-2xl font-semibold text-primary">
+                    Estimated price: ${estimate.total.toLocaleString()}
+                  </div>
+                  
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>Base site ({pageCount} page{pageCount > 1 ? 's' : ''})</span>
+                      <span>${estimate.breakdown.base}</span>
+                    </div>
+                    
+                    {Object.keys(estimate.breakdown.addOns).length > 0 && (
+                      <>
+                        <div className="text-xs font-semibold text-muted-foreground pt-2">Add-ons:</div>
+                        {Object.entries(estimate.breakdown.addOns).map(([name, price]) => (
+                          <div key={name} className="flex justify-between text-muted-foreground pl-2">
+                            <span>• {name}</span>
+                            <span>+${price}</span>
+                          </div>
+                        ))}
+                      </>
+                    )}
+                  </div>
+
+                  <p className="text-xs text-muted-foreground pt-2">
+                    Based on the same engine used in the guided estimate.
                   </p>
-                  <ul className="space-y-2 pt-2">
-                    {["Up to 6–7 pages", "Help shaping structure and wording (light copy support)", "3 rounds of revisions", "Usually ready within a week"].map((item, i) => <li key={i} className="flex items-start gap-2">
-                        <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm leading-relaxed">{item}</span>
-                      </li>)}
-                  </ul>
-                </CardContent>
+                </Card>
+
+                {/* Subtle Link to Full Estimator */}
+                <p className="text-sm text-muted-foreground text-center pt-2">
+                  Want the full quote?{" "}
+                  <a href="/estimate" className="text-primary hover:underline">
+                    Try the guided estimate →
+                  </a>
+                </p>
               </Card>
             </div>
 
-            <p className="text-sm text-muted-foreground text-center max-w-3xl mx-auto">
+            <p className="text-sm text-muted-foreground text-center max-w-3xl mx-auto mt-8">
               Hosting and your domain are paid directly to your provider (usually around $100–$200 per year). If you want ongoing help after launch, we can keep things simple and talk about a small, separate maintenance arrangement.
-            </p>
-            <p className="text-sm text-muted-foreground text-center max-w-3xl mx-auto mt-6">
-              Not sure which option fits?{" "}
-              <a href="/estimate" className="text-primary hover:underline">
-                Try the guided estimate
-              </a>{" "}
-              — it uses the same pricing I use when quoting projects.
             </p>
           </div>
         </section>
