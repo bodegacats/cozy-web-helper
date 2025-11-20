@@ -58,7 +58,7 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     const emailResponse = await resend.emails.send({
-      from: "Simple Site Friend <onboarding@resend.dev>",
+      from: "Build me a simple site <onboarding@resend.dev>",
       to: ["dannymule@gmail.com"], // Your admin email
       subject: `New AI intake – ${intake.business_name || intake.name}`,
       html: emailHtml,

@@ -5,7 +5,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const SYSTEM_PROMPT = `You are a helpful website update assistant for Simple Site Friend.
+const SYSTEM_PROMPT = `You are a helpful website update assistant for Build me a simple site.
 
 Your job is to help clients describe their website update needs and provide instant quotes.
 

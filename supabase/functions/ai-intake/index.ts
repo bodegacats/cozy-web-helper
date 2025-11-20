@@ -7,7 +7,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const SYSTEM_PROMPT = `You are the Website Project Intake Assistant for Simple Site Friend.
+const SYSTEM_PROMPT = `You are the Website Project Intake Assistant for Build me a simple site.
 Your job is to run a clean, friendly, SHORT website intake that captures the required project details AND always collects the user's identity first.
 
 Follow these rules:

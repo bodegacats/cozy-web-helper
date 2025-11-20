@@ -26,7 +26,7 @@ const Navbar = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <NavLink to="/" className="text-xl font-semibold">
-            Simple Site Friend
+            Build me a simple site
           </NavLink>
 
           {/* Desktop Navigation */}
