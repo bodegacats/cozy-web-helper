@@ -16,6 +16,10 @@ import AdminClientDetail from "./pages/AdminClientDetail";
 import AdminRequests from "./pages/AdminRequests";
 import AdminPipeline from "./pages/AdminPipeline";
 import AdminIntakes from "./pages/AdminIntakes";
+import AdminBlog from "./pages/AdminBlog";
+import AdminBlogEditor from "./pages/AdminBlogEditor";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 
@@ -31,6 +35,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/start" element={<AIIntake />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/portal" element={<Portal />} />
           <Route path="/portal/home" element={<Navigate to="/portal" replace />} />
           <Route path="/portal/request" element={<PortalRequest />} />
@@ -80,6 +86,22 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <AdminPipeline />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/blog"
+            element={
+              <ProtectedRoute>
+                <AdminBlog />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/blog/:id"
+            element={
+              <ProtectedRoute>
+                <AdminBlogEditor />
               </ProtectedRoute>
             }
           />
