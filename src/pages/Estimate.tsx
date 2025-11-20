@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Check, ArrowLeft } from "lucide-react";
+import { calculateEstimate } from "@/lib/pricingEngine";
 
 const Estimate = () => {
   const navigate = useNavigate();
@@ -19,57 +20,34 @@ const Estimate = () => {
   const [step, setStep] = useState<"form" | "submitted">("form");
 
   // Form state
-  const [siteType, setSiteType] = useState("personal");
-  const [contentHelp, setContentHelp] = useState("none");
+  const [contentHelp, setContentHelp] = useState<'ready' | 'light_editing' | 'heavy_shaping'>('ready');
   const [pageCount, setPageCount] = useState([3]);
   const [addOns, setAddOns] = useState({
     portfolio: false,
     blog: false,
-    scheduling: false,
-    newsletter: false,
   });
-  const [timeline, setTimeline] = useState("normal");
+  const [timeline, setTimeline] = useState<'normal' | 'rush'>('normal');
 
   // Contact info
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [notes, setNotes] = useState("");
 
-  // Calculate price
-  const calculatePrice = () => {
-    let total = 50000; // Base $500 in cents
+  // Calculate price using unified pricing engine
+  const result = calculateEstimate({
+    pageCount: pageCount[0],
+    contentReadiness: contentHelp,
+    features: {
+      gallery: addOns.portfolio,
+      blog: addOns.blog
+    },
+    timeline: timeline
+  });
 
-    // Content help
-    const contentCosts: Record<string, number> = {
-      none: 0,
-      light: 15000,
-      moderate: 30000,
-      full: 60000,
-    };
-    total += contentCosts[contentHelp];
+  const { total, breakdown } = result;
 
-    // Extra pages (first page included)
-    total += (pageCount[0] - 1) * 20000;
-
-    // Add-ons
-    if (addOns.portfolio) total += 30000;
-    if (addOns.blog) total += 30000;
-    if (addOns.scheduling) total += 15000;
-    if (addOns.newsletter) total += 20000;
-
-    // Timeline
-    if (timeline === "rush") total += 15000;
-
-    const estimateLow = Math.round(total * 0.9);
-    const estimateHigh = Math.round(total * 1.1);
-
-    return { estimateLow, estimateHigh, total };
-  };
-
-  const { estimateLow, estimateHigh } = calculatePrice();
-
-  const formatPrice = (cents: number) => {
-    return `$${(cents / 100).toFixed(0)}`;
+  const formatPrice = (dollars: number) => {
+    return `$${dollars}`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -85,41 +63,29 @@ const Estimate = () => {
     }
 
     const selectedOptions = {
-      siteType,
       contentHelp,
       pageCount: pageCount[0],
       addOns,
       timeline,
     };
 
-    // Generate a summary for project_description
-    const siteTypeLabels: Record<string, string> = {
-      personal: "Personal or solo-professional site",
-      business: "Small business or organization site",
-      creative: "Creative project site",
-    };
-
     const contentLabels: Record<string, string> = {
-      none: "Client will write all content",
-      light: "Light editing needed",
-      moderate: "Help shaping the wording",
-      full: "Full content rewrite",
+      ready: "Client will write all content",
+      light_editing: "Light editing needed",
+      heavy_shaping: "Help shaping the wording",
     };
 
     const addOnsList = [];
     if (addOns.portfolio) addOnsList.push("Portfolio/gallery page");
     if (addOns.blog) addOnsList.push("Blog page");
-    if (addOns.scheduling) addOnsList.push("Scheduling integration");
-    if (addOns.newsletter) addOnsList.push("Newsletter integration");
 
     const projectDescription = `
 Estimate Request:
-- Site type: ${siteTypeLabels[siteType]}
 - Pages: ${pageCount[0]}
 - Content help: ${contentLabels[contentHelp]}
 - Add-ons: ${addOnsList.length > 0 ? addOnsList.join(", ") : "None"}
 - Timeline: ${timeline === "rush" ? "Rush (48-72 hours)" : "Normal"}
-- Estimated price range: ${formatPrice(estimateLow)} - ${formatPrice(estimateHigh)}
+- Estimated total: ${formatPrice(total)}
     `.trim();
 
     try {
@@ -129,8 +95,8 @@ Estimate Request:
         project_description: projectDescription,
         wish: "Estimate request",
         selected_options: selectedOptions,
-        estimate_low: estimateLow,
-        estimate_high: estimateHigh,
+        estimate_low: total,
+        estimate_high: total,
         notes: notes || null,
         status: "new",
       });
@@ -226,73 +192,37 @@ Estimate Request:
         <div className="grid md:grid-cols-3 gap-8">
           {/* Questions Column */}
           <div className="md:col-span-2 space-y-6">
-            {/* Question 1: Site Type */}
-            <Card>
-              <CardHeader>
-                <CardTitle>What kind of site are you building?</CardTitle>
-                <CardDescription>This helps me understand your project context.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <RadioGroup value={siteType} onValueChange={setSiteType}>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <RadioGroupItem value="personal" id="personal" />
-                    <Label htmlFor="personal" className="font-normal cursor-pointer">
-                      Personal or solo-professional
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <RadioGroupItem value="business" id="business" />
-                    <Label htmlFor="business" className="font-normal cursor-pointer">
-                      Small business or organization
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="creative" id="creative" />
-                    <Label htmlFor="creative" className="font-normal cursor-pointer">
-                      Creative project (book, film, event)
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </CardContent>
-            </Card>
-
-            {/* Question 2: Content Help */}
+            {/* Question 1: Content Help */}
             <Card>
               <CardHeader>
                 <CardTitle>How much help do you want with wording?</CardTitle>
                 <CardDescription>Content editing and writing services.</CardDescription>
               </CardHeader>
               <CardContent>
-                <RadioGroup value={contentHelp} onValueChange={setContentHelp}>
+                <RadioGroup value={contentHelp} onValueChange={(value) => setContentHelp(value as 'ready' | 'light_editing' | 'heavy_shaping')}>
                   <div className="flex items-center space-x-2 mb-3">
-                    <RadioGroupItem value="none" id="none" />
-                    <Label htmlFor="none" className="font-normal cursor-pointer">
+                    <RadioGroupItem value="ready" id="ready" />
+                    <Label htmlFor="ready" className="font-normal cursor-pointer">
                       I'll write everything <span className="text-muted-foreground">(free)</span>
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2 mb-3">
-                    <RadioGroupItem value="light" id="light" />
-                    <Label htmlFor="light" className="font-normal cursor-pointer">
+                    <RadioGroupItem value="light_editing" id="light_editing" />
+                    <Label htmlFor="light_editing" className="font-normal cursor-pointer">
                       Light editing <span className="text-muted-foreground">(+$150)</span>
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-2 mb-3">
-                    <RadioGroupItem value="moderate" id="moderate" />
-                    <Label htmlFor="moderate" className="font-normal cursor-pointer">
-                      Help shaping the wording <span className="text-muted-foreground">(+$300)</span>
-                    </Label>
-                  </div>
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="full" id="full" />
-                    <Label htmlFor="full" className="font-normal cursor-pointer">
-                      Full rewrite <span className="text-muted-foreground">(+$600)</span>
+                    <RadioGroupItem value="heavy_shaping" id="heavy_shaping" />
+                    <Label htmlFor="heavy_shaping" className="font-normal cursor-pointer">
+                      Help shaping the wording <span className="text-muted-foreground">(+$300)</span>
                     </Label>
                   </div>
                 </RadioGroup>
               </CardContent>
             </Card>
 
-            {/* Question 3: Add-ons */}
+            {/* Question 2: Add-ons */}
             <Card>
               <CardHeader>
                 <CardTitle>Do you need any of these?</CardTitle>
@@ -308,7 +238,7 @@ Estimate Request:
                     }
                   />
                   <Label htmlFor="portfolio" className="font-normal cursor-pointer">
-                    Portfolio/gallery page <span className="text-muted-foreground">(+$300)</span>
+                    Portfolio/gallery page <span className="text-muted-foreground">(+$100)</span>
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -318,44 +248,18 @@ Estimate Request:
                     onCheckedChange={(checked) => setAddOns({ ...addOns, blog: checked as boolean })}
                   />
                   <Label htmlFor="blog" className="font-normal cursor-pointer">
-                    Blog page <span className="text-muted-foreground">(+$300)</span>
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="scheduling"
-                    checked={addOns.scheduling}
-                    onCheckedChange={(checked) =>
-                      setAddOns({ ...addOns, scheduling: checked as boolean })
-                    }
-                  />
-                  <Label htmlFor="scheduling" className="font-normal cursor-pointer">
-                    Scheduling/booking integration{" "}
-                    <span className="text-muted-foreground">(+$150)</span>
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="newsletter"
-                    checked={addOns.newsletter}
-                    onCheckedChange={(checked) =>
-                      setAddOns({ ...addOns, newsletter: checked as boolean })
-                    }
-                  />
-                  <Label htmlFor="newsletter" className="font-normal cursor-pointer">
-                    Newsletter signup integration{" "}
-                    <span className="text-muted-foreground">(+$200)</span>
+                    Blog page <span className="text-muted-foreground">(+$150)</span>
                   </Label>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Question 4: Page Count */}
+            {/* Question 3: Page Count */}
             <Card>
               <CardHeader>
                 <CardTitle>How many pages?</CardTitle>
                 <CardDescription>
-                  The first page is included. Each additional page is +$200.
+                  Pricing tiers: 1 page ($500), 2-4 pages ($1000), 5-7 pages ($1500)
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -363,35 +267,33 @@ Estimate Request:
                   <div className="flex items-center justify-between">
                     <Label className="text-lg font-semibold">{pageCount[0]} pages</Label>
                     <span className="text-sm text-muted-foreground">
-                      {pageCount[0] === 1
-                        ? "Included"
-                        : `+$${((pageCount[0] - 1) * 200).toFixed(0)}`}
+                      Base: ${breakdown.base}
                     </span>
                   </div>
                   <Slider
                     value={pageCount}
                     onValueChange={setPageCount}
                     min={1}
-                    max={8}
+                    max={7}
                     step={1}
                     className="w-full"
                   />
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>1 page</span>
-                    <span>8 pages</span>
+                    <span>7 pages</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Question 5: Timeline */}
+            {/* Question 4: Timeline */}
             <Card>
               <CardHeader>
                 <CardTitle>Timeline</CardTitle>
                 <CardDescription>When do you need your site completed?</CardDescription>
               </CardHeader>
               <CardContent>
-                <RadioGroup value={timeline} onValueChange={setTimeline}>
+                <RadioGroup value={timeline} onValueChange={(value) => setTimeline(value as 'normal' | 'rush')}>
                   <div className="flex items-center space-x-2 mb-3">
                     <RadioGroupItem value="normal" id="normal" />
                     <Label htmlFor="normal" className="font-normal cursor-pointer">
@@ -401,7 +303,7 @@ Estimate Request:
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="rush" id="rush" />
                     <Label htmlFor="rush" className="font-normal cursor-pointer">
-                      Rush 48-72 hours <span className="text-muted-foreground">(+$150)</span>
+                      Rush 48-72 hours <span className="text-muted-foreground">(+$200)</span>
                     </Label>
                   </div>
                 </RadioGroup>
@@ -417,71 +319,35 @@ Estimate Request:
                 <CardDescription>Based on your selections</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Price Range */}
+                {/* Price Total */}
                 <div className="text-center py-6 bg-primary/5 rounded-lg">
-                  <div className="text-sm text-muted-foreground mb-2">Estimated range</div>
+                  <div className="text-sm text-muted-foreground mb-2">Estimated total</div>
                   <div className="text-3xl font-bold text-primary">
-                    {formatPrice(estimateLow)} - {formatPrice(estimateHigh)}
+                    {formatPrice(total)}
                   </div>
                 </div>
 
-                {/* Selected Options Summary */}
+                {/* Breakdown */}
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Base price</span>
-                    <span>$500</span>
+                    <span className="text-muted-foreground">Base site ({pageCount[0]} page{pageCount[0] > 1 ? 's' : ''})</span>
+                    <span>${breakdown.base}</span>
                   </div>
-                  {pageCount[0] > 1 && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">
-                        {pageCount[0] - 1} extra page{pageCount[0] > 2 ? "s" : ""}
-                      </span>
-                      <span>+${((pageCount[0] - 1) * 200).toFixed(0)}</span>
-                    </div>
+                  {Object.entries(breakdown.addOns).length > 0 && (
+                    <>
+                      <div className="text-xs font-semibold text-muted-foreground mt-2">Add-ons:</div>
+                      {Object.entries(breakdown.addOns).map(([name, price]) => (
+                        <div key={name} className="flex justify-between pl-2">
+                          <span className="text-muted-foreground">• {name}</span>
+                          <span>+${price}</span>
+                        </div>
+                      ))}
+                    </>
                   )}
-                  {contentHelp !== "none" && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Content help</span>
-                      <span>
-                        +$
-                        {{
-                          light: "150",
-                          moderate: "300",
-                          full: "600",
-                        }[contentHelp] || "0"}
-                      </span>
-                    </div>
-                  )}
-                  {addOns.portfolio && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Portfolio</span>
-                      <span>+$300</span>
-                    </div>
-                  )}
-                  {addOns.blog && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Blog</span>
-                      <span>+$300</span>
-                    </div>
-                  )}
-                  {addOns.scheduling && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Scheduling</span>
-                      <span>+$150</span>
-                    </div>
-                  )}
-                  {addOns.newsletter && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Newsletter</span>
-                      <span>+$200</span>
-                    </div>
-                  )}
-                  {timeline === "rush" && (
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Rush delivery</span>
-                      <span>+$150</span>
-                    </div>
-                  )}
+                  <div className="border-t pt-2 flex justify-between font-semibold">
+                    <span>Total</span>
+                    <span>${total}</span>
+                  </div>
                 </div>
 
                 {/* Contact Form */}
