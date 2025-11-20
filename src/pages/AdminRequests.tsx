@@ -27,6 +27,7 @@ interface UpdateRequest {
   internal_notes: string | null;
   size_tier: string;
   quoted_price_cents: number | null;
+  attachments: Array<{ url: string; name: string; size: number }> | null;
   clients: {
     name: string;
     email: string;
@@ -82,7 +83,12 @@ const AdminRequests = () => {
     if (error) {
       console.error('Error loading requests:', error);
     } else {
-      setRequests(data || []);
+      // Type the data properly
+      const typedData = (data || []).map(req => ({
+        ...req,
+        attachments: req.attachments as Array<{ url: string; name: string; size: number }> | null
+      })) as UpdateRequest[];
+      setRequests(typedData);
     }
     setLoading(false);
   };
@@ -333,6 +339,26 @@ const AdminRequests = () => {
                   <Label>Description</Label>
                   <p className="mt-1 whitespace-pre-wrap">{selectedRequest.description}</p>
                 </div>
+
+                {selectedRequest.attachments && selectedRequest.attachments.length > 0 && (
+                  <div>
+                    <Label>Attachments</Label>
+                    <div className="mt-2 space-y-2">
+                      {selectedRequest.attachments.map((attachment, index) => (
+                        <a
+                          key={index}
+                          href={attachment.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center text-sm text-primary hover:underline"
+                        >
+                          {attachment.name}
+                          <ExternalLink className="ml-1 h-3 w-3" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>

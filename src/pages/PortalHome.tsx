@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { formatCurrency } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
 import { format } from "date-fns";
@@ -199,6 +200,28 @@ const PortalHome = () => {
 
         <Card className="mb-6">
           <CardHeader>
+            <CardTitle>What your request status means</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2 text-sm">
+              <div>
+                <span className="font-semibold">New</span> – I've received your request but haven't started yet
+              </div>
+              <div>
+                <span className="font-semibold">In progress</span> – I'm working on it
+              </div>
+              <div>
+                <span className="font-semibold">Waiting on you</span> – I need something from you (I'll note what)
+              </div>
+              <div>
+                <span className="font-semibold">Done</span> – The update is finished
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="mb-6">
+          <CardHeader>
             <CardTitle>Your recent requests</CardTitle>
           </CardHeader>
           <CardContent>
@@ -219,6 +242,57 @@ const PortalHome = () => {
                 ))}
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {client.plan_type === 'build_only' ? (
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <p className="text-sm text-muted-foreground">
+                You're on a build-only plan. Small fixes are free. Larger updates will show a quote before you approve anything.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Your monthly included edits</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span>Included minutes:</span>
+                <span className="font-semibold">{client.monthly_included_minutes} minutes</span>
+              </div>
+              {limits && (
+                <>
+                  <div className="flex justify-between text-sm">
+                    <span>Requests used this month:</span>
+                    <span className="font-semibold">{limits.used_requests} of {limits.included_requests}</span>
+                  </div>
+                  <Progress 
+                    value={(limits.used_requests / limits.included_requests) * 100} 
+                    className="h-2"
+                  />
+                </>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>What small fixes are always free</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-1 text-sm list-disc list-inside">
+              <li>Fixing typos</li>
+              <li>Swapping one image</li>
+              <li>Changing a sentence</li>
+              <li>Adjusting spacing</li>
+            </ul>
+            <p className="text-sm text-muted-foreground mt-3">
+              Anything larger gets an instant quote before I start.
+            </p>
           </CardContent>
         </Card>
 
