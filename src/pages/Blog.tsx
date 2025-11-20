@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 
 interface BlogPost {
   id: string;
@@ -66,6 +66,16 @@ export default function Blog() {
       <main className="min-h-screen bg-background">
         <section className="py-20 px-6">
           <div className="max-w-6xl mx-auto">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/")}
+              className="mb-6"
+              aria-label="Return to homepage"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Home
+            </Button>
+            
             <div className="text-center mb-16">
               <h1 className="text-4xl md:text-5xl font-bold mb-4">Blog</h1>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">

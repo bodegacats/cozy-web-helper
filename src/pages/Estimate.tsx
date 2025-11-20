@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,9 +11,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Check } from "lucide-react";
+import { Check, ArrowLeft } from "lucide-react";
 
 const Estimate = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [step, setStep] = useState<"form" | "submitted">("form");
 
@@ -204,6 +206,16 @@ Estimate Request:
       </Helmet>
 
       <div className="container mx-auto px-4 max-w-4xl">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/")}
+          className="mb-6"
+          aria-label="Return to homepage"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Home
+        </Button>
+        
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Pricing Estimator</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
