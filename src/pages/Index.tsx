@@ -357,54 +357,50 @@ const Index = () => {
 
         {/* Pricing */}
         <section id="pricing" className="py-16 md:py-24 px-4 bg-muted/30">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-4">
-              Simple website pricing
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-8">
+              Simple pricing
             </h2>
-            <p className="text-base leading-relaxed text-muted-foreground text-center max-w-3xl mx-auto mb-8">
-              Your price is based on the number of pages, how much help you want with wording, and whether you need optional features like a portfolio or blog.
-            </p>
             
-            <div className="max-w-3xl mx-auto space-y-8">
-              {/* Pricing explanation */}
-              <div className="text-center space-y-4">
-                <div className="border-2 rounded-lg p-6 bg-card text-left">
-                  <h3 className="text-lg font-semibold mb-3">How pricing works</h3>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li>• First page: $500</li>
-                    <li>• Pages 2-4: +$150 each</li>
-                    <li>• Pages 5-7: +$100 each</li>
-                    <li>• Light editing (I tidy your wording): +$150</li>
-                    <li>• Help shaping/rewriting: +$300</li>
-                    <li>• Portfolio/gallery page: +$100</li>
-                    <li>• Blog setup: +$150</li>
-                    <li>• Rush timeline (48-72 hours): +$200</li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* CTAs */}
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Button asChild size="lg">
-                  <a href="/start">Talk to the intake AI</a>
-                </Button>
-                <Button size="lg" variant="outline" onClick={scrollToContact}>
-                  Talk to me directly
-                </Button>
-              </div>
-
-              {/* Hosting/maintenance note */}
-              <p className="text-sm text-muted-foreground text-center">
-                Hosting and your domain are paid directly to your provider (usually around $100–$200 per year). If you want ongoing help after launch, most people choose a simple maintenance plan ($50–150/month) depending on how much support they need.
+            <div className="max-w-2xl mx-auto space-y-6 text-foreground">
+              <p className="text-base text-center text-muted-foreground">
+                Most projects fall between $500 and $1,500 depending on pages and content help.
               </p>
 
-              {/* $50 Site Checkup */}
-              <div className="p-6 bg-card border-2 rounded-lg">
-                <h3 className="text-xl font-semibold mb-3">$50 Site Checkup</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  A quick written audit of your existing website. I tell you what's working, what's not, and what I'd fix. Delivered within 24 hours.
-                </p>
+              <div className="space-y-3">
+                <h3 className="text-xl font-semibold">How pricing works:</h3>
+                <ul className="space-y-1 text-muted-foreground">
+                  <li>• First page: $500</li>
+                  <li>• Pages 2–4: +$150 each</li>
+                  <li>• Pages 5–7: +$100 each</li>
+                  <li>• Light editing: +$150</li>
+                  <li>• Help shaping the wording: +$300</li>
+                </ul>
               </div>
+
+              <div className="space-y-3">
+                <h3 className="text-xl font-semibold">Optional features:</h3>
+                <ul className="space-y-1 text-muted-foreground">
+                  <li>• Gallery/portfolio page +$100</li>
+                  <li>• Blog setup +$150</li>
+                </ul>
+              </div>
+
+              <p className="text-muted-foreground">
+                Rush delivery (48–72 hours): +$200
+              </p>
+
+              <div className="space-y-3 pt-2">
+                <h3 className="text-xl font-semibold">Examples:</h3>
+                <ul className="space-y-1 text-muted-foreground">
+                  <li>• A 4-page site with light editing: $950</li>
+                  <li>• A 6-page site with wording help and a gallery page: $1,450</li>
+                </ul>
+              </div>
+
+              <p className="text-sm text-center text-muted-foreground pt-4">
+                Want a clearer number? <a href="/start" className="text-primary hover:underline">Talk to the intake AI</a> — it uses this exact pricing.
+              </p>
             </div>
           </div>
         </section>
