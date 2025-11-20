@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet";
+import { ArrowLeft } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -41,7 +42,17 @@ const Login = () => {
         <title>Admin Login | Build Me a Simple Site</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
-      <Card className="w-full max-w-md">
+      <div className="w-full max-w-md">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/")}
+          className="mb-4"
+          aria-label="Return to homepage"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Home
+        </Button>
+        <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Admin Login</CardTitle>
           <CardDescription>Log in to view contact submissions</CardDescription>
@@ -75,6 +86,7 @@ const Login = () => {
           </form>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };
