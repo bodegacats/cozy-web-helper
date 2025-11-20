@@ -7,7 +7,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Unified pricing engine (duplicated from frontend)
+// Unified pricing engine - Hybrid tier + per-page model
 function calculateEstimate(inputs: {
   pageCount: number;
   contentReadiness: string;
@@ -15,10 +15,26 @@ function calculateEstimate(inputs: {
   hasBlog: boolean;
   isRush: boolean;
 }) {
-  let base = 500;
-  if (inputs.pageCount >= 2 && inputs.pageCount <= 4) base = 1000;
-  else if (inputs.pageCount >= 5 && inputs.pageCount <= 7) base = 1500;
-  else if (inputs.pageCount > 7) base = 1500;
+  // Hybrid pricing: Base + per-page add-ons
+  // First page: $500
+  // Pages 2-4: +$150 each
+  // Pages 5-7: +$100 each
+  
+  let base = 500; // First page
+  const pageCount = Math.min(inputs.pageCount, 7); // Cap at 7 pages
+  
+  // Calculate additional page costs
+  if (pageCount >= 2) {
+    // Pages 2-4 cost $150 each
+    const pages2to4 = Math.min(pageCount - 1, 3); // Pages 2, 3, 4
+    base += pages2to4 * 150;
+  }
+  
+  if (pageCount >= 5) {
+    // Pages 5-7 cost $100 each
+    const pages5to7 = pageCount - 4; // Pages 5, 6, 7
+    base += pages5to7 * 100;
+  }
 
   const addOns: { [key: string]: number } = {};
   
@@ -116,10 +132,10 @@ Do NOT give pricing unless the user specifically asks.
 If the user asks about pricing:
 - Ask clarifying questions to gather: page count, content readiness (ready/light editing/heavy shaping), whether they need a gallery, whether they need a blog, and timeline (normal/rush)
 - Use the get_pricing_estimate tool to calculate pricing
-- Base tiers are $500 (1 page), $1000 (2-4 pages), $1500 (5-7 pages)
+- NEW PRICING MODEL: First page = $500, Pages 2-4 = +$150 each, Pages 5-7 = +$100 each
 - Add-ons: light editing +$150, heavy shaping +$300, gallery +$100, blog +$150, rush +$200
-- Present pricing calmly: "Based on [X pages], [add-ons], your estimated total is $[amount]. This matches the [tier name] tier."
-- Suggest which flat tier (500 / 1000 / 1500) they fall closest to
+- Present pricing calmly: "Based on [X pages], [add-ons], your estimated total is $[amount]."
+- Also mention which homepage tier it's closest to: "This is closest to our [Single-page starter / Small website / Full simple site] tier."
 
 Do NOT oversell.
 

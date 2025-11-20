@@ -19,14 +19,25 @@ export interface PricingResult {
 }
 
 export function calculateEstimate(inputs: PricingInputs): PricingResult {
-  // Determine base price based on page count tiers
-  let base = 500;
-  if (inputs.pageCount >= 2 && inputs.pageCount <= 4) {
-    base = 1000;
-  } else if (inputs.pageCount >= 5 && inputs.pageCount <= 7) {
-    base = 1500;
-  } else if (inputs.pageCount > 7) {
-    base = 1500; // Cap at 7 pages
+  // Hybrid pricing: Base + per-page add-ons
+  // First page: $500
+  // Pages 2-4: +$150 each
+  // Pages 5-7: +$100 each
+  
+  let base = 500; // First page
+  const pageCount = Math.min(inputs.pageCount, 7); // Cap at 7 pages
+  
+  // Calculate additional page costs
+  if (pageCount >= 2) {
+    // Pages 2-4 cost $150 each
+    const pages2to4 = Math.min(pageCount - 1, 3); // Pages 2, 3, 4
+    base += pages2to4 * 150;
+  }
+  
+  if (pageCount >= 5) {
+    // Pages 5-7 cost $100 each
+    const pages5to7 = pageCount - 4; // Pages 5, 6, 7
+    base += pages5to7 * 100;
   }
 
   // Calculate add-ons
