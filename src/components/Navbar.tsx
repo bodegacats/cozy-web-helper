@@ -16,6 +16,7 @@ const Navbar = () => {
     { label: "How It Works", id: "how-it-works" },
     { label: "Projects", id: "projects" },
     { label: "Pricing", id: "pricing" },
+    { label: "Estimate", id: "estimate", link: "/estimate" },
     { label: "Blog", id: "blog", link: "/blog" },
     { label: "FAQ", id: "faq" },
     { label: "Contact", id: "contact" },

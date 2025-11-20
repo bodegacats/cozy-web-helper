@@ -125,9 +125,13 @@ export type Database = {
         Row: {
           created_at: string | null
           email: string
+          estimate_high: number | null
+          estimate_low: number | null
           id: string
           name: string
+          notes: string | null
           project_description: string
+          selected_options: Json | null
           status: string
           website_url: string | null
           wish: string
@@ -135,9 +139,13 @@ export type Database = {
         Insert: {
           created_at?: string | null
           email: string
+          estimate_high?: number | null
+          estimate_low?: number | null
           id?: string
           name: string
+          notes?: string | null
           project_description: string
+          selected_options?: Json | null
           status?: string
           website_url?: string | null
           wish: string
@@ -145,9 +153,13 @@ export type Database = {
         Update: {
           created_at?: string | null
           email?: string
+          estimate_high?: number | null
+          estimate_low?: number | null
           id?: string
           name?: string
+          notes?: string | null
           project_description?: string
+          selected_options?: Json | null
           status?: string
           website_url?: string | null
           wish?: string
