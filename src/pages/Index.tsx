@@ -6,8 +6,30 @@ import { Check, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Navbar from "@/components/Navbar";
 import { Helmet } from "react-helmet";
+import { Slider } from "@/components/ui/slider";
+import { useState } from "react";
 
 const Index = () => {
+  const [pageCount, setPageCount] = useState<number>(1);
+
+  const calculatePrice = (pages: number): number => {
+    let price = 500; // First page
+    
+    if (pages >= 2) {
+      const pages2to4 = Math.min(pages - 1, 3); // Pages 2, 3, 4
+      price += pages2to4 * 150;
+    }
+    
+    if (pages >= 5) {
+      const pages5to7 = pages - 4; // Pages 5, 6, 7
+      price += pages5to7 * 100;
+    }
+    
+    return price;
+  };
+
+  const currentPrice = calculatePrice(pageCount);
+
   const scrollToContact = () => {
     const element = document.getElementById('contact');
     element?.scrollIntoView({
@@ -355,52 +377,76 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Pricing */}
+        {/* Instant Quote */}
         <section id="pricing" className="py-16 md:py-24 px-4 bg-muted/30">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-8">
-              Simple pricing
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">
+              Instant Quote
             </h2>
             
-            <div className="max-w-2xl mx-auto space-y-6 text-foreground">
-              <p className="text-base text-center text-muted-foreground">
-                Most projects fall between $500 and $1,500 depending on pages and content help.
-              </p>
+            <div className="bg-card border-2 rounded-lg p-8 md:p-12 space-y-8">
+              {/* Slider Section */}
+              <div className="space-y-6">
+                <label className="block text-lg font-medium text-center">
+                  How many pages do you need?
+                </label>
+                
+                <div className="space-y-4">
+                  <Slider
+                    value={[pageCount]}
+                    onValueChange={(value) => setPageCount(value[0])}
+                    min={1}
+                    max={7}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>1 page</span>
+                    <span className="font-semibold text-foreground text-base">{pageCount} {pageCount === 1 ? 'page' : 'pages'}</span>
+                    <span>7 pages</span>
+                  </div>
+                </div>
+              </div>
 
-              <div className="space-y-3">
-                <h3 className="text-xl font-semibold">How pricing works:</h3>
-                <ul className="space-y-1 text-muted-foreground">
-                  <li>• First page: $500</li>
-                  <li>• Pages 2–4: +$150 each</li>
-                  <li>• Pages 5–7: +$100 each</li>
-                  <li>• Light editing: +$150</li>
-                  <li>• Help shaping the wording: +$300</li>
+              {/* Price Display */}
+              <div className="text-center py-6">
+                <div className="text-5xl md:text-6xl font-bold text-foreground mb-2">
+                  ${currentPrice.toLocaleString()}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Estimated price updates instantly based on the number of pages.
+                </p>
+              </div>
+
+              {/* Included List */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-center">What's included:</h3>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
+                  <li>• Design and build of your website</li>
+                  <li>• Mobile-friendly layout</li>
+                  <li>• Fast hosting</li>
+                  <li>• SSL security</li>
+                  <li>• Automatic backups</li>
+                  <li>• Speed optimization</li>
+                  <li>• Clean, modern design</li>
+                  <li>• Contact form setup</li>
+                  <li>• Clear navigation</li>
+                  <li>• Launch support</li>
+                  <li className="md:col-span-2 text-center font-medium">• 2 rounds of revisions</li>
                 </ul>
               </div>
 
-              <div className="space-y-3">
-                <h3 className="text-xl font-semibold">Optional features:</h3>
-                <ul className="space-y-1 text-muted-foreground">
-                  <li>• Gallery/portfolio page +$100</li>
-                  <li>• Blog setup +$150</li>
-                </ul>
-              </div>
-
-              <p className="text-muted-foreground">
-                Rush delivery (48–72 hours): +$200
+              {/* Content Note */}
+              <p className="text-sm text-muted-foreground text-center pt-4 border-t">
+                You provide the words and images. I handle the build.
               </p>
 
-              <div className="space-y-3 pt-2">
-                <h3 className="text-xl font-semibold">Examples:</h3>
-                <ul className="space-y-1 text-muted-foreground">
-                  <li>• A 4-page site with light editing: $950</li>
-                  <li>• A 6-page site with wording help and a gallery page: $1,450</li>
-                </ul>
+              {/* CTA Button */}
+              <div className="text-center pt-4">
+                <Button asChild size="lg">
+                  <a href="/start">Talk to the intake AI for a more detailed quote</a>
+                </Button>
               </div>
-
-              <p className="text-sm text-center text-muted-foreground pt-4">
-                Want a clearer number? <a href="/start" className="text-primary hover:underline">Talk to the intake AI</a> — it uses this exact pricing.
-              </p>
             </div>
           </div>
         </section>
