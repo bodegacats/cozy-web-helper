@@ -27,9 +27,7 @@ const Index = () => {
       {/* Hero Section */}
       <header className="min-h-[85vh] flex items-center justify-center bg-gradient-to-b from-background via-muted/20 to-background px-4 py-16">
         <div className="max-w-3xl mx-auto text-center space-y-8">
-          <p className="text-sm md:text-base font-medium text-primary uppercase tracking-wide">
-            One person website service
-          </p>
+          
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight">
             I will build you a simple website.              
           </h1>
