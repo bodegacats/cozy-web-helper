@@ -82,10 +82,10 @@ const Index = () => {
             One person website service
           </p>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight">
-            Simple websites for small businesses and solo projects
+            Get a small website built in about a week, without learning a thing
           </h1>
           <p className="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-2xl mx-auto">
-            I build straightforward websites for small businesses, solo professionals, artists, nonprofits, and creative projects. We talk through what you need, I build and launch it, and I am around for small changes if you want. No long contract, no new software for you to learn.
+            I build small, focused websites for small businesses, solo professionals, artists, nonprofits, and creative projects who never wanted to learn web tools in the first place. We talk through what you need, I pull what I need from you, and I build and launch the site for you, usually in under a week. Tiny fixes like typos or swapping a photo are included. Bigger changes are quoted before I touch anything. No long contract, no dashboard, no agency drama.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Button size="lg" onClick={scrollToChecklist} className="shadow-base">
@@ -95,6 +95,9 @@ const Index = () => {
               Talk to me about your site
             </Button>
           </div>
+          <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+            Not sure you even need a new site? You can start with a $50 site checkup further down this page.
+          </p>
         </div>
       </header>
 
@@ -212,33 +215,19 @@ const Index = () => {
             
             <div className="space-y-4">
               <p className="text-base leading-relaxed text-muted-foreground">
-                Before you decide on a full rebuild, you might just want an honest, simple opinion on what you already have.
+                If you are on the fence about a full rebuild, you do not have to guess. Start with a $50 Simple Site Checkup.
               </p>
               <p className="text-base leading-relaxed text-muted-foreground">
-                That's what this is for.
+                I record a 5–7 minute personal video walkthrough of your current website, point out 3–5 concrete things you can fix yourself, and give you my honest take on whether you should keep what you have, use a cheaper DIY option, or have me rebuild it.
+              </p>
+              <p className="text-base leading-relaxed text-muted-foreground">
+                If you hire me for a new site within 30 days, I put the $50 toward your project fee.
               </p>
             </div>
 
             <Card className="shadow-lg border-2">
               <CardContent className="p-8 space-y-6">
                 <h3 className="text-2xl font-semibold">$50 Simple Site Checkup</h3>
-                
-                <ul className="space-y-3 text-left">
-                  {[
-                    "A 5–7 minute personal video walkthrough of your current website",
-                    "3–5 concrete things you can fix yourself",
-                    "My honest take on whether you should keep what you have, use a cheaper DIY option, or have me rebuild it"
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="text-base leading-relaxed">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <p className="text-sm text-muted-foreground">
-                  If you hire me for a new site within 30 days, I put the $50 toward your project fee.
-                </p>
 
                 <Button size="lg" onClick={scrollToContact}>
                   Get a $50 site checkup
