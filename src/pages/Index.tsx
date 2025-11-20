@@ -1,69 +1,15 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ContactForm } from "@/components/ContactForm";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Check, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const Index = () => {
-  const [checklistAnswers, setChecklistAnswers] = useState<Record<number, string>>({});
-  const [showResult, setShowResult] = useState(false);
-
-  const checklistQuestions = [
-    { id: 1, text: "Do you need just 1-8 pages?" },
-    { id: 2, text: "Do you need a clean, professional site (not cutting-edge design)?" },
-    { id: 3, text: "Will a contact form and basic features cover your needs?" },
-    { id: 4, text: "Do you want one person (not a team) handling your entire project from start to finish?" },
-    { id: 5, text: "Do you want to avoid learning new tools or platforms?" },
-    { id: 6, text: "Can your project wait about a week for delivery?" },
-    { id: 7, text: "Do you have a budget of $500–$1,500?" },
-  ];
-
-  const handleChecklistSubmit = () => {
-    setShowResult(true);
-    const resultElement = document.getElementById('checklist-result');
-    resultElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  const yesCount = Object.values(checklistAnswers).filter(a => a === "yes").length;
-  const noCount = Object.values(checklistAnswers).filter(a => a === "no").length;
-
-  const getResultMessage = () => {
-    if (yesCount >= 5) {
-      return {
-        title: "If you said yes to most questions",
-        message: "This service is probably a strong match. You want a clear, honest site, built by one person, without a long process. That is exactly what I do.",
-        cta: true
-      };
-    } else if (yesCount >= 3) {
-      return {
-        title: "If you had a mix of yes and no",
-        message: "You might still be a good fit. It just means we should talk through your project and see what makes sense. Some things we can keep simple. Some things might need a different plan.",
-        cta: true
-      };
-    } else {
-      return {
-        title: "If you said no to most questions",
-        message: "You may need a bigger team, a fully custom build, or a different type of website. If you want to share what you are working on, I am happy to point you toward a better option, even if that is not me.",
-        cta: false
-      };
-    }
-  };
-
-  const scrollToChecklist = () => {
-    const element = document.getElementById('checklist');
-    element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
   const scrollToContact = () => {
     const element = document.getElementById('contact');
     element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
-
-  const result = showResult ? getResultMessage() : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -91,10 +37,7 @@ const Index = () => {
             Not sure you even need a new site? Start with a $50 site checkup.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Button size="lg" onClick={scrollToChecklist} className="shadow-base">
-              Take the 7 question checklist
-            </Button>
-            <Button size="lg" variant="outline" onClick={() => window.location.href = '/start'} className="border-2">
+            <Button size="lg" onClick={() => window.location.href = '/start'} className="shadow-base">
               Talk to the intake assistant
             </Button>
             <Button size="lg" variant="outline" onClick={scrollToContact} className="border-2">
@@ -144,108 +87,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Checklist Section */}
-        <section id="checklist" className="py-16 md:py-24 px-4 bg-muted/30">
-          <div className="max-w-2xl mx-auto">
-            <div className="space-y-3 mb-8 text-center">
-              <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight">Simple website fit check</h2>
-              <p className="text-lg md:text-xl leading-relaxed text-muted-foreground">
-                These questions are not a test. They just help us see if this service matches what you need. Pick yes or no for each one.
-              </p>
-            </div>
-
-            <Card className="shadow-lg border-2">
-              <CardContent className="p-8 space-y-6">
-                <div className="space-y-4">
-                  {checklistQuestions.map((question, index) => (
-                    <div 
-                      key={question.id}
-                      className="p-4 rounded-lg bg-muted/50 hover:bg-accent/50 transition-colors"
-                    >
-                      <p className="text-base leading-relaxed font-medium mb-3">{question.text}</p>
-                      <RadioGroup
-                        value={checklistAnswers[question.id]}
-                        onValueChange={(value) => {
-                          setChecklistAnswers(prev => ({ ...prev, [question.id]: value }));
-                          setShowResult(false);
-                        }}
-                        className="flex gap-4"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="yes" id={`q${question.id}-yes`} />
-                          <Label htmlFor={`q${question.id}-yes`} className="cursor-pointer">Yes</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="no" id={`q${question.id}-no`} />
-                          <Label htmlFor={`q${question.id}-no`} className="cursor-pointer">No</Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-                  ))}
-                </div>
-
-                <Button 
-                  onClick={handleChecklistSubmit}
-                  disabled={Object.keys(checklistAnswers).length < 7}
-                  className="w-full mt-6"
-                  size="lg"
-                >
-                  See my result
-                </Button>
-
-                {showResult && result && (
-                  <div 
-                    id="checklist-result"
-                    className="mt-8 p-6 rounded-xl bg-primary/5 border-2 border-primary/20 animate-fadeInUp"
-                  >
-                    <h3 className="text-xl font-semibold mb-3">{result.title}</h3>
-                    <p className="text-base leading-relaxed mb-4">{result.message}</p>
-                    {result.cta && (
-                      <Button onClick={scrollToContact} size="lg">
-                        Talk to me about my site
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        {/* Simple Site Checkup */}
-        <section className="py-16 md:py-24 px-4">
-          <div className="max-w-3xl mx-auto text-center space-y-8">
-            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight">
-              Not sure if you even need a new site?
-            </h2>
-            
-            <div className="space-y-4">
-              <p className="text-base leading-relaxed text-muted-foreground">
-                If you are on the fence about a full rebuild, you do not have to guess. Start with a $50 Simple Site Checkup.
-              </p>
-              <p className="text-base leading-relaxed text-muted-foreground">
-                I record a 5–7 minute personal video walkthrough of your current website, point out 3–5 concrete things you can fix yourself, and give you my honest take on whether you should keep what you have, use a cheaper DIY option, or have me rebuild it.
-              </p>
-              <p className="text-base leading-relaxed text-muted-foreground">
-                If you hire me for a new site within 30 days, I put the $50 toward your project fee.
-              </p>
-            </div>
-
-            <Card className="shadow-lg border-2">
-              <CardContent className="p-8 space-y-6">
-                <h3 className="text-2xl font-semibold">$50 Simple Site Checkup</h3>
-
-                <Button size="lg" onClick={scrollToContact}>
-                  Get a $50 site checkup
-                </Button>
-
-                <p className="text-sm text-muted-foreground">
-                  When you write to me, just mention "checkup" so I know you want the $50 video review.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
 
         {/* What You Get */}
         <section className="py-16 md:py-24 px-4">
