@@ -82,10 +82,10 @@ const Index = () => {
             One person website service
           </p>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight">
-            A simple website, built for you in about a week
+            Get a small website built in about a week, without learning a thing
           </h1>
           <p className="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-2xl mx-auto">
-            I build done for you sites for small businesses, solo professionals, artists, nonprofits, and other serious projects. You tell me what the site needs to do, I plan it, build it, launch it, and stay around for small fixes so you never have to touch a website platform.
+            I build small, focused websites for small businesses, solo professionals, artists, nonprofits, and creative projects who never wanted to learn web tools in the first place. We talk through what you need, I pull what I need from you, and I build and launch the site for you, usually in under a week. Tiny fixes like typos or swapping a photo are included. Bigger changes are quoted before I touch anything. No long contract, no dashboard, no agency drama.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Button size="lg" onClick={scrollToChecklist} className="shadow-base">
