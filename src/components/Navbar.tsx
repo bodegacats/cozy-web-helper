@@ -16,6 +16,7 @@ const Navbar = () => {
     { label: "How It Works", id: "how-it-works" },
     { label: "Projects", id: "projects" },
     { label: "Pricing", id: "pricing" },
+    { label: "Blog", id: "blog", link: "/blog" },
     { label: "FAQ", id: "faq" },
     { label: "Contact", id: "contact" },
   ];
@@ -31,15 +32,25 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {item.label}
-              </button>
-            ))}
+            {navItems.map((item) => 
+              item.link ? (
+                <NavLink
+                  key={item.id}
+                  to={item.link}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {item.label}
+                </NavLink>
+              ) : (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {item.label}
+                </button>
+              )
+            )}
             <Button asChild variant="outline" size="sm">
               <NavLink to="/portal">Client Portal</NavLink>
             </Button>
@@ -58,15 +69,26 @@ const Navbar = () => {
         {/* Mobile Navigation */}
         {isOpen && (
           <div className="md:hidden py-4 space-y-3 border-t">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className="block w-full text-left px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-              >
-                {item.label}
-              </button>
-            ))}
+            {navItems.map((item) => 
+              item.link ? (
+                <NavLink
+                  key={item.id}
+                  to={item.link}
+                  className="block w-full text-left px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.label}
+                </NavLink>
+              ) : (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className="block w-full text-left px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                >
+                  {item.label}
+                </button>
+              )
+            )}
             <div className="px-4 pt-2">
               <Button asChild variant="outline" size="sm" className="w-full">
                 <NavLink to="/portal">Client Portal</NavLink>
