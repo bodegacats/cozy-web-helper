@@ -76,13 +76,69 @@ export default function BlogPost() {
       <Helmet>
         <title>{post.meta_title}</title>
         <meta name="description" content={post.meta_description} />
+        <link rel="canonical" href={`https://buildmeasimplesite.com/blog/${post.slug}`} />
         <meta property="og:title" content={post.meta_title} />
         <meta property="og:description" content={post.meta_description} />
         <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://buildmeasimplesite.com/blog/${post.slug}`} />
+        <meta property="og:site_name" content="Build Me a Simple Site" />
         {post.featured_image_url && (
           <meta property="og:image" content={post.featured_image_url} />
         )}
-        <link rel="canonical" href={`https://yourdomain.com/blog/${post.slug}`} />
+        <meta property="article:published_time" content={post.published_at} />
+        <meta property="article:author" content="Dan Mulé" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={post.meta_title} />
+        <meta name="twitter:description" content={post.meta_description} />
+        {post.featured_image_url && (
+          <meta name="twitter:image" content={post.featured_image_url} />
+        )}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": post.title,
+            "description": post.excerpt,
+            "image": post.featured_image_url,
+            "datePublished": post.published_at,
+            "dateModified": post.published_at,
+            "author": {
+              "@type": "Person",
+              "name": "Dan Mulé"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Build Me a Simple Site",
+              "url": "https://buildmeasimplesite.com"
+            }
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://buildmeasimplesite.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Blog",
+                "item": "https://buildmeasimplesite.com/blog"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": post.title,
+                "item": `https://buildmeasimplesite.com/blog/${post.slug}`
+              }
+            ]
+          })}
+        </script>
       </Helmet>
 
       <main className="min-h-screen bg-background">
@@ -124,6 +180,8 @@ export default function BlogPost() {
                 src={post.featured_image_url}
                 alt={post.title}
                 className="w-full h-auto"
+                width="1200"
+                height="675"
               />
             </div>
           )}

@@ -5,6 +5,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Check, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Navbar from "@/components/Navbar";
+import { Helmet } from "react-helmet";
 const Index = () => {
   const scrollToContact = () => {
     const element = document.getElementById('contact');
@@ -14,6 +15,64 @@ const Index = () => {
     });
   };
   return <div className="min-h-screen bg-background">
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "How long does it usually take?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Once I have your content (text, images, links), most sites launch within a week. Some take a bit longer depending on how much back and forth we need. If you are slow to send materials or give feedback, that adds time."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What if I don't have content ready?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "I can help organize and edit what you have, but I don't write copy from scratch. You provide the words, I make them clear and place them well."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I update the site myself later?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. I build on platforms that let you log in and change text or images without touching code. I show you how everything works before we launch."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What platform do you use?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "I use whatever makes sense for your project (usually Webflow, Wix, or WordPress). You own the site and login credentials."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What happens after launch?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "The site is yours. You can update it yourself or ask me for help. Small fixes (broken link, typo, image swap) are included for the first 30 days. After that, I charge hourly for updates."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What if my project is bigger than this?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "If you need something more complex (custom features, integrations, or ongoing work), I'll tell you upfront and we can talk through other options or I can refer you to someone better suited."
+                }
+              }
+            ]
+          })}
+        </script>
+      </Helmet>
       <Navbar />
       
       {/* 
@@ -38,15 +97,15 @@ const Index = () => {
             Not sure you even need a new site? Start with a $50 site checkup.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Button size="lg" onClick={() => window.location.href = '/start'} className="shadow-base">
+            <Button size="lg" onClick={() => window.location.href = '/start'} className="shadow-base" aria-label="Start website intake process with AI assistant">
               Talk to the intake assistant
             </Button>
-            <Button size="lg" variant="outline" onClick={scrollToContact} className="border-2">
+            <Button size="lg" variant="outline" onClick={scrollToContact} className="border-2" aria-label="Scroll to contact form to discuss your website">
               Talk to me about your site
             </Button>
           </div>
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-            Not sure you even need a new site? You can start with a $50 site checkup further down this page.
+            Not sure you even need a new site? You can start with a $50 site checkup or <a href="#pricing" className="text-primary hover:underline">view pricing</a>.
           </p>
         </div>
       </header>
@@ -138,10 +197,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <img src="https://i.imgur.com/7rAmj6S.jpeg" alt="Dog walking and pet sitting small business website in Jersey City" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
+                      <img src="https://i.imgur.com/7rAmj6S.jpeg" alt="Dog walking and pet sitting small business website in Jersey City" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" loading="lazy" width="800" height="450" aria-label="View full screenshot of RuffLife website" />
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-                      <img src="https://i.imgur.com/K49QVdg.jpeg" alt="Dog walking and pet sitting small business website in Jersey City" className="w-full h-auto" />
+                      <img src="https://i.imgur.com/K49QVdg.jpeg" alt="Dog walking and pet sitting small business website in Jersey City" className="w-full h-auto" width="1200" height="2400" />
                     </DialogContent>
                   </Dialog>
                   <h3 className="text-xl font-semibold">RuffLife: Jersey City</h3>
@@ -162,10 +221,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <img src="https://i.imgur.com/vuJkqLu.jpeg" alt="NYC walking tour website for Cats About Town Tours" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
+                      <img src="https://i.imgur.com/vuJkqLu.jpeg" alt="NYC walking tour website for Cats About Town Tours" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" loading="lazy" width="800" height="450" aria-label="View full screenshot of Cats About Town Tours website" />
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-                      <img src="https://i.imgur.com/hJGImR8.jpeg" alt="NYC walking tour website for Cats About Town Tours" className="w-full h-auto" />
+                      <img src="https://i.imgur.com/hJGImR8.jpeg" alt="NYC walking tour website for Cats About Town Tours" className="w-full h-auto" width="1200" height="2400" />
                     </DialogContent>
                   </Dialog>
                   <h3 className="text-xl font-semibold">Cats About Town Tours</h3>
@@ -186,10 +245,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <img src="https://i.imgur.com/9Kcx0Dp.jpeg" alt="Advocacy and storytelling website for New York bodega cats" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
+                      <img src="https://i.imgur.com/9Kcx0Dp.jpeg" alt="Advocacy and storytelling website for New York bodega cats" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" loading="lazy" width="800" height="450" aria-label="View full screenshot of Bodega Cats of New York website" />
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-                      <img src="https://i.imgur.com/hOL1GCg.jpeg" alt="Advocacy and storytelling website for New York bodega cats" className="w-full h-auto" />
+                      <img src="https://i.imgur.com/hOL1GCg.jpeg" alt="Advocacy and storytelling website for New York bodega cats" className="w-full h-auto" width="1200" height="2400" />
                     </DialogContent>
                   </Dialog>
                   <h3 className="text-xl font-semibold">Bodega Cats of New York</h3>
@@ -210,10 +269,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <img src="https://i.imgur.com/HptFEBB.jpeg" alt="Pop up life drawing event website for Pencils & Pecs" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
+                      <img src="https://i.imgur.com/HptFEBB.jpeg" alt="Pop up life drawing event website for Pencils & Pecs" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" loading="lazy" width="800" height="450" aria-label="View full screenshot of Pencils & Pecs website" />
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-                      <img src="https://i.imgur.com/4dLGWQt.jpeg" alt="Pop up life drawing event website for Pencils & Pecs" className="w-full h-auto" />
+                      <img src="https://i.imgur.com/4dLGWQt.jpeg" alt="Pop up life drawing event website for Pencils & Pecs" className="w-full h-auto" width="1200" height="2400" />
                     </DialogContent>
                   </Dialog>
                   <h3 className="text-xl font-semibold">Pencils & Pecs</h3>

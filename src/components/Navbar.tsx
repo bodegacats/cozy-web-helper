@@ -46,6 +46,7 @@ const Navbar = () => {
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
                   className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label={`Scroll to ${item.label} section`}
                 >
                   {item.label}
                 </button>
@@ -60,7 +61,7 @@ const Navbar = () => {
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2"
-            aria-label="Toggle menu"
+            aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
           >
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -84,6 +85,7 @@ const Navbar = () => {
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
                   className="block w-full text-left px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                  aria-label={`Scroll to ${item.label} section`}
                 >
                   {item.label}
                 </button>
