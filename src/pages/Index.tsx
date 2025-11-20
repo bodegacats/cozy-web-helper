@@ -4,6 +4,7 @@ import { ContactForm } from "@/components/ContactForm";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Check, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import Navbar from "@/components/Navbar";
 
 const Index = () => {
   const scrollToContact = () => {
@@ -13,6 +14,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navbar />
+      
       {/* 
         SEMANTIC STRUCTURE:
         - Single <h1> in hero for main heading
@@ -52,7 +55,7 @@ const Index = () => {
 
       <main>
         {/* How This Works */}
-        <section className="py-16 md:py-24 px-4">
+        <section id="how-it-works" className="py-16 md:py-24 px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">How this works</h2>
             <div className="grid md:grid-cols-3 gap-6">
@@ -141,7 +144,7 @@ const Index = () => {
 
 
         {/* Recent Projects */}
-        <section className="py-16 md:py-24 px-4 bg-muted/30">
+        <section id="projects" className="py-16 md:py-24 px-4 bg-muted/30">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-4">
               Recent projects
@@ -363,7 +366,7 @@ const Index = () => {
         </section>
 
         {/* Pricing */}
-        <section className="py-16 md:py-24 px-4 bg-muted/30">
+        <section id="pricing" className="py-16 md:py-24 px-4 bg-muted/30">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-4">
               Simple, flat project pricing
@@ -462,7 +465,7 @@ const Index = () => {
         </section>
 
         {/* FAQ */}
-        <section className="py-16 md:py-24 px-4">
+        <section id="faq" className="py-16 md:py-24 px-4">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">Common questions</h2>
             <Accordion type="single" collapsible className="space-y-4">

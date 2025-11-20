@@ -222,9 +222,14 @@ const PortalHome = () => {
           </CardContent>
         </Card>
 
-        <Button onClick={() => navigate('/portal/request')} size="lg" className="w-full">
-          Request a website change
-        </Button>
+        <div className="grid md:grid-cols-2 gap-4">
+          <Button onClick={() => navigate('/portal/request')} size="lg" className="w-full">
+            Use the request form
+          </Button>
+          <Button onClick={() => navigate('/portal/chat')} size="lg" variant="outline" className="w-full">
+            Chat with AI about updates
+          </Button>
+        </div>
       </div>
     </div>
   );
