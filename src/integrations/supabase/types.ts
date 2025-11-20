@@ -109,6 +109,86 @@ export type Database = {
         }
         Relationships: []
       }
+      project_intakes: {
+        Row: {
+          budget_range: string | null
+          business_name: string | null
+          client_id: string | null
+          content_readiness: string | null
+          created_at: string | null
+          design_examples: string | null
+          email: string
+          fit_status: string
+          goals: string | null
+          id: string
+          kanban_stage: string
+          name: string
+          pages_estimate: number | null
+          project_description: string | null
+          raw_conversation: Json | null
+          raw_summary: string | null
+          source: string | null
+          special_needs: string | null
+          suggested_tier: string | null
+          tech_comfort: string | null
+          timeline: string | null
+        }
+        Insert: {
+          budget_range?: string | null
+          business_name?: string | null
+          client_id?: string | null
+          content_readiness?: string | null
+          created_at?: string | null
+          design_examples?: string | null
+          email: string
+          fit_status?: string
+          goals?: string | null
+          id?: string
+          kanban_stage?: string
+          name: string
+          pages_estimate?: number | null
+          project_description?: string | null
+          raw_conversation?: Json | null
+          raw_summary?: string | null
+          source?: string | null
+          special_needs?: string | null
+          suggested_tier?: string | null
+          tech_comfort?: string | null
+          timeline?: string | null
+        }
+        Update: {
+          budget_range?: string | null
+          business_name?: string | null
+          client_id?: string | null
+          content_readiness?: string | null
+          created_at?: string | null
+          design_examples?: string | null
+          email?: string
+          fit_status?: string
+          goals?: string | null
+          id?: string
+          kanban_stage?: string
+          name?: string
+          pages_estimate?: number | null
+          project_description?: string | null
+          raw_conversation?: Json | null
+          raw_summary?: string | null
+          source?: string | null
+          special_needs?: string | null
+          suggested_tier?: string | null
+          tech_comfort?: string | null
+          timeline?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_intakes_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       request_limits: {
         Row: {
           client_id: string

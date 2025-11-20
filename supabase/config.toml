@@ -1,1 +1,10 @@
 project_id = "qmwkhayegskycrpgudit"
+
+[functions.send-contact-notification]
+verify_jwt = false
+
+[functions.ai-intake]
+verify_jwt = false
+
+[functions.send-intake-notification]
+verify_jwt = false

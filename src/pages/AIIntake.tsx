@@ -1,0 +1,244 @@
+import { useState, useRef, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Loader2, Send, Bot, User } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
+const AIIntake = () => {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: "assistant",
+      content: "Hi! I'm here to help you figure out if a simple website project is right for your needs. I'll ask you some questions about what you're looking for, and at the end we'll see if we're a good match. Sound good?",
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
+
+    const userMessage = input.trim();
+    setInput("");
+    setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-intake", {
+        body: {
+          messages: [...messages, { role: "user", content: userMessage }],
+        },
+      });
+
+      if (error) throw error;
+
+      if (data.message) {
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: data.message },
+        ]);
+
+        // Check if this is the completion message asking for contact info
+        if (data.message.toLowerCase().includes("name") && data.message.toLowerCase().includes("email")) {
+          // Next user message will trigger intake creation
+        }
+
+        // Check if we should create the intake (user provided name and email after assessment)
+        const lastAssistantMsg = data.message.toLowerCase();
+        if (lastAssistantMsg.includes("create") && lastAssistantMsg.includes("intake")) {
+          await createIntake([...messages, { role: "user", content: userMessage }, { role: "assistant", content: data.message }]);
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const createIntake = async (conversationHistory: Message[]) => {
+    // Parse the conversation to extract structured data
+    // This is a simplified version - in production you'd use AI to structure this
+    const conversation = conversationHistory.filter(m => m.role === "user").map(m => m.content);
+    
+    // Extract email and name from last user message (assuming format like "John Doe, john@example.com")
+    const lastUserMsg = conversation[conversation.length - 1];
+    const emailMatch = lastUserMsg.match(/[\w.-]+@[\w.-]+\.\w+/);
+    const email = emailMatch ? emailMatch[0] : "";
+    
+    // Extract name (text before comma or email)
+    const nameMatch = lastUserMsg.split(/[,@]/)[0].trim();
+    const name = nameMatch || "Unknown";
+
+    const intakeData = {
+      name,
+      email,
+      business_name: conversation[0] || "",
+      project_description: conversation[0] || "",
+      goals: conversation[1] || "",
+      pages_estimate: parseInt(conversation[2]) || null,
+      content_readiness: conversation[3] || "",
+      timeline: conversation[4] || "",
+      budget_range: conversation[5] || "",
+      design_examples: conversation[6] || "",
+      special_needs: conversation[7] || "",
+      tech_comfort: conversation[8] || "",
+      fit_status: "good", // AI should determine this
+      suggested_tier: "1000", // AI should determine this
+      raw_summary: conversationHistory.find(m => m.role === "assistant" && m.content.includes("assess"))?.content || "",
+      raw_conversation: conversationHistory,
+    };
+
+    try {
+      const { error } = await supabase.functions.invoke("ai-intake", {
+        body: {
+          action: "create_intake",
+          intakeData,
+        },
+      });
+
+      if (error) throw error;
+
+      setIsComplete(true);
+      toast.success("Intake submitted! I'll review and follow up by email soon.");
+    } catch (error) {
+      console.error("Error creating intake:", error);
+      toast.error("Failed to save your intake. Please try again.");
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-6 py-16 max-w-4xl">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-semibold mb-4">
+            Talk through your site with an intake assistant
+          </h1>
+          <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+            Instead of a long form or discovery call, answer a few questions here. 
+            This helps me see if I'm the right fit and what kind of site you need.
+          </p>
+        </div>
+
+        {/* Chat Container */}
+        <Card className="shadow-lg border-2 mb-6">
+          <CardContent className="p-6">
+            <div className="space-y-4 mb-4 max-h-[500px] overflow-y-auto">
+              {messages.map((msg, idx) => (
+                <div
+                  key={idx}
+                  className={`flex gap-3 ${
+                    msg.role === "user" ? "flex-row-reverse" : "flex-row"
+                  }`}
+                >
+                  <div
+                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                      msg.role === "user"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted"
+                    }`}
+                  >
+                    {msg.role === "user" ? (
+                      <User className="w-4 h-4" />
+                    ) : (
+                      <Bot className="w-4 h-4" />
+                    )}
+                  </div>
+                  <div
+                    className={`flex-1 p-4 rounded-lg ${
+                      msg.role === "user"
+                        ? "bg-primary text-primary-foreground ml-12"
+                        : "bg-muted mr-12"
+                    }`}
+                  >
+                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                      {msg.content}
+                    </p>
+                  </div>
+                </div>
+              ))}
+              {isLoading && (
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-muted">
+                    <Bot className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 p-4 rounded-lg bg-muted mr-12">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {!isComplete && (
+              <div className="flex gap-2">
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Type your answer..."
+                  disabled={isLoading}
+                  className="flex-1"
+                />
+                <Button
+                  onClick={handleSend}
+                  disabled={isLoading || !input.trim()}
+                  size="icon"
+                >
+                  {isLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
+            )}
+
+            {isComplete && (
+              <div className="p-4 rounded-lg bg-primary/5 border-2 border-primary/20 text-center">
+                <p className="text-base font-medium mb-2">All set!</p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  I'll review your answers and email you within a day or two. If I'm not the right fit, I'll say so directly.
+                </p>
+                <Button onClick={() => navigate("/")}>Back to Home</Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <p className="text-sm text-center text-muted-foreground">
+          When you're done, I'll review your answers and email you within a day or two.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default AIIntake;
