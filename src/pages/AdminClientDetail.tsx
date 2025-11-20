@@ -347,67 +347,15 @@ const AdminClientDetail = () => {
                 />
               </div>
 
-              <div className="border-t pt-4 space-y-4">
-                <div>
-                  <Label htmlFor="plan_type">Plan type*</Label>
-                  <Select
-                    value={clientForm.plan_type}
-                    onValueChange={(value) => setClientForm({ ...clientForm, plan_type: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="build_only">Build only</SelectItem>
-                      <SelectItem value="care_plan">Care plan</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="setup_fee">Setup fee ($)</Label>
-                    <Input
-                      id="setup_fee"
-                      type="number"
-                      value={clientForm.setup_fee_dollars}
-                      onChange={(e) =>
-                        setClientForm({ ...clientForm, setup_fee_dollars: parseFloat(e.target.value) || 0 })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="monthly_fee">Monthly fee ($)</Label>
-                    <Input
-                      id="monthly_fee"
-                      type="number"
-                      value={clientForm.monthly_fee_dollars}
-                      onChange={(e) =>
-                        setClientForm({ ...clientForm, monthly_fee_dollars: parseFloat(e.target.value) || 0 })
-                      }
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="monthly_included_minutes">Monthly included minutes</Label>
-                  <Input
-                    id="monthly_included_minutes"
-                    type="number"
-                    value={clientForm.monthly_included_minutes}
-                    onChange={(e) =>
-                      setClientForm({ ...clientForm, monthly_included_minutes: parseInt(e.target.value) || 0 })
-                    }
-                  />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="active"
-                    checked={clientForm.active}
-                    onCheckedChange={(checked) => setClientForm({ ...clientForm, active: checked as boolean })}
-                  />
-                  <Label htmlFor="active" className="cursor-pointer">
-                    Active client
-                  </Label>
-                </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="active"
+                  checked={clientForm.active}
+                  onCheckedChange={(checked) => setClientForm({ ...clientForm, active: checked as boolean })}
+                />
+                <Label htmlFor="active" className="cursor-pointer">
+                  Active client
+                </Label>
               </div>
 
               <div className="border-t pt-4 space-y-2">
