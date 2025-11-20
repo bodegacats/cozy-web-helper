@@ -3,14 +3,27 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ContactForm } from "@/components/ContactForm";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Check, X } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import Navbar from "@/components/Navbar";
 import { Helmet } from "react-helmet";
 import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Index = () => {
   const [pageCount, setPageCount] = useState<number>(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    notes: ''
+  });
 
   const calculatePrice = (pages: number): number => {
     if (pages === 1) return 500;
@@ -20,6 +33,62 @@ const Index = () => {
   };
 
   const currentPrice = calculatePrice(pageCount);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validation
+    if (!formData.name.trim() || !formData.email.trim()) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      const { error } = await supabase.from('contact_submissions').insert({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        wish: "Instant quote",
+        project_description: "Instant quote submission",
+        selected_options: { pageCount },
+        estimate_low: currentPrice,
+        estimate_high: currentPrice,
+        notes: formData.notes.trim() || null,
+        status: "new"
+      });
+      
+      if (error) throw error;
+      
+      setIsSuccess(true);
+      toast.success("Estimate sent successfully!");
+      
+      // Auto-close after 3 seconds
+      setTimeout(() => {
+        setIsModalOpen(false);
+        setIsSuccess(false);
+        setFormData({ name: '', email: '', notes: '' });
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Error submitting estimate:', error);
+      toast.error("Failed to submit estimate. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const scrollToContact = () => {
     const element = document.getElementById('contact');
@@ -103,7 +172,7 @@ const Index = () => {
             and you're done — unless you need updates later (then you just ask). Most sites launch in 5–7 business days.
           </p>
           <p className="text-sm md:text-base text-muted-foreground/80 max-w-xl mx-auto italic">
-            Not sure you even need a new site? Get a <strong>$50 site checkup</strong> — a short written audit covering what's working, what isn't, and what I'd change. <a href="#contact" className="text-primary hover:underline">Contact me to get started.</a>
+            Not sure you even need a new site? Get a <strong>$50 site checkup</strong> — a quick, practical review of your current website. I'll send you a short written audit covering what's working, what isn't, and what I'd change. Clear, actionable, no jargon. <a href="#contact" className="text-primary hover:underline">Contact me to get started.</a>
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <div className="flex flex-col items-center gap-2">
@@ -414,15 +483,15 @@ const Index = () => {
               {/* Included List */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-center">What's included:</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Custom, simple design</li>
-                  <li>• Clean code</li>
-                  <li>• Mobile optimization</li>
-                  <li>• Fast loading</li>
-                  <li>• Hosting & security handled</li>
-                  <li>• Contact form setup</li>
-                  <li>• Up to 2 revision rounds</li>
-                  <li>• Clear instructions for updates</li>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
+                  <li>• Clean, simple, mobile-ready design</li>
+                  <li>• Hosting</li>
+                  <li>• Security</li>
+                  <li>• Easy editing tools</li>
+                  <li>• Fast performance</li>
+                  <li>• Two rounds of revisions</li>
+                  <li>• Guidance on best practices</li>
+                  <li>• Launch support</li>
                 </ul>
               </div>
 
@@ -431,11 +500,109 @@ const Index = () => {
                 You provide the words and images. I handle the build.
               </p>
 
-              {/* CTA Button */}
-              <div className="text-center pt-4">
-                <Button asChild size="lg">
-                  <a href="/start">Talk to the intake AI</a>
-                </Button>
+              {/* CTA Buttons */}
+              <div className="space-y-3 pt-4">
+                <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="w-full" size="lg">
+                      Send me this estimate
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    {!isSuccess ? (
+                      <>
+                        <DialogHeader>
+                          <DialogTitle>Send me this estimate</DialogTitle>
+                          <DialogDescription>
+                            I'll review this and get back to you within one business day.
+                          </DialogDescription>
+                        </DialogHeader>
+                        
+                        <div className="space-y-4 py-4">
+                          <div className="space-y-2 pb-4 border-b">
+                            <p className="text-sm font-medium">
+                              Estimated price: <span className="text-2xl font-bold text-primary">${currentPrice}</span>
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Based on {pageCount} page{pageCount !== 1 ? 's' : ''}
+                            </p>
+                          </div>
+                          
+                          <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="name">Name *</Label>
+                              <Input
+                                id="name"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                                required
+                                placeholder="Your name"
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="email">Email *</Label>
+                              <Input
+                                id="email"
+                                name="email"
+                                type="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                required
+                                placeholder="your@email.com"
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="notes">Notes about your project (optional)</Label>
+                              <Textarea
+                                id="notes"
+                                name="notes"
+                                value={formData.notes}
+                                onChange={handleInputChange}
+                                placeholder="Any additional details..."
+                                rows={3}
+                              />
+                            </div>
+                            
+                            <Button type="submit" className="w-full" disabled={isSubmitting}>
+                              {isSubmitting ? "Sending..." : "Send Estimate"}
+                            </Button>
+                          </form>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="py-8 text-center space-y-4">
+                        <DialogHeader>
+                          <DialogTitle>Thanks!</DialogTitle>
+                          <DialogDescription>
+                            I'll review your estimate and reply within one business day.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <Button onClick={() => setIsModalOpen(false)} variant="outline">
+                          Close
+                        </Button>
+                      </div>
+                    )}
+                  </DialogContent>
+                </Dialog>
+                
+                <div className="text-center">
+                  <Button 
+                    asChild 
+                    variant="ghost" 
+                    size="sm"
+                    className="text-sm"
+                  >
+                    <button onClick={() => {
+                      const element = document.getElementById('pricing');
+                      element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}>
+                      View pricing details
+                    </button>
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -446,8 +613,50 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Pricing Details - How It Works */}
+        <section className="py-20 md:py-28 px-4">
+          <div className="max-w-3xl mx-auto space-y-8">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center">
+              How Pricing Works
+            </h2>
+            
+            <div className="prose prose-lg mx-auto text-muted-foreground">
+              <div className="bg-card border-2 rounded-lg p-8 space-y-6 shadow-sm">
+                <div>
+                  <h3 className="text-xl font-semibold text-foreground mb-3">Simple, Tiered Pricing</h3>
+                  <ul className="space-y-2 text-base">
+                    <li>• <strong>1 page:</strong> $500</li>
+                    <li>• <strong>2-4 pages:</strong> $1,000</li>
+                    <li>• <strong>5-7 pages:</strong> $1,500</li>
+                  </ul>
+                </div>
+                
+                <div className="pt-4 border-t">
+                  <h3 className="text-xl font-semibold text-foreground mb-3">What's Always Included</h3>
+                  <ul className="space-y-2 text-base">
+                    <li>• Clean, simple, mobile-ready design</li>
+                    <li>• Hosting</li>
+                    <li>• Security</li>
+                    <li>• Easy editing tools</li>
+                    <li>• Fast performance</li>
+                    <li>• Two rounds of revisions</li>
+                    <li>• Guidance on best practices</li>
+                    <li>• Launch support</li>
+                  </ul>
+                </div>
+                
+                <div className="pt-4 border-t">
+                  <p className="text-sm text-muted-foreground italic">
+                    You provide the words and images. I handle the build.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* FAQ */}
-        <section id="faq" className="py-20 md:py-28 px-4">
+        <section id="faq" className="py-20 md:py-28 px-4 bg-muted/30">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-12">Frequently Asked Questions</h2>
             <Accordion type="single" collapsible className="space-y-4">
