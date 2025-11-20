@@ -413,11 +413,11 @@ const Index = () => {
               Hosting and your domain are paid directly to your provider (usually around $100–$200 per year). If you want ongoing help after launch, we can keep things simple and talk about a small, separate maintenance arrangement.
             </p>
             <p className="text-sm text-muted-foreground text-center max-w-3xl mx-auto mt-6">
-              Not sure which option fits your project?{" "}
+              Not sure which option fits?{" "}
               <a href="/estimate" className="text-primary hover:underline">
                 Try the guided estimate
               </a>{" "}
-              to see your price range.
+              — it uses the same pricing I use when quoting projects.
             </p>
           </div>
         </section>

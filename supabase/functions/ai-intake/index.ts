@@ -7,6 +7,32 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Unified pricing engine (duplicated from frontend)
+function calculateEstimate(inputs: {
+  pageCount: number;
+  contentReadiness: string;
+  hasGallery: boolean;
+  hasBlog: boolean;
+  isRush: boolean;
+}) {
+  let base = 500;
+  if (inputs.pageCount >= 2 && inputs.pageCount <= 4) base = 1000;
+  else if (inputs.pageCount >= 5 && inputs.pageCount <= 7) base = 1500;
+  else if (inputs.pageCount > 7) base = 1500;
+
+  const addOns: { [key: string]: number } = {};
+  
+  if (inputs.contentReadiness === 'light') addOns['Copy Support'] = 150;
+  if (inputs.contentReadiness === 'heavy') addOns['Copy Shaping'] = 300;
+  if (inputs.hasGallery) addOns['Gallery/Images'] = 100;
+  if (inputs.hasBlog) addOns['Blog Setup'] = 150;
+  if (inputs.isRush) addOns['Rush Delivery'] = 200;
+
+  const total = base + Object.values(addOns).reduce((sum, val) => sum + val, 0);
+
+  return { total, base, addOns };
+}
+
 const SYSTEM_PROMPT = `You are the Website Project Intake Assistant for Build me a simple site.
 Your job is to run a clean, friendly, SHORT website intake that captures the required project details AND always collects the user's identity first.
 
@@ -86,6 +112,14 @@ Fill every field.
 Be concise and friendly.
 
 Do NOT give pricing unless the user specifically asks.
+
+If the user asks about pricing:
+- Ask clarifying questions to gather: page count, content readiness (ready/light editing/heavy shaping), whether they need a gallery, whether they need a blog, and timeline (normal/rush)
+- Use the get_pricing_estimate tool to calculate pricing
+- Base tiers are $500 (1 page), $1000 (2-4 pages), $1500 (5-7 pages)
+- Add-ons: light editing +$150, heavy shaping +$300, gallery +$100, blog +$150, rush +$200
+- Present pricing calmly: "Based on [X pages], [add-ons], your estimated total is $[amount]. This matches the [tier name] tier."
+- Suggest which flat tier (500 / 1000 / 1500) they fall closest to
 
 Do NOT oversell.
 
@@ -227,6 +261,30 @@ serve(async (req) => {
           { role: 'system', content: SYSTEM_PROMPT },
           ...messages
         ],
+        tools: [
+          {
+            type: 'function',
+            function: {
+              name: 'get_pricing_estimate',
+              description: 'Calculate pricing estimate based on project requirements',
+              parameters: {
+                type: 'object',
+                properties: {
+                  pageCount: { type: 'number', description: 'Number of pages (1-7)' },
+                  contentReadiness: { 
+                    type: 'string', 
+                    enum: ['ready', 'light', 'heavy'],
+                    description: 'Content readiness level'
+                  },
+                  hasGallery: { type: 'boolean', description: 'Need gallery/portfolio' },
+                  hasBlog: { type: 'boolean', description: 'Need blog setup' },
+                  isRush: { type: 'boolean', description: 'Rush delivery needed' }
+                },
+                required: ['pageCount', 'contentReadiness', 'hasGallery', 'hasBlog', 'isRush']
+              }
+            }
+          }
+        ],
         stream: false,
       }),
     });
@@ -256,7 +314,46 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    const aiMessage = data.choices[0].message.content;
+    let aiMessage = data.choices[0].message.content;
+
+    // Handle tool calls if present
+    if (data.choices[0].message.tool_calls) {
+      const toolCall = data.choices[0].message.tool_calls[0];
+      if (toolCall.function.name === 'get_pricing_estimate') {
+        const args = JSON.parse(toolCall.function.arguments);
+        const estimate = calculateEstimate(args);
+        
+        // Make a second request with the tool result
+        const followUpResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              { role: 'system', content: SYSTEM_PROMPT },
+              ...messages,
+              data.choices[0].message,
+              {
+                role: 'tool',
+                tool_call_id: toolCall.id,
+                content: JSON.stringify(estimate)
+              }
+            ],
+            stream: false,
+          }),
+        });
+        
+        if (!followUpResponse.ok) {
+          console.error('Follow-up AI request failed:', await followUpResponse.text());
+        } else {
+          const followUpData = await followUpResponse.json();
+          aiMessage = followUpData.choices[0].message.content;
+        }
+      }
+    }
 
     return new Response(
       JSON.stringify({ message: aiMessage }),
