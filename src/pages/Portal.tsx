@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { ExternalLink, ArrowLeft, Trash2 } from "lucide-react";
+import { CancelRequestDialog } from "@/components/CancelRequestDialog";
 
 interface Client {
   id: string;
@@ -32,6 +33,8 @@ const Portal = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [client, setClient] = useState<Client | null>(null);
   const [requests, setRequests] = useState<UpdateRequest[]>([]);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [requestToCancel, setRequestToCancel] = useState<{ id: string; title: string } | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -105,21 +108,30 @@ const Portal = () => {
     }
   };
 
-  const handleCancelRequest = async (requestId: string) => {
-    if (!confirm("Are you sure you want to cancel this request?")) return;
+  const handleCancelRequest = async () => {
+    if (!requestToCancel) return;
 
     const { error } = await supabase
       .from('update_requests')
       .update({ status: 'cancelled' })
-      .eq('id', requestId);
+      .eq('id', requestToCancel.id)
+      .eq('status', 'new'); // Only cancel if still new
 
     if (error) {
-      toast.error("Could not cancel request");
+      console.error('Cancel error:', error);
+      toast.error("Could not cancel request. It may have already been started.");
       return;
     }
 
     toast.success("Request cancelled");
+    setCancelDialogOpen(false);
+    setRequestToCancel(null);
     loadClientData();
+  };
+
+  const openCancelDialog = (id: string, title: string) => {
+    setRequestToCancel({ id, title });
+    setCancelDialogOpen(true);
   };
 
 
@@ -289,7 +301,7 @@ const Portal = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleCancelRequest(request.id)}
+                          onClick={() => openCancelDialog(request.id, request.title)}
                           className="h-8 w-8 p-0"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -324,6 +336,13 @@ const Portal = () => {
           </CardContent>
         </Card>
       </div>
+
+      <CancelRequestDialog
+        open={cancelDialogOpen}
+        onOpenChange={setCancelDialogOpen}
+        onConfirm={handleCancelRequest}
+        requestTitle={requestToCancel?.title || ""}
+      />
     </div>
   );
 };
