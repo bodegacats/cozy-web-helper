@@ -12,7 +12,6 @@ interface Client {
   business_name: string | null;
   email: string;
   website_url: string | null;
-  plan_type: string;
   created_at: string;
 }
 
@@ -103,7 +102,6 @@ const AdminClients = () => {
                       <th className="pb-3 font-semibold">Business/Project</th>
                       <th className="pb-3 font-semibold">Email</th>
                       <th className="pb-3 font-semibold">Website</th>
-                      <th className="pb-3 font-semibold">Plan</th>
                       <th className="pb-3 font-semibold">Created</th>
                       <th className="pb-3"></th>
                     </tr>
@@ -134,7 +132,6 @@ const AdminClients = () => {
                             <span className="text-muted-foreground">—</span>
                           )}
                         </td>
-                        <td className="py-3">{client.plan_type.replace(/_/g, ' ')}</td>
                         <td className="py-3 text-muted-foreground">
                           {new Date(client.created_at).toLocaleDateString()}
                         </td>

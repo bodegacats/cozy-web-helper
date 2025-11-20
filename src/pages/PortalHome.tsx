@@ -4,8 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { formatCurrency } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 
@@ -15,10 +13,6 @@ interface Client {
   business_name: string | null;
   email: string;
   website_url: string | null;
-  plan_type: string;
-  monthly_fee_cents: number;
-  setup_fee_cents: number;
-  monthly_included_minutes: number;
   active: boolean;
 }
 
@@ -31,17 +25,11 @@ interface UpdateRequest {
   quoted_price_cents: number | null;
 }
 
-interface RequestLimits {
-  included_requests: number;
-  used_requests: number;
-}
-
 const PortalHome = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [client, setClient] = useState<Client | null>(null);
   const [requests, setRequests] = useState<UpdateRequest[]>([]);
-  const [limits, setLimits] = useState<RequestLimits | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -82,18 +70,6 @@ const PortalHome = () => {
       .limit(10);
 
     setRequests(requestsData || []);
-
-    const currentMonth = new Date();
-    const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-    
-    const { data: limitsData } = await supabase
-      .from('request_limits')
-      .select('included_requests, used_requests')
-      .eq('client_id', clientData.id)
-      .eq('month', monthStart.toISOString().split('T')[0])
-      .maybeSingle();
-
-    setLimits(limitsData || { included_requests: 2, used_requests: 0 });
     setLoading(false);
   };
 
@@ -107,12 +83,6 @@ const PortalHome = () => {
 
     const config = variants[status] || { variant: "outline", label: status };
     return <Badge variant={config.variant}>{config.label}</Badge>;
-  };
-
-  const formatQuotedPrice = (sizeTier: string, quotedPriceCents: number | null) => {
-    if (sizeTier === 'tiny') return 'Free';
-    if (sizeTier === 'large' || quotedPriceCents === null) return 'Quote pending';
-    return formatCurrency(quotedPriceCents);
   };
 
   const handleLogout = async () => {
@@ -160,41 +130,16 @@ const PortalHome = () => {
 
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Your website details</CardTitle>
+            <CardTitle>Your website</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent>
             {client.website_url && (
-              <div>
-                <Button variant="outline" asChild>
-                  <a href={client.website_url} target="_blank" rel="noopener noreferrer">
-                    Open my site <ExternalLink className="ml-2 h-4 w-4" />
-                  </a>
-                </Button>
-              </div>
+              <Button variant="outline" asChild>
+                <a href={client.website_url} target="_blank" rel="noopener noreferrer">
+                  Open my site <ExternalLink className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
             )}
-            
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Plan</p>
-              {client.plan_type === 'build_only' ? (
-                <p>
-                  Build Only. You paid {formatCurrency(client.setup_fee_cents)} for your website build.
-                </p>
-              ) : (
-                <div>
-                  <p>
-                    Care Plan. Monthly fee: {formatCurrency(client.monthly_fee_cents)}.
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Included requests each month: {limits?.included_requests || 2}
-                  </p>
-                  {limits && (
-                    <p className="text-sm text-muted-foreground">
-                      Used this month: {limits.used_requests} of {limits.included_requests}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
           </CardContent>
         </Card>
 
@@ -244,40 +189,6 @@ const PortalHome = () => {
             )}
           </CardContent>
         </Card>
-
-        {client.plan_type === 'build_only' ? (
-          <Card className="mb-6">
-            <CardContent className="pt-6">
-              <p className="text-sm text-muted-foreground">
-                You're on a build-only plan. Small fixes are free. Larger updates will show a quote before you approve anything.
-              </p>
-            </CardContent>
-          </Card>
-        ) : (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Your monthly included edits</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between text-sm">
-                <span>Included minutes:</span>
-                <span className="font-semibold">{client.monthly_included_minutes} minutes</span>
-              </div>
-              {limits && (
-                <>
-                  <div className="flex justify-between text-sm">
-                    <span>Requests used this month:</span>
-                    <span className="font-semibold">{limits.used_requests} of {limits.included_requests}</span>
-                  </div>
-                  <Progress 
-                    value={(limits.used_requests / limits.included_requests) * 100} 
-                    className="h-2"
-                  />
-                </>
-              )}
-            </CardContent>
-          </Card>
-        )}
 
         <Card className="mb-6">
           <CardHeader>

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,8 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { ArrowLeft, Upload, X, Loader2, AlertCircle, CheckCircle } from "lucide-react";
-import { getCurrentMonthStart } from "@/lib/utils";
+import { Upload, X, Loader2, AlertCircle, CheckCircle } from "lucide-react";
 import { PortalNav } from "@/components/PortalNav";
 
 interface Client {
@@ -30,8 +29,6 @@ const PortalRequest = () => {
   const navigate = useNavigate();
   const [client, setClient] = useState<Client | null>(null);
   const [loading, setLoading] = useState(true);
-  const [canSubmit, setCanSubmit] = useState(false);
-  const [openRequestsCount, setOpenRequestsCount] = useState(0);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [aiClassification, setAiClassification] = useState<AIClassification | null>(null);
@@ -106,16 +103,6 @@ const PortalRequest = () => {
     }
 
     setClient(clientData);
-
-    const { data: requestsData, count } = await supabase
-      .from('update_requests')
-      .select('id', { count: 'exact' })
-      .eq('client_id', clientData.id)
-      .neq('status', 'done');
-
-    const openCount = count || 0;
-    setOpenRequestsCount(openCount);
-    setCanSubmit(openCount < 2);
     setLoading(false);
   };
 
@@ -171,11 +158,6 @@ const PortalRequest = () => {
 
     if (!client) return;
 
-    if (!canSubmit) {
-      toast.error("You already have two active requests");
-      return;
-    }
-
     setUploading(true);
 
     // Upload files to storage
@@ -227,32 +209,6 @@ const PortalRequest = () => {
       return;
     }
 
-    const monthStart = getCurrentMonthStart();
-    const monthKey = monthStart.toISOString().split('T')[0];
-
-    const { data: existingLimit } = await supabase
-      .from('request_limits')
-      .select('*')
-      .eq('client_id', client.id)
-      .eq('month', monthKey)
-      .maybeSingle();
-
-    if (existingLimit) {
-      await supabase
-        .from('request_limits')
-        .update({ used_requests: existingLimit.used_requests + 1 })
-        .eq('id', existingLimit.id);
-    } else {
-      await supabase
-        .from('request_limits')
-        .insert({
-          client_id: client.id,
-          month: monthKey,
-          included_requests: 2,
-          used_requests: 1
-        });
-    }
-
     toast.success("Got it. I will review this and get back to you.");
     setUploading(false);
     navigate('/portal/home');
@@ -278,26 +234,6 @@ const PortalRequest = () => {
           </CardHeader>
           <CardContent>
             <Button onClick={() => navigate('/portal/home')} variant="outline" className="w-full">
-              Back to home
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  if (!canSubmit) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Request limit reached</CardTitle>
-            <CardDescription>
-              You already have two active requests. Once one is marked done, you can send another.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button onClick={() => navigate('/portal/home')} className="w-full">
               Back to home
             </Button>
           </CardContent>
