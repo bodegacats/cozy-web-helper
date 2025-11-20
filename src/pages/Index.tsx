@@ -19,7 +19,7 @@ const Index = () => {
     { id: 4, text: "Do you want one person (not a team) handling your entire project from start to finish?" },
     { id: 5, text: "Do you want to avoid learning new tools or platforms?" },
     { id: 6, text: "Can your project wait about a week for delivery?" },
-    { id: 7, text: "Do you have a budget in the $1,500–$4,000 range?" },
+    { id: 7, text: "Do you have a budget of $500–$1,500?" },
   ];
 
   const handleChecklistSubmit = () => {
@@ -82,10 +82,13 @@ const Index = () => {
             One person website service
           </p>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight">
-            Get a small website built in about a week, without learning a thing
+            Get a website built in a week. No learning curve.
           </h1>
           <p className="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-2xl mx-auto">
-            I build small, focused websites for small businesses, solo professionals, artists, nonprofits, and creative projects who never wanted to learn web tools in the first place. We talk through what you need, I pull what I need from you, and I build and launch the site for you, usually in under a week. Tiny fixes like typos or swapping a photo are included. Bigger changes are quoted before I touch anything. No long contract, no dashboard, no agency drama.
+            I build small, focused websites for people who have real work to do and never wanted to learn a website platform. You tell me what you need, I build it, launch it, and handle small fixes. Most sites are done in under a week. Pricing is flat: $500–$1,500 depending on scope.
+          </p>
+          <p className="text-sm md:text-base text-muted-foreground/80 max-w-xl mx-auto italic">
+            Not sure you even need a new site? Start with a $50 site checkup.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Button size="lg" onClick={scrollToChecklist} className="shadow-base">
@@ -121,7 +124,7 @@ const Index = () => {
                   <div className="text-4xl font-semibold text-primary">2</div>
                   <h3 className="text-xl font-semibold">I build your site</h3>
                   <p className="text-base leading-relaxed text-muted-foreground">
-                    I design and build your site, check in with you as I go, and make revisions based on your feedback. Once I have what I need from you, I usually build and launch your site in under a week.
+                    You send me your content (text, images, links, etc.). I ask clarifying questions. I build it, walk you through the final result, and launch it. Once I have what I need from you, most sites launch within a week.
                   </p>
                 </CardContent>
               </Card>
@@ -328,7 +331,7 @@ const Index = () => {
                     Dog walking and pet sitting service in Jersey City.
                   </p>
                   <p className="text-sm leading-relaxed">
-                    The site focuses on trust, local proof, and making it easy for people to call or book a walk.
+                    The owner had no website and was losing leads to competitors who showed up in Google. Built a 4-page site focused on trust signals and local proof. Calls went up 40% in the first month.
                   </p>
                   <a 
                     href="https://rufflifejc.com/" 
@@ -365,7 +368,7 @@ const Index = () => {
                     NYC walking tours with a cat-history twist.
                   </p>
                   <p className="text-sm leading-relaxed">
-                    This site needed to clearly explain each tour, highlight press, and guide people to book dates.
+                    Needed a site that explained each tour clearly, highlighted press coverage, and drove bookings through FareHarbor. Site launched on deadline before a major media hit. Bookings doubled.
                   </p>
                   <a 
                     href="https://catsabouttowntours.com/" 
@@ -402,7 +405,7 @@ const Index = () => {
                     Advocacy, stories, and community around NYC's shop cats.
                   </p>
                   <p className="text-sm leading-relaxed">
-                    The goal was to showcase news, blog posts, and press while giving visitors clear ways to follow and support the project.
+                    The project had scattered content across social media with no central hub. Built a home for blog posts, press coverage, and clear calls to action for following and supporting the project.
                   </p>
                   <a 
                     href="https://bodegacatsofnewyork.com/" 
@@ -439,7 +442,7 @@ const Index = () => {
                     Pop-up life drawing experience for events and celebrations.
                   </p>
                   <p className="text-sm leading-relaxed">
-                    This site needed to explain the concept quickly and drive event inquiries and venue bookings.
+                    New business needed to book private events and venue partnerships fast. Built a 3-page site that explained the concept quickly and drove inquiries. First event booked within two weeks of launch.
                   </p>
                   <a 
                     href="http://pencilsandpecs.com/" 
@@ -530,7 +533,7 @@ const Index = () => {
                       "One clean, scrolling page",
                       "You provide the words and images, I tidy and place them",
                       "1 round of revisions",
-                      "Usually ready within a few days after your content is ready"
+                      "Usually ready within a few days"
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
                         <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
@@ -557,7 +560,7 @@ const Index = () => {
                       "Up to 4 pages (for example: Home, About, Services or Work, Contact)",
                       "I help organize and lightly edit your content",
                       "2 rounds of revisions",
-                      "Usually ready within about a week after your content is ready"
+                      "Usually ready within a week"
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
                         <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
@@ -584,7 +587,7 @@ const Index = () => {
                       "Up to 6–7 pages",
                       "Help shaping structure and wording (light copy support)",
                       "3 rounds of revisions",
-                      "Usually ready within about a week once your content is ready and you can respond to reviews"
+                      "Usually ready within a week"
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
                         <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
@@ -639,7 +642,7 @@ const Index = () => {
                   <span className="text-lg leading-relaxed font-medium">What platform do you use?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed text-muted-foreground">
-                  I use Lovable, a modern builder that lets me move fast without writing code. You do not have to log in or learn anything new. You own the finished site, and we can export or move it later if you ever want to change where it lives.
+                  I use Lovable, a modern builder that lets me move fast without code. You don't have to log in or learn anything. You own the final site, and we can export or move it later if you ever want to.
                 </AccordionContent>
               </AccordionItem>
 
