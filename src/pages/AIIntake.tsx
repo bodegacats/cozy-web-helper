@@ -34,6 +34,61 @@ const AIIntake = () => {
     scrollToBottom();
   }, [messages]);
 
+  const parseIntakeJSON = (content: string) => {
+    // Try to find JSON in the message
+    const jsonMatch = content.match(/\{[\s\S]*"name"[\s\S]*"email"[\s\S]*\}/);
+    if (!jsonMatch) return null;
+
+    try {
+      const parsed = JSON.parse(jsonMatch[0]);
+      
+      // Map fields from AI's JSON schema to our database schema
+      return {
+        name: parsed.name || "",
+        email: parsed.email || "",
+        business_name: parsed.business_name || null,
+        website_url: parsed.website_url || null,
+        project_description: parsed.project_description || "",
+        goals: parsed.goal || "",
+        pages_estimate: parsed.pages ? parseInt(parsed.pages) : null,
+        content_readiness: parsed.content_ready || "",
+        timeline: parsed.timeline || "",
+        budget_range: parsed.budget || "",
+        design_examples: parsed.design_examples || "",
+        special_needs: parsed.advanced_features || "",
+        tech_comfort: parsed.update_preference || "",
+        fit_status: parsed.fit === "good" ? "good" : parsed.fit === "maybe" ? "borderline" : "not_fit",
+        suggested_tier: parsed.budget?.includes("1500") || parsed.budget?.includes("$1,500") ? "1500" 
+                      : parsed.budget?.includes("500") || parsed.budget?.includes("$500") ? "500"
+                      : "1000",
+        raw_summary: parsed.intake_summary || "",
+        raw_conversation: parsed.raw_chat || messages,
+      };
+    } catch (e) {
+      console.error("Failed to parse intake JSON:", e);
+      return null;
+    }
+  };
+
+  const createIntake = async (intakeData: any) => {
+    try {
+      const { error } = await supabase.functions.invoke("ai-intake", {
+        body: {
+          action: "create_intake",
+          intakeData,
+        },
+      });
+
+      if (error) throw error;
+
+      setIsComplete(true);
+      toast.success("Intake submitted! I'll review and follow up by email soon.");
+    } catch (error) {
+      console.error("Error creating intake:", error);
+      toast.error("Failed to save your intake. Please try again.");
+    }
+  };
+
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
@@ -52,20 +107,14 @@ const AIIntake = () => {
       if (error) throw error;
 
       if (data.message) {
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: data.message },
-        ]);
+        const assistantMessage = { role: "assistant" as const, content: data.message };
+        setMessages((prev) => [...prev, assistantMessage]);
 
-        // Check if this is the completion message asking for contact info
-        if (data.message.toLowerCase().includes("name") && data.message.toLowerCase().includes("email")) {
-          // Next user message will trigger intake creation
-        }
-
-        // Check if we should create the intake (user provided name and email after assessment)
-        const lastAssistantMsg = data.message.toLowerCase();
-        if (lastAssistantMsg.includes("create") && lastAssistantMsg.includes("intake")) {
-          await createIntake([...messages, { role: "user", content: userMessage }, { role: "assistant", content: data.message }]);
+        // Check if the message contains the final JSON output
+        const intakeData = parseIntakeJSON(data.message);
+        if (intakeData && intakeData.email && intakeData.name) {
+          // Automatically create the intake
+          await createIntake(intakeData);
         }
       }
     } catch (error) {
@@ -73,57 +122,6 @@ const AIIntake = () => {
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const createIntake = async (conversationHistory: Message[]) => {
-    // Parse the conversation to extract structured data
-    // This is a simplified version - in production you'd use AI to structure this
-    const conversation = conversationHistory.filter(m => m.role === "user").map(m => m.content);
-    
-    // Extract email and name from last user message (assuming format like "John Doe, john@example.com")
-    const lastUserMsg = conversation[conversation.length - 1];
-    const emailMatch = lastUserMsg.match(/[\w.-]+@[\w.-]+\.\w+/);
-    const email = emailMatch ? emailMatch[0] : "";
-    
-    // Extract name (text before comma or email)
-    const nameMatch = lastUserMsg.split(/[,@]/)[0].trim();
-    const name = nameMatch || "Unknown";
-
-    const intakeData = {
-      name,
-      email,
-      business_name: conversation[0] || "",
-      project_description: conversation[0] || "",
-      goals: conversation[1] || "",
-      pages_estimate: parseInt(conversation[2]) || null,
-      content_readiness: conversation[3] || "",
-      timeline: conversation[4] || "",
-      budget_range: conversation[5] || "",
-      design_examples: conversation[6] || "",
-      special_needs: conversation[7] || "",
-      tech_comfort: conversation[8] || "",
-      fit_status: "good", // AI should determine this
-      suggested_tier: "1000", // AI should determine this
-      raw_summary: conversationHistory.find(m => m.role === "assistant" && m.content.includes("assess"))?.content || "",
-      raw_conversation: conversationHistory,
-    };
-
-    try {
-      const { error } = await supabase.functions.invoke("ai-intake", {
-        body: {
-          action: "create_intake",
-          intakeData,
-        },
-      });
-
-      if (error) throw error;
-
-      setIsComplete(true);
-      toast.success("Intake submitted! I'll review and follow up by email soon.");
-    } catch (error) {
-      console.error("Error creating intake:", error);
-      toast.error("Failed to save your intake. Please try again.");
     }
   };
 
