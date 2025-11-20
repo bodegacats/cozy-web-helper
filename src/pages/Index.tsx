@@ -91,7 +91,7 @@ const Index = () => {
         <div className="max-w-3xl mx-auto text-center space-y-8">
           
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight text-center">
-            I will build you a simple website without a subscription.
+            I'm Dan Rimada. I will build you a simple website without a subscription.
           </h1>
           <p className="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-2xl mx-auto">
             I build small, focused websites for people who have real work to do and never wanted to learn a website platform. You tell me what you need, I build it, launch it, and handle small fixes. Most sites are done in under a week. 
@@ -100,16 +100,23 @@ const Index = () => {
             Not sure you even need a new site? Start with a $50 site checkup.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Button size="lg" onClick={() => window.location.href = '/start'} className="shadow-base" aria-label="Start website intake process with AI assistant">
-              Talk to the intake assistant
-            </Button>
-            <Button size="lg" variant="outline" onClick={scrollToContact} className="border-2" aria-label="Scroll to contact form to discuss your website">
-              Talk to me about your site
-            </Button>
+            <div className="flex flex-col items-center gap-2">
+              <Button size="lg" onClick={() => window.location.href = '/start'} className="shadow-base" aria-label="Start website intake process with AI assistant">
+                Talk to the intake AI
+              </Button>
+              <p className="text-xs text-muted-foreground max-w-[200px] text-center">
+                Fast, guided questions that help you figure out what you need.
+              </p>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Button size="lg" variant="outline" onClick={scrollToContact} className="border-2" aria-label="Scroll to contact form to discuss your website">
+                Talk to me directly
+              </Button>
+              <p className="text-xs text-muted-foreground max-w-[200px] text-center">
+                If you prefer human-first help.
+              </p>
+            </div>
           </div>
-          <p className="text-xs text-muted-foreground pt-2">
-            The assistant gives a quick, structured scope. The form goes directly to me.
-          </p>
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
             Or <a href="#pricing" className="text-primary hover:underline">view pricing</a>.
           </p>
@@ -136,7 +143,7 @@ const Index = () => {
                   <div className="text-4xl font-semibold text-primary">2</div>
                   <h3 className="text-xl font-semibold">I build your site</h3>
                   <p className="text-base leading-relaxed text-muted-foreground">
-                    You send me your content (text, images, links, etc.). I ask clarifying questions. I build it, walk you through the final result, and launch it. Once I have what I need from you, most sites launch within a week.
+                    You send me your content (text, images, links, etc.). I ask clarifying questions. I build it, walk you through the final result, and launch it. Most sites launch within 5–7 business days once I have your content.
                   </p>
                 </CardContent>
               </Card>
@@ -198,7 +205,7 @@ const Index = () => {
               Recent projects
             </h2>
             <p className="text-base leading-relaxed text-muted-foreground text-center max-w-3xl mx-auto mb-12">
-              Here are a few websites I've designed and helped shape. Each one is simple, clear, and built around what the client actually needed their site to do.
+              Here are a few projects I've built or helped shape. Some are client sites, some are my own work. All were built with the same process I use today.
             </p>
             
             <div className="grid md:grid-cols-2 gap-8">
@@ -345,7 +352,7 @@ const Index = () => {
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center mb-8">About Me</h2>
             <div className="prose prose-lg mx-auto">
               <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
-                I've spent nearly a decade helping people get clear, functional websites without the usual stress or tech learning curve. I've worked with hundreds of small businesses, solo professionals, artists, tour companies, nonprofits, and local service providers. My strength is taking scattered ideas and turning them into calm, readable websites that explain what you do and help people reach you. I keep things simple, fast, and organized so you can focus on your real work. I scope every project honestly and only take on work that fits this simple-build model.
+                I'm Dan Rimada, and I build clear, simple websites for people who have real work to do. I've spent nearly a decade helping people get clear, functional websites without the usual stress or tech learning curve. I've worked with hundreds of small businesses, solo professionals, artists, tour companies, nonprofits, and local service providers. My strength is taking scattered ideas and turning them into calm, readable websites that explain what you do and help people reach you. I keep things simple, fast, and organized so you can focus on your real work. I scope every project honestly and only take on work that fits this simple-build model.
               </p>
             </div>
           </div>
@@ -358,32 +365,37 @@ const Index = () => {
               Simple website pricing
             </h2>
             <p className="text-base leading-relaxed text-muted-foreground text-center max-w-3xl mx-auto mb-8">
-              No contracts, no subscriptions — your price adjusts based on what you need.
+              Pricing stays simple. Most small websites fall into one of three ranges depending on pages, content readiness, and features.
             </p>
             
-            <div className="max-w-2xl mx-auto text-center space-y-6">
-              <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-                Your price is based on the number of pages, how much help you want with wording, and whether you need optional features like a portfolio or blog.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
-                <Button asChild size="lg">
-                  <a href="/estimate">Use the guided estimate</a>
-                </Button>
-                <Button asChild size="lg" variant="outline">
-                  <a href="/start">Talk to the intake AI</a>
-                </Button>
-              </div>
+            <p className="text-base text-muted-foreground text-center max-w-3xl mx-auto mb-6">
+              For exact numbers, you can use the estimator or talk to the intake AI.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
+              <Button asChild size="lg">
+                <a href="/estimate">Use the guided estimator</a>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <a href="/start">Talk to the intake AI</a>
+              </Button>
             </div>
 
             <p className="text-sm text-muted-foreground text-center max-w-3xl mx-auto mt-8">
-              Hosting and your domain are paid directly to your provider (usually around $100–$200 per year). If you want ongoing help after launch, we can keep things simple and talk about a small, separate maintenance arrangement.
+              Hosting and your domain are paid directly to your provider (usually around $100–$200 per year). If you want ongoing help after launch, most people choose a simple maintenance arrangement ($50–150 per month depending on needs).
             </p>
+
+            <div className="max-w-2xl mx-auto mt-12 p-6 bg-card border-2 rounded-lg">
+              <h3 className="text-xl font-semibold mb-3">$50 Site Checkup</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                A quick, practical review of your current site. You get a short written audit covering what's working, what isn't, and the exact fixes I'd recommend. Delivered within 24 hours. No jargon, no upsells.
+              </p>
+            </div>
 
             <p className="text-base text-muted-foreground text-center max-w-3xl mx-auto mt-6">
               You have three ways to get pricing clarity:<br />
-              • The guided estimate — fast, self-serve estimate using the same pricing I use.<br />
-              • The intake assistant — describe your project and it will scope it using the unified pricing engine.<br />
+              • The guided estimator — fast, self-serve estimate using the same pricing I use.<br />
+              • The intake AI — describe your project and it will scope it using the unified pricing engine.<br />
               • The contact form — if you prefer to speak with me directly.
             </p>
           </div>
@@ -406,7 +418,7 @@ const Index = () => {
                   <span className="text-lg leading-relaxed font-medium">How long does it take?</span>
                 </AccordionTrigger>
                 <AccordionContent className="text-base leading-relaxed text-muted-foreground">
-                  Once I have your content (text, images, links), most sites launch within a week. Some take a bit longer depending on how much back and forth we need. If you are slow to send materials or give feedback, that adds time.
+                  Most sites launch within 5–7 business days once I have your content (text, images, links). Some take a bit longer depending on how much back and forth we need. If you are slow to send materials or give feedback, that adds time.
                 </AccordionContent>
               </AccordionItem>
 
