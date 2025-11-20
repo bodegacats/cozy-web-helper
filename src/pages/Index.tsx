@@ -5,15 +5,15 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Check, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Navbar from "@/components/Navbar";
-
 const Index = () => {
   const scrollToContact = () => {
     const element = document.getElementById('contact');
-    element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    element?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Navbar />
       
       {/* 
@@ -22,7 +22,7 @@ const Index = () => {
         - Section headings use <h2>
         - Subsection headings use <h3>
         - Wrapped in <header>, <main>, <footer> for accessibility and SEO
-      */}
+       */}
       
       {/* Hero Section */}
       <header className="min-h-[85vh] flex items-center justify-center bg-gradient-to-b from-background via-muted/20 to-background px-4 py-16">
@@ -31,7 +31,7 @@ const Index = () => {
             One person website service
           </p>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight">
-            Get a website built in a week. No learning curve.
+            I will build you a simple website.              
           </h1>
           <p className="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-2xl mx-auto">
             I build small, focused websites for people who have real work to do and never wanted to learn a website platform. You tell me what you need, I build it, launch it, and handle small fixes. Most sites are done in under a week. Pricing is flat: $500–$1,500 depending on scope.
@@ -100,20 +100,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-xl font-semibold">Included in every site</h3>
                   <ul className="space-y-3">
-                    {[
-                      "Most sites end up between 4 and 7 pages (Home, About, Services or Work, Contact, plus anything else you truly need).",
-                      "Mobile-friendly responsive design",
-                      "Fast loading and clean code",
-                      "Basic SEO setup",
-                      "Contact form that works",
-                      "Simple, clear navigation",
-                      "Instructions for making updates"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-3">
+                    {["Most sites end up between 4 and 7 pages (Home, About, Services or Work, Contact, plus anything else you truly need).", "Mobile-friendly responsive design", "Fast loading and clean code", "Basic SEO setup", "Contact form that works", "Simple, clear navigation", "Instructions for making updates"].map((item, i) => <li key={i} className="flex items-start gap-3">
                         <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-base leading-relaxed">{item}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
               </Card>
@@ -122,19 +112,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-xl font-semibold">Types of sites this works for</h3>
                   <ul className="space-y-3">
-                    {[
-                      "Service businesses (consultants, therapists, contractors)",
-                      "Portfolios (artists, photographers, writers)",
-                      "Nonprofits and community organizations",
-                      "Creative projects (films, books, events)",
-                      "Solo professionals (coaches, educators, speakers)",
-                      "Small retail or local businesses (no ecommerce)"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-3">
+                    {["Service businesses (consultants, therapists, contractors)", "Portfolios (artists, photographers, writers)", "Nonprofits and community organizations", "Creative projects (films, books, events)", "Solo professionals (coaches, educators, speakers)", "Small retail or local businesses (no ecommerce)"].map((item, i) => <li key={i} className="flex items-start gap-3">
                         <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-base leading-relaxed">{item}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
               </Card>
@@ -159,18 +140,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <img 
-                        src="https://i.imgur.com/7rAmj6S.jpeg" 
-                        alt="RuffLife Jersey City website hero" 
-                        className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
-                      />
+                      <img src="https://i.imgur.com/7rAmj6S.jpeg" alt="RuffLife Jersey City website hero" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-                      <img 
-                        src="https://i.imgur.com/K49QVdg.jpeg" 
-                        alt="RuffLife Jersey City full page screenshot" 
-                        className="w-full h-auto"
-                      />
+                      <img src="https://i.imgur.com/K49QVdg.jpeg" alt="RuffLife Jersey City full page screenshot" className="w-full h-auto" />
                     </DialogContent>
                   </Dialog>
                   <h3 className="text-xl font-semibold">RuffLife: Jersey City</h3>
@@ -180,12 +153,7 @@ const Index = () => {
                   <p className="text-sm leading-relaxed">
                     The owner had no website and was losing leads to competitors who showed up in Google. Built a 4-page site focused on trust signals and local proof. Calls went up 40% in the first month.
                   </p>
-                  <a 
-                    href="https://rufflifejc.com/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-block text-sm font-medium text-primary hover:underline"
-                  >
+                  <a href="https://rufflifejc.com/" target="_blank" rel="noopener noreferrer" className="inline-block text-sm font-medium text-primary hover:underline">
                     View site →
                   </a>
                 </CardContent>
@@ -196,18 +164,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <img 
-                        src="https://i.imgur.com/vuJkqLu.jpeg" 
-                        alt="Cats About Town Tours website hero" 
-                        className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
-                      />
+                      <img src="https://i.imgur.com/vuJkqLu.jpeg" alt="Cats About Town Tours website hero" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-                      <img 
-                        src="https://i.imgur.com/hJGImR8.jpeg" 
-                        alt="Cats About Town Tours full page screenshot" 
-                        className="w-full h-auto"
-                      />
+                      <img src="https://i.imgur.com/hJGImR8.jpeg" alt="Cats About Town Tours full page screenshot" className="w-full h-auto" />
                     </DialogContent>
                   </Dialog>
                   <h3 className="text-xl font-semibold">Cats About Town Tours</h3>
@@ -217,12 +177,7 @@ const Index = () => {
                   <p className="text-sm leading-relaxed">
                     Needed a site that explained each tour clearly, highlighted press coverage, and drove bookings through FareHarbor. Site launched on deadline before a major media hit. Bookings doubled.
                   </p>
-                  <a 
-                    href="https://catsabouttowntours.com/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-block text-sm font-medium text-primary hover:underline"
-                  >
+                  <a href="https://catsabouttowntours.com/" target="_blank" rel="noopener noreferrer" className="inline-block text-sm font-medium text-primary hover:underline">
                     View site →
                   </a>
                 </CardContent>
@@ -233,18 +188,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <img 
-                        src="https://i.imgur.com/9Kcx0Dp.jpeg" 
-                        alt="Bodega Cats of New York website hero" 
-                        className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
-                      />
+                      <img src="https://i.imgur.com/9Kcx0Dp.jpeg" alt="Bodega Cats of New York website hero" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-                      <img 
-                        src="https://i.imgur.com/hOL1GCg.jpeg" 
-                        alt="Bodega Cats of New York full page screenshot" 
-                        className="w-full h-auto"
-                      />
+                      <img src="https://i.imgur.com/hOL1GCg.jpeg" alt="Bodega Cats of New York full page screenshot" className="w-full h-auto" />
                     </DialogContent>
                   </Dialog>
                   <h3 className="text-xl font-semibold">Bodega Cats of New York</h3>
@@ -254,12 +201,7 @@ const Index = () => {
                   <p className="text-sm leading-relaxed">
                     The project had scattered content across social media with no central hub. Built a home for blog posts, press coverage, and clear calls to action for following and supporting the project.
                   </p>
-                  <a 
-                    href="https://bodegacatsofnewyork.com/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-block text-sm font-medium text-primary hover:underline"
-                  >
+                  <a href="https://bodegacatsofnewyork.com/" target="_blank" rel="noopener noreferrer" className="inline-block text-sm font-medium text-primary hover:underline">
                     View site →
                   </a>
                 </CardContent>
@@ -270,18 +212,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <img 
-                        src="https://i.imgur.com/HptFEBB.jpeg" 
-                        alt="Pencils & Pecs website hero" 
-                        className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" 
-                      />
+                      <img src="https://i.imgur.com/HptFEBB.jpeg" alt="Pencils & Pecs website hero" className="w-full h-56 object-cover rounded-lg hover:opacity-90 transition-opacity cursor-pointer" />
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-                      <img 
-                        src="https://i.imgur.com/4dLGWQt.jpeg" 
-                        alt="Pencils & Pecs full page screenshot" 
-                        className="w-full h-auto"
-                      />
+                      <img src="https://i.imgur.com/4dLGWQt.jpeg" alt="Pencils & Pecs full page screenshot" className="w-full h-auto" />
                     </DialogContent>
                   </Dialog>
                   <h3 className="text-xl font-semibold">Pencils & Pecs</h3>
@@ -291,12 +225,7 @@ const Index = () => {
                   <p className="text-sm leading-relaxed">
                     New business needed to book private events and venue partnerships fast. Built a 3-page site that explained the concept quickly and drove inquiries. First event booked within two weeks of launch.
                   </p>
-                  <a 
-                    href="http://pencilsandpecs.com/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-block text-sm font-medium text-primary hover:underline"
-                  >
+                  <a href="http://pencilsandpecs.com/" target="_blank" rel="noopener noreferrer" className="inline-block text-sm font-medium text-primary hover:underline">
                     View site →
                   </a>
                 </CardContent>
@@ -328,17 +257,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-xl font-semibold">This is a good fit if you:</h3>
                   <ul className="space-y-3">
-                    {[
-                      "Want a simple 5 to 7 page site that looks clean and professional",
-                      "Do not want to learn a website platform or deal with a big agency",
-                      "Have a real business, practice, or project you are ready to share",
-                      "Are fine with straightforward, non fancy design that is clear and easy to read"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-3">
+                    {["Want a simple 5 to 7 page site that looks clean and professional", "Do not want to learn a website platform or deal with a big agency", "Have a real business, practice, or project you are ready to share", "Are fine with straightforward, non fancy design that is clear and easy to read"].map((item, i) => <li key={i} className="flex items-start gap-3">
                         <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-base leading-relaxed">{item}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
               </Card>
@@ -347,17 +269,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-xl font-semibold">This is not a good fit if you:</h3>
                   <ul className="space-y-3">
-                    {[
-                      "Need ecommerce, online courses, or complex booking systems",
-                      "Need a large custom web app or portal",
-                      "Want endless rounds of design changes",
-                      "Expect a full marketing agency, SEO campaign, or ad management"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-3">
+                    {["Need ecommerce, online courses, or complex booking systems", "Need a large custom web app or portal", "Want endless rounds of design changes", "Expect a full marketing agency, SEO campaign, or ad management"].map((item, i) => <li key={i} className="flex items-start gap-3">
                         <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
                         <span className="text-base leading-relaxed">{item}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
               </Card>
@@ -388,17 +303,10 @@ const Index = () => {
                     For when you just need something simple on the web that explains who you are and how to reach you.
                   </p>
                   <ul className="space-y-2 pt-2">
-                    {[
-                      "One clean, scrolling page",
-                      "You provide the words and images, I tidy and place them",
-                      "1 round of revisions",
-                      "Usually ready within a few days"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-2">
+                    {["One clean, scrolling page", "You provide the words and images, I tidy and place them", "1 round of revisions", "Usually ready within a few days"].map((item, i) => <li key={i} className="flex items-start gap-2">
                         <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-sm leading-relaxed">{item}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
               </Card>
@@ -415,17 +323,10 @@ const Index = () => {
                     For a small but complete website that feels put together without getting complicated.
                   </p>
                   <ul className="space-y-2 pt-2">
-                    {[
-                      "Up to 4 pages (for example: Home, About, Services or Work, Contact)",
-                      "I help organize and lightly edit your content",
-                      "2 rounds of revisions",
-                      "Usually ready within a week"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-2">
+                    {["Up to 4 pages (for example: Home, About, Services or Work, Contact)", "I help organize and lightly edit your content", "2 rounds of revisions", "Usually ready within a week"].map((item, i) => <li key={i} className="flex items-start gap-2">
                         <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-sm leading-relaxed">{item}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
               </Card>
@@ -442,17 +343,10 @@ const Index = () => {
                     For when you want me more in your corner shaping what the site says as well as how it looks.
                   </p>
                   <ul className="space-y-2 pt-2">
-                    {[
-                      "Up to 6–7 pages",
-                      "Help shaping structure and wording (light copy support)",
-                      "3 rounds of revisions",
-                      "Usually ready within a week"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-2">
+                    {["Up to 6–7 pages", "Help shaping structure and wording (light copy support)", "3 rounds of revisions", "Usually ready within a week"].map((item, i) => <li key={i} className="flex items-start gap-2">
                         <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-sm leading-relaxed">{item}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
               </Card>
@@ -544,8 +438,6 @@ const Index = () => {
           </a>
         </p>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
