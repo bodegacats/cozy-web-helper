@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.send-intake-notification]
 verify_jwt = false
+
+[functions.portal-ai-chat]
+verify_jwt = true

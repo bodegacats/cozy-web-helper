@@ -10,6 +10,7 @@ import AdminSubmissions from "./pages/AdminSubmissions";
 import Portal from "./pages/Portal";
 import PortalHome from "./pages/PortalHome";
 import PortalRequest from "./pages/PortalRequest";
+import PortalAIChat from "./pages/PortalAIChat";
 import AdminClients from "./pages/AdminClients";
 import AdminClientDetail from "./pages/AdminClientDetail";
 import AdminRequests from "./pages/AdminRequests";
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/portal" element={<Portal />} />
           <Route path="/portal/home" element={<PortalHome />} />
           <Route path="/portal/request" element={<PortalRequest />} />
+          <Route path="/portal/chat" element={<PortalAIChat />} />
           <Route
             path="/admin/submissions"
             element={
