@@ -4,7 +4,8 @@ import { Helmet } from "react-helmet";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar } from "lucide-react";
+import { ArrowLeft, Calendar, Clock } from "lucide-react";
+import { getCategoryStyles } from "@/components/blog/getCategoryStyles";
 
 interface BlogPost {
   id: string;
@@ -99,6 +100,9 @@ export default function BlogPost() {
 
   if (!post) return null;
 
+  const styles = getCategoryStyles(post.category);
+  const estimatedReadTime = Math.max(1, Math.ceil(post.content.split(' ').length / 200));
+
   return (
     <>
       <Helmet>
@@ -189,64 +193,80 @@ export default function BlogPost() {
       </Helmet>
 
       <main className="min-h-screen bg-background">
-        <article className="max-w-3xl mx-auto px-6 py-20">
-          <Button
-            variant="ghost"
-            className="mb-8"
-            onClick={() => navigate("/blog")}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Blog
-          </Button>
-
-          <header className="mb-12">
-            <div className="flex items-center gap-3 mb-4">
-              {post.category && (
-                <Badge variant="secondary">{post.category}</Badge>
-              )}
-              <div className="flex items-center text-muted-foreground">
-                <Calendar className="mr-2 h-4 w-4" />
-                <time dateTime={post.published_at}>
-                  {new Date(post.published_at).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric"
-                  })}
-                </time>
-              </div>
-            </div>
-
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">{post.title}</h1>
-            
-            <p className="text-xl text-muted-foreground">{post.excerpt}</p>
-          </header>
-
-          {post.featured_image_url && post.featured_image_url.trim() !== '' && (
-            <div className="mb-12 rounded-lg overflow-hidden">
+        {/* Hero Section */}
+        {post.featured_image_url && post.featured_image_url.trim() !== '' && (
+          <div className="relative h-[50vh] min-h-[400px] overflow-hidden">
+            <div className="absolute inset-0">
               <img
                 src={post.featured_image_url}
                 alt={post.title}
-                className="w-full h-auto"
-                width="1200"
-                height="675"
+                className="w-full h-full object-cover"
+                width="1920"
+                height="1080"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
-                  e.currentTarget.parentElement!.style.display = 'none';
                 }}
               />
             </div>
-          )}
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+          </div>
+        )}
+
+        <article className="max-w-4xl mx-auto px-6 pb-20" style={{ marginTop: post.featured_image_url ? '-8rem' : '5rem' }}>
+          <div className="relative">
+            <Button
+              variant="ghost"
+              className="mb-8 bg-background/80 hover:bg-background backdrop-blur-sm"
+              onClick={() => navigate("/blog")}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Blog
+            </Button>
+
+            <header className="mb-12 bg-background/95 backdrop-blur-sm rounded-2xl p-8 border-2 border-border shadow-soft-xl">
+              <div className="flex items-center gap-3 mb-4 flex-wrap">
+                {post.category && (
+                  <Badge className={`${styles.badgeClass} border`}>
+                    {post.category}
+                  </Badge>
+                )}
+                <div className="flex items-center text-muted-foreground text-sm gap-3">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    <time dateTime={post.published_at}>
+                      {new Date(post.published_at).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric"
+                      })}
+                    </time>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-4 w-4" />
+                    {estimatedReadTime} min read
+                  </span>
+                </div>
+              </div>
+
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">{post.title}</h1>
+              
+              <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed">{post.excerpt}</p>
+            </header>
+          </div>
 
           <div 
-            className="prose prose-lg max-w-prose mx-auto
-    prose-headings:font-bold prose-headings:text-foreground
-    prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
-    prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-    prose-p:text-foreground prose-p:leading-relaxed prose-p:mb-4
-    prose-a:text-primary hover:prose-a:underline
-    prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6
-    prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6
-    prose-li:mb-2"
+            className="prose prose-lg prose-slate dark:prose-invert max-w-none mx-auto
+    prose-headings:font-bold prose-headings:text-foreground prose-headings:scroll-mt-20
+    prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:border-b prose-h2:pb-3 prose-h2:border-border
+    prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4
+    prose-p:text-foreground prose-p:leading-relaxed prose-p:mb-6 prose-p:text-lg
+    prose-a:text-primary prose-a:font-medium hover:prose-a:underline prose-a:transition-colors
+    prose-ul:my-6 prose-ul:list-disc prose-ul:pl-6 prose-ul:space-y-2
+    prose-ol:my-6 prose-ol:list-decimal prose-ol:pl-6 prose-ol:space-y-2
+    prose-li:mb-2 prose-li:leading-relaxed
+    prose-strong:text-foreground prose-strong:font-semibold
+    prose-code:text-primary prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+    first:prose-p:first-letter:text-5xl first:prose-p:first-letter:font-bold first:prose-p:first-letter:mr-1 first:prose-p:first-letter:float-left"
             dangerouslySetInnerHTML={{ 
               __html: stripLeadingTitle(post.content, post.title)
                 .replace(/^### (.*$)/gim, '<h3>$1</h3>')
@@ -258,11 +278,17 @@ export default function BlogPost() {
             }}
           />
 
-          <footer className="mt-16 pt-8 border-t">
-            <Button onClick={() => navigate("/blog")}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Blog
-            </Button>
+          <footer className="mt-20 pt-12 border-t-2 border-border">
+            <div className="flex justify-between items-center">
+              <Button 
+                onClick={() => navigate("/blog")}
+                size="lg"
+                className="group"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+                Back to Blog
+              </Button>
+            </div>
           </footer>
         </article>
       </main>

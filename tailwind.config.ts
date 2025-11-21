@@ -22,6 +22,12 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        "category-tips": "hsl(var(--category-tips))",
+        "category-tips-light": "hsl(var(--category-tips-light))",
+        "category-business": "hsl(var(--category-business))",
+        "category-business-light": "hsl(var(--category-business-light))",
+        "category-seo": "hsl(var(--category-seo))",
+        "category-seo-light": "hsl(var(--category-seo-light))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -89,13 +95,23 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in-up": "fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
         "scale-in": "scale-in 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+        "shimmer": "shimmer 2s infinite linear",
+        "float": "float 3s ease-in-out infinite"
       },
       boxShadow: {
         'soft-sm': '0 1px 2px 0 rgba(0, 0, 0, 0.03)',
         'soft-base': '0 2px 8px 0 rgba(40, 30, 20, 0.06)',
         'soft-md': '0 4px 16px 0 rgba(40, 30, 20, 0.08)',
         'soft-lg': '0 8px 24px 0 rgba(40, 30, 20, 0.10)',
+        'soft-xl': '0 20px 50px rgba(40, 30, 20, 0.15)',
+        'colored-tips': 'var(--shadow-colored-tips)',
+        'colored-business': 'var(--shadow-colored-business)',
+        'colored-seo': 'var(--shadow-colored-seo)'
       },
+      backgroundImage: {
+        'gradient-hero': 'var(--gradient-hero)',
+        'gradient-card': 'var(--gradient-card)'
+      }
     },
   },
   plugins: [
