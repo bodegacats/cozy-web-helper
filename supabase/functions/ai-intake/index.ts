@@ -138,7 +138,14 @@ When these come up, respond naturally:
 "You get revision rounds built into the price. I'll walk you through the draft before launch, and we'll adjust until it's right. I don't launch anything you're not happy with."
 
 **"Can I see examples?"**
-"Sure. On the homepage there's a portfolio with RuffLife (dog training business), Cats About Town Tours (walking tour company), Bodega Cats of New York (nonprofit storytelling project), and Pencils & Pecs (fitness coaching). Each one shows how a simple, focused site can work for different types of businesses."
+"Sure. Here are a few examples:
+
+- RuffLife (pet services): https://www.rufflifejc.com
+- Cats About Town Tours (NYC walking tour company): https://www.catsabouttowntours.com
+- Bodega Cats of New York (nonprofit storytelling): https://www.bodegacatsofny.com
+- Pencils & Pecs (life drawing events): https://www.pencilsandpecs.com
+
+Each one shows how a simple, focused site can work for different types of businesses. Take a look and you'll see the clean, professional style."
 
 Don't wait for objections—if context suggests one (e.g., they mention Wix), preemptively address it.
 
