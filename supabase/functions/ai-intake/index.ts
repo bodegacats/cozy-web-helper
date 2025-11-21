@@ -7,41 +7,24 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Unified pricing engine - Hybrid tier + per-page model
+// Unified pricing engine - Per-page model
 function calculateEstimate(inputs: {
   pageCount: number;
   contentReadiness: string;
-  hasGallery: boolean;
-  hasBlog: boolean;
   isRush: boolean;
 }) {
-  // Hybrid pricing: Base + per-page add-ons
-  // First page: $500
-  // Pages 2-4: +$150 each
-  // Pages 5-7: +$100 each
-  
-  let base = 500; // First page
+  // Base $500 includes 1 page, then +$150 per additional page
+  let base = 500; // Base includes 1 page
   const pageCount = Math.min(inputs.pageCount, 7); // Cap at 7 pages
   
-  // Calculate additional page costs
-  if (pageCount >= 2) {
-    // Pages 2-4 cost $150 each
-    const pages2to4 = Math.min(pageCount - 1, 3); // Pages 2, 3, 4
-    base += pages2to4 * 150;
-  }
-  
-  if (pageCount >= 5) {
-    // Pages 5-7 cost $100 each
-    const pages5to7 = pageCount - 4; // Pages 5, 6, 7
-    base += pages5to7 * 100;
+  // Calculate additional page costs (flat $150 per page)
+  if (pageCount > 1) {
+    base += (pageCount - 1) * 150;
   }
 
   const addOns: { [key: string]: number } = {};
   
-  if (inputs.contentReadiness === 'light') addOns['Copy Support'] = 150;
-  if (inputs.contentReadiness === 'heavy') addOns['Copy Shaping'] = 300;
-  if (inputs.hasGallery) addOns['Gallery/Images'] = 100;
-  if (inputs.hasBlog) addOns['Blog Setup'] = 150;
+  if (inputs.contentReadiness === 'heavy') addOns['Content Shaping'] = 300;
   if (inputs.isRush) addOns['Rush Delivery'] = 200;
 
   const total = base + Object.values(addOns).reduce((sum, val) => sum + val, 0);
@@ -61,8 +44,8 @@ You must:
 1. Extract the real requirements clearly
 2. Ask ONE clarifying question at a time (only when truly needed)
 3. Summarize the project in simple, clean language
-4. Scope the site using the unified pricing engine
-5. Present pricing transparently with a tier recommendation
+4. Scope the site using the unified pricing engine ($500 base + $150/page + add-ons)
+5. Present pricing transparently with clear breakdown
 
 You are calm, warm, and human-sounding. Never panic. Never overwhelm.
 
@@ -80,18 +63,14 @@ Step 1: Detect the format
 Step 2: Extract requirements
 From ANY format (conversation, bullets, paragraph, ramble), identify:
 - Estimated page count (if mentioned or implied)
-- Gallery/portfolio need (photo-heavy, visual work, portfolio)
-- Blog requirement (news, articles, regular content updates)
 - Content readiness:
   • "ready" = has copy/photos ready to go
-  • "light" = needs tidying and clarity fixes (I tidy your wording and fix clarity issues)
   • "heavy" = needs rewriting/reshaping (I rewrite or reshape sections that aren't working, help clarify message)
 - Timeline urgency (rush = 48-72 hours, normal = standard)
 - Special features beyond brochure site (store, login, scheduling, etc.)
 
 Step 3: Ask clarifying questions ONLY when:
 - Page count is completely unclear
-- Can't tell if they need gallery vs. blog
 - Content readiness is ambiguous
 - They mention "another AI said I need 8 pages" (gently validate or correct)
 
@@ -102,9 +81,9 @@ HANDLING PASTED AI CONVERSATIONS
 If the user pastes a long block of text or a conversation with another AI or consultant, your job is:
 1. Detect that it is a conversation or transcript.
 2. Summarize it briefly.
-3. Extract the requirements: page count, content readiness, need for gallery, need for blog, and rush or normal timeline.
+3. Extract the requirements: page count, content readiness, and rush or normal timeline.
 4. Use the unified pricing engine tool to calculate pricing.
-5. Explain the pricing clearly and reference which tier (Single-page starter, Small website, Full simple site) the project aligns with.
+5. Explain the pricing clearly using the per-page model.
 Never ask the user to retype what was already in the pasted text.
 
 WHEN TO USE PRICING TOOL
@@ -114,63 +93,38 @@ If the user asks "how much," "what would this cost," "can you quote this," "what
 - Then call the get_pricing_estimate tool.
 - Present the result calmly without upselling.
 
-TIER NAME CONSISTENCY
-
-When referencing pricing tiers, always use the exact names:
-- "Single-page starter"
-- "Small website"
-- "Full simple site"
-
-Never create new names or variants.
-
-ESTIMATOR VS AI DIFFERENTIATION
-
-When users ask about the difference:
-- Guided estimator at /estimate = structured calculator, step-by-step form
-- AI intake (this) = conversational, handles messy input, pasted conversations, rambles
-- Both use the SAME unified pricing engine
-- Neither gives "full quote" - both give "estimated range"
-
-Never say one is better than the other. They're two paths to the same pricing.
-
 PRICING PRESENTATION
 
 When you have enough information to scope the project:
 
 1. Use get_pricing_estimate tool with extracted requirements
-2. The tool will return total, base, addOns, estimate_low, estimate_high, and suggested_tier
+2. The tool will return total, base, and addOns
 3. Present the estimate like this:
 
 Example Format:
 "Here's what I pulled out from your description:
 
 • Estimated pages: 4
-• Light content editing needed
-• Gallery page for your portfolio work
+• Content shaping needed
 • Not in a rush
 
 Using the unified pricing model:
-- Base (4 pages): $950
-- Light editing: +$150
-- Gallery/images: +$100
+- Base (1 page): $500
+- Additional pages (3 × $150): +$450
+- Content shaping: +$300
 
-Total estimated range: $1,080 to $1,320
+Total: $1,250
 
-This falls right in the **Small website** tier ($1,000 on the homepage)."
+This is straightforward pricing — no tiers, no guesswork."
 
 If they mentioned another AI suggesting more pages:
 "Note: You mentioned another AI suggested 8 pages. For most simple sites, 5-7 pages cover everything needed. We cap at 7 to keep sites focused and affordable."
 
 Always:
-- Show the breakdown clearly
+- Show the breakdown clearly (base + additional pages calculation + add-ons)
 - Explain add-ons in plain language
-- Use the suggested_tier from the tool response
 - Sound calm and transparent, never salesy
-
-TIER MAPPING (automatically provided by tool)
-- Total ≤ $700 → "Single-page starter ($500 tier)"
-- Total $700-$1,200 → "Small website ($1,000 tier)"
-- Total ≥ $1,200 → "Full simple site ($1,500 tier)"
+- DO NOT reference tiers or tier names
 
 THINGS YOU MUST NEVER DO
 
@@ -216,7 +170,7 @@ After all information is collected, output this exact schema:
   "design_examples": "",
   "advanced_features": "",
   "update_preference": "",
-  "fit": "",
+  "fit": "good" | "borderline" | "not a fit",
   "intake_summary": "",
   "raw_chat": []
 }
@@ -224,7 +178,7 @@ After all information is collected, output this exact schema:
 Rules:
 - Fill every field
 - "raw_chat" must contain full conversation as array of {role, content} objects
-- "fit" should be "good", "maybe", or "not a fit"
+- "fit" must be one of: "good", "borderline", or "not a fit"
 - "intake_summary" should be 2–3 sentences summarizing the project
 - Output ONLY the JSON, no extra text`;
 
@@ -365,23 +319,15 @@ serve(async (req) => {
                   },
                   contentReadiness: { 
                     type: 'string', 
-                    enum: ['ready', 'light', 'heavy'],
-                    description: 'ready=has content, light=needs editing, heavy=needs help shaping'
-                  },
-                  hasGallery: { 
-                    type: 'boolean', 
-                    description: 'Gallery/portfolio/image-heavy section needed' 
-                  },
-                  hasBlog: { 
-                    type: 'boolean', 
-                    description: 'Blog setup with posts/articles needed' 
+                    enum: ['ready', 'heavy'],
+                    description: 'ready=has content, heavy=needs help shaping/rewriting'
                   },
                   isRush: { 
                     type: 'boolean', 
                     description: 'Rush delivery (48-72 hours) needed' 
                   }
                 },
-                required: ['pageCount', 'contentReadiness', 'hasGallery', 'hasBlog', 'isRush']
+                required: ['pageCount', 'contentReadiness', 'isRush']
               }
             }
           }
@@ -424,25 +370,11 @@ serve(async (req) => {
         const args = JSON.parse(toolCall.function.arguments);
         const estimate = calculateEstimate(args);
         
-        // Calculate range (90% to 110%)
-        const estimateLow = Math.round(estimate.total * 0.9);
-        const estimateHigh = Math.round(estimate.total * 1.1);
-        
-        // Determine tier
-        let tier = 'Single-page starter ($500 tier)';
-        if (estimate.total >= 700 && estimate.total < 1200) {
-          tier = 'Small website ($1,000 tier)';
-        } else if (estimate.total >= 1200) {
-          tier = 'Full simple site ($1,500 tier)';
-        }
-        
-        // Enhanced response with range and tier
+        // Enhanced response with breakdown
         const enhancedEstimate = {
           ...estimate,
-          estimate_low: estimateLow,
-          estimate_high: estimateHigh,
-          suggested_tier: tier,
-          breakdown_text: `Base (${args.pageCount} page${args.pageCount > 1 ? 's' : ''}): $${estimate.base}` +
+          breakdown_text: `Base (1 page): $500` +
+            (args.pageCount > 1 ? `\nAdditional pages (${args.pageCount - 1} × $150): +$${(args.pageCount - 1) * 150}` : '') +
             Object.entries(estimate.addOns)
               .map(([name, price]) => `\n${name}: +$${price}`)
               .join('')
