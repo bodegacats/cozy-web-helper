@@ -60,7 +60,7 @@ const PortalAIChat = () => {
 
     if (!clientData) {
       toast.error("No client record found");
-      navigate('/portal/home');
+      navigate('/portal');
       return;
     }
 
@@ -349,7 +349,7 @@ const PortalAIChat = () => {
                 <p className="text-sm text-muted-foreground mb-4">
                   I'll review your request and get back to you soon.
                 </p>
-                <Button onClick={() => navigate("/portal/home")}>Back to Portal</Button>
+                <Button onClick={() => navigate("/portal")}>Back to Portal</Button>
               </div>
             )}
           </CardContent>

@@ -20,7 +20,7 @@ export const PortalNav = ({ currentPage, client }: PortalNavProps) => {
   };
 
   const navItems = [
-    { id: 'home', label: 'Home', icon: Home, path: '/portal/home' },
+    { id: 'home', label: 'Home', icon: Home, path: '/portal' },
     { id: 'request', label: 'Submit Request', icon: FileText, path: '/portal/request' },
     { id: 'chat', label: 'AI Chat', icon: MessageSquare, path: '/portal/chat' },
   ];
