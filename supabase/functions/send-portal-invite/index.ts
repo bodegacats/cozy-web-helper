@@ -1,7 +1,4 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
-
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -22,38 +19,61 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const { clientName, clientEmail, tempPassword, portalUrl }: InviteRequest = await req.json();
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+
+    if (!resendApiKey) {
+      console.error("RESEND_API_KEY not configured");
+      return new Response(
+        JSON.stringify({ error: "Email service not configured" }),
+        { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
 
     console.log("Sending portal invite to:", clientEmail);
 
-    const emailResponse = await resend.emails.send({
-      from: "Dan @ Build Me a Simple Site <onboarding@resend.dev>",
-      to: [clientEmail],
-      subject: "Your client portal access",
-      html: `
-        <h2>Hi ${clientName},</h2>
-        <p>Your client portal is now set up! You can use it to:</p>
-        <ul>
-          <li>View your project status</li>
-          <li>Submit change requests</li>
-          <li>Chat with my AI assistant</li>
-        </ul>
-        
-        <h3>Login details:</h3>
-        <p><strong>Portal URL:</strong> <a href="${portalUrl}">${portalUrl}</a></p>
-        <p><strong>Email:</strong> ${clientEmail}</p>
-        <p><strong>Temporary password:</strong> <code style="background: #f4f4f4; padding: 4px 8px; border-radius: 4px; font-family: monospace;">${tempPassword}</code></p>
-        
-        <p>Please log in and change your password to something memorable.</p>
-        
-        <p>If you have any trouble logging in, just reply to this email.</p>
-        
-        <p>Best,<br>Dan</p>
-      `,
+    const emailResponse = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${resendApiKey}`,
+      },
+      body: JSON.stringify({
+        from: "Dan @ Build Me a Simple Site <onboarding@resend.dev>",
+        to: [clientEmail],
+        subject: "Your client portal access",
+        html: `
+          <h2>Hi ${clientName},</h2>
+          <p>Your client portal is now set up! You can use it to:</p>
+          <ul>
+            <li>View your project status</li>
+            <li>Submit change requests</li>
+            <li>Chat with my AI assistant</li>
+          </ul>
+          
+          <h3>Login details:</h3>
+          <p><strong>Portal URL:</strong> <a href="${portalUrl}">${portalUrl}</a></p>
+          <p><strong>Email:</strong> ${clientEmail}</p>
+          <p><strong>Temporary password:</strong> <code style="background: #f4f4f4; padding: 4px 8px; border-radius: 4px; font-family: monospace;">${tempPassword}</code></p>
+          
+          <p>Please log in and change your password to something memorable.</p>
+          
+          <p>If you have any trouble logging in, just reply to this email.</p>
+          
+          <p>Best,<br>Dan</p>
+        `,
+      }),
     });
 
-    console.log("Portal invite sent successfully:", emailResponse);
+    if (!emailResponse.ok) {
+      const errorData = await emailResponse.text();
+      console.error("Resend API error:", errorData);
+      throw new Error(`Resend API error: ${errorData}`);
+    }
 
-    return new Response(JSON.stringify(emailResponse), {
+    const data = await emailResponse.json();
+    console.log("Portal invite sent successfully:", data);
+
+    return new Response(JSON.stringify(data), {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
