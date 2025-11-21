@@ -104,24 +104,43 @@ export default function BlogPost() {
     <>
       <Helmet>
         <title>{post.meta_title}</title>
+        <meta name="title" content={post.meta_title} />
         <meta name="description" content={post.meta_description} />
         <link rel="canonical" href={`https://buildmeasimplesite.com/blog/${post.slug}`} />
-        <meta property="og:title" content={post.meta_title} />
-        <meta property="og:description" content={post.meta_description} />
+        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        <meta name="author" content="Dan Mulé" />
+
+        {/* Open Graph */}
         <meta property="og:type" content="article" />
         <meta property="og:url" content={`https://buildmeasimplesite.com/blog/${post.slug}`} />
         <meta property="og:site_name" content="Build Me a Simple Site" />
+        <meta property="og:title" content={post.meta_title} />
+        <meta property="og:description" content={post.meta_description} />
         {post.featured_image_url && (
-          <meta property="og:image" content={post.featured_image_url} />
+          <>
+            <meta property="og:image" content={post.featured_image_url} />
+            <meta property="og:image:secure_url" content={post.featured_image_url} />
+            <meta property="og:image:alt" content={post.title} />
+          </>
         )}
+        <meta property="og:locale" content="en_US" />
         <meta property="article:published_time" content={post.published_at} />
         <meta property="article:author" content="Dan Mulé" />
+        {post.category && <meta property="article:section" content={post.category} />}
+
+        {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={`https://buildmeasimplesite.com/blog/${post.slug}`} />
         <meta name="twitter:title" content={post.meta_title} />
         <meta name="twitter:description" content={post.meta_description} />
         {post.featured_image_url && (
-          <meta name="twitter:image" content={post.featured_image_url} />
+          <>
+            <meta name="twitter:image" content={post.featured_image_url} />
+            <meta name="twitter:image:alt" content={post.title} />
+          </>
         )}
+        <meta name="twitter:creator" content="@buildmeasimple" />
+        <meta name="twitter:site" content="@buildmeasimple" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",

@@ -137,14 +137,61 @@ const AIIntake = () => {
     <div className="min-h-screen bg-background">
       <Helmet>
         <title>Website Intake Assistant | Build Me a Simple Site</title>
+        <meta name="title" content="Website Intake Assistant | Build Me a Simple Site" />
         <meta name="description" content="Use our AI intake assistant to quickly determine if a simple website project is right for your needs. Answer a few questions to get started." />
+        <meta name="keywords" content="website intake, AI assistant, website consultation, website estimate, web project questionnaire" />
         <link rel="canonical" href="https://buildmeasimplesite.com/start" />
-        <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="Website Intake Assistant | Build Me a Simple Site" />
-        <meta property="og:description" content="Use our AI intake assistant to quickly determine if a simple website project is right for your needs. Answer a few questions to get started." />
+        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+        {/* Open Graph */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://buildmeasimplesite.com/start" />
         <meta property="og:site_name" content="Build Me a Simple Site" />
+        <meta property="og:title" content="Website Intake Assistant | Build Me a Simple Site" />
+        <meta property="og:description" content="Use our AI intake assistant to quickly determine if a simple website project is right for your needs. Answer a few questions to get started." />
+        <meta property="og:image" content="https://buildmeasimplesite.com/og-image.jpg" />
+        <meta property="og:image:secure_url" content="https://buildmeasimplesite.com/og-image.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="en_US" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://buildmeasimplesite.com/start" />
+        <meta name="twitter:title" content="Website Intake Assistant | Build Me a Simple Site" />
+        <meta name="twitter:description" content="Use our AI intake assistant to quickly determine if a simple website project is right for your needs." />
+        <meta name="twitter:image" content="https://buildmeasimplesite.com/og-image.jpg" />
+
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "Website Intake Assistant",
+            "description": "Use our AI intake assistant to quickly determine if a simple website project is right for your needs.",
+            "url": "https://buildmeasimplesite.com/start",
+            "isPartOf": {
+              "@id": "https://buildmeasimplesite.com/#website"
+            },
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://buildmeasimplesite.com"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Website Intake Assistant",
+                  "item": "https://buildmeasimplesite.com/start"
+                }
+              ]
+            }
+          })}
+        </script>
       </Helmet>
       <div className="container mx-auto px-6 py-16 max-w-4xl">
         {/* Back Button */}
