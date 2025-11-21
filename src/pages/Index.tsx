@@ -623,16 +623,6 @@ const Index = () => {
                 <div className="text-5xl md:text-6xl font-bold text-foreground mb-2">
                   ${currentPrice.toLocaleString()}
                 </div>
-                <div className="text-center">
-                  <a href="#how-pricing-works" className="text-sm text-primary hover:underline font-medium" onClick={e => {
-                  e.preventDefault();
-                  document.getElementById('how-pricing-works')?.scrollIntoView({
-                    behavior: 'smooth'
-                  });
-                }}>
-                    How pricing works →
-                  </a>
-                </div>
               </div>
 
               {/* Included List */}
@@ -739,67 +729,6 @@ const Index = () => {
             <p className="text-center text-sm text-muted-foreground mt-8 max-w-2xl mx-auto">
               If you want ongoing help after launch, most people choose a simple monthly maintenance arrangement ($50–150/month) depending on how much support they need.
             </p>
-          </div>
-        </section>
-
-        {/* Pricing Details - How It Works */}
-        <section id="how-pricing-works" className="py-20 md:py-28 px-4">
-          <div className="max-w-3xl mx-auto space-y-8">
-            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center">
-              How Pricing Works
-            </h2>
-            
-            <div className="prose prose-lg mx-auto text-muted-foreground">
-              <div className="bg-card border-2 rounded-lg p-8 space-y-6 shadow-sm">
-                <div>
-                  <h3 className="text-xl font-semibold text-foreground mb-3">Simple Per-Page Pricing</h3>
-                  <ul className="space-y-2 text-base">
-                    <li>• <strong>Base:</strong> $500 (includes 1 page)</li>
-                    <li>• <strong>Each additional page:</strong> +$150</li>
-                  </ul>
-                  <div className="mt-4 p-3 bg-muted rounded-lg">
-                    <p className="text-sm font-medium mb-2">Price examples:</p>
-                    <ul className="text-sm space-y-1">
-                      <li>1 page = $500</li>
-                      <li>2 pages = $650</li>
-                      <li>3 pages = $800</li>
-                      <li>4 pages = $950</li>
-                      <li>5 pages = $1,100</li>
-                      <li>6 pages = $1,250</li>
-                      <li>7 pages = $1,400</li>
-                    </ul>
-                  </div>
-                </div>
-                
-                <div className="pt-4 border-t">
-                  <h3 className="text-xl font-semibold text-foreground mb-3">Optional Add-Ons</h3>
-                  <ul className="space-y-2 text-base">
-                    <li>• <strong>Content shaping:</strong> +$300 <span className="text-sm text-muted-foreground">(I'll rewrite or reshape sections that aren't working)</span></li>
-                    <li>• <strong>Rush delivery:</strong> +$200 <span className="text-sm text-muted-foreground">(48-72 hour turnaround)</span></li>
-                  </ul>
-                </div>
-                
-                <div className="pt-4 border-t">
-                  <h3 className="text-xl font-semibold text-foreground mb-3">What's Always Included</h3>
-                  <ul className="space-y-2 text-base">
-                    <li>• Clean, simple, mobile-ready design</li>
-                    <li>• Hosting</li>
-                    <li>• Security</li>
-                    <li>• Easy editing tools</li>
-                    <li>• Fast performance</li>
-                    <li>• Two rounds of revisions</li>
-                    <li>• Guidance on best practices</li>
-                    <li>• Launch support</li>
-                  </ul>
-                </div>
-                
-                <div className="pt-4 border-t">
-                  <p className="text-sm text-muted-foreground italic">
-                    You provide the words and images. I handle the build.
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 
