@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import Navbar from "@/components/Navbar";
 import { Helmet } from "react-helmet";
-import { Monitor } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -873,10 +873,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="py-8 px-4 border-t">
         <div className="max-w-6xl mx-auto text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Monitor className="h-8 w-8" />
-            <span className="text-xl font-semibold">Build Me a Simple Site</span>
-          </div>
+          <img src={logo} alt="Build Me a Simple Site" className="h-10 mx-auto mb-4" />
           <p className="text-sm text-muted-foreground">&copy; 2024 Build Me a Simple Site. All rights reserved.</p>
           <p className="mt-2">
             <a href="/portal" className="text-sm text-primary hover:underline">Client Portal</a>
