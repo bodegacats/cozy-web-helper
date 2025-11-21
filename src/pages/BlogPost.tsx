@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar } from "lucide-react";
-import ReactMarkdown from "react-markdown";
 
 interface BlogPost {
   id: string;
@@ -238,23 +237,26 @@ export default function BlogPost() {
             </div>
           )}
 
-          <div className="prose prose-lg max-w-prose mx-auto
-            prose-headings:font-bold prose-headings:text-foreground prose-headings:tracking-tight
-            prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-12
-            prose-h2:text-3xl prose-h2:mb-5 prose-h2:mt-10 prose-h2:border-b prose-h2:border-border prose-h2:pb-2
-            prose-h3:text-2xl prose-h3:mb-4 prose-h3:mt-8
-            prose-p:text-foreground prose-p:leading-relaxed prose-p:mb-5
-            prose-a:text-primary prose-a:font-medium prose-a:no-underline hover:prose-a:underline
-            prose-strong:text-foreground prose-strong:font-semibold
-            prose-ul:my-5 prose-ul:list-disc prose-ul:pl-6
-            prose-ol:my-5 prose-ol:list-decimal prose-ol:pl-6
-            prose-li:text-foreground prose-li:mb-2
-            prose-img:rounded-lg prose-img:shadow-md
-          prose-code:text-sm prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
-            prose-pre:bg-secondary prose-pre:text-foreground prose-pre:font-sans prose-pre:text-[0.95rem] prose-pre:leading-relaxed prose-pre:px-6 prose-pre:py-5 prose-pre:rounded-xl
-            prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic">
-            <ReactMarkdown>{stripLeadingTitle(post.content, post.title)}</ReactMarkdown>
-          </div>
+          <div 
+            className="prose prose-lg max-w-prose mx-auto
+    prose-headings:font-bold prose-headings:text-foreground
+    prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
+    prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
+    prose-p:text-foreground prose-p:leading-relaxed prose-p:mb-4
+    prose-a:text-primary hover:prose-a:underline
+    prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6
+    prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6
+    prose-li:mb-2"
+            dangerouslySetInnerHTML={{ 
+              __html: stripLeadingTitle(post.content, post.title)
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+                .replace(/\*(.*)\*/gim, '<em>$1</em>')
+                .replace(/\n/gim, '<br />')
+            }}
+          />
 
           <footer className="mt-16 pt-8 border-t">
             <Button onClick={() => navigate("/blog")}>
