@@ -809,7 +809,7 @@ const Index = () => {
       <footer className="py-8 px-4 border-t">
         <div className="max-w-6xl mx-auto text-center">
           <img src={logo} alt="Build Me a Simple Site" className="h-10 mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground">&copy; 2024 Build Me a Simple Site. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">&copy; 2025 Build Me a Simple Site. All rights reserved.</p>
           <p className="mt-2">
             <a href="/portal" className="text-sm text-primary hover:underline">Client Portal</a>
           </p>
