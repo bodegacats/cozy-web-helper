@@ -2,9 +2,20 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.83.0";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+// Get allowed origins from environment or use secure defaults
+const ALLOWED_ORIGINS = Deno.env.get('ALLOWED_ORIGINS')?.split(',') || [
+  'http://localhost:5173',
+  'http://localhost:8080',
+  'https://cozy-web-helper.lovable.app',
+];
+
+const getCorsHeaders = (origin: string | null) => {
+  const isAllowed = origin && ALLOWED_ORIGINS.includes(origin);
+  return {
+    'Access-Control-Allow-Origin': isAllowed ? origin : ALLOWED_ORIGINS[0],
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Credentials': 'true',
+  };
 };
 
 // Unified pricing engine - Per-page model
@@ -13,17 +24,28 @@ function calculateEstimate(inputs: {
   contentReadiness: string;
   isRush: boolean;
 }) {
+  // Validate inputs
+  if (!Number.isInteger(inputs.pageCount) || inputs.pageCount < 1) {
+    throw new Error('Page count must be a positive integer');
+  }
+  if (inputs.pageCount > 7) {
+    throw new Error('Page count exceeds maximum of 7 pages');
+  }
+  if (!['ready', 'heavy'].includes(inputs.contentReadiness)) {
+    throw new Error('Invalid content readiness value');
+  }
+
   // Base $500 includes 1 page, then +$150 per additional page
   let base = 500; // Base includes 1 page
   const pageCount = Math.min(inputs.pageCount, 7); // Cap at 7 pages
-  
+
   // Calculate additional page costs (flat $150 per page)
   if (pageCount > 1) {
     base += (pageCount - 1) * 150;
   }
 
   const addOns: { [key: string]: number } = {};
-  
+
   if (inputs.contentReadiness === 'heavy') addOns['Content Shaping'] = 300;
   if (inputs.isRush) addOns['Rush Delivery'] = 200;
 
@@ -273,6 +295,9 @@ Rules:
 - Output ONLY the JSON, no extra text`;
 
 serve(async (req) => {
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -282,13 +307,20 @@ serve(async (req) => {
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY not configured');
+      console.error('LOVABLE_API_KEY not configured');
+      throw new Error('Service temporarily unavailable');
     }
 
     // Handle intake creation action
     if (action === 'create_intake' && intakeData) {
-      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const supabaseUrl = Deno.env.get('SUPABASE_URL');
+      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+      if (!supabaseUrl || !supabaseKey) {
+        console.error('Supabase environment variables not configured');
+        throw new Error('Service temporarily unavailable');
+      }
+
       const supabase = createClient(supabaseUrl, supabaseKey);
 
       // Find or create client
@@ -447,10 +479,16 @@ serve(async (req) => {
       }
       const errorText = await response.text();
       console.error('AI gateway error:', response.status, errorText);
-      throw new Error('AI service error');
+      throw new Error('Service temporarily unavailable');
     }
 
     const data = await response.json();
+
+    if (!data?.choices?.[0]?.message?.content) {
+      console.error('Invalid AI response format');
+      throw new Error('Invalid response from service');
+    }
+
     let aiMessage = data.choices[0].message.content;
 
     // Handle tool calls if present
@@ -512,7 +550,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in ai-intake function:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ error: 'An error occurred. Please try again later.' }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

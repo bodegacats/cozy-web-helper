@@ -47,8 +47,9 @@ const PortalAIChat = () => {
 
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session) {
+
+    if (!session || !session.user.email) {
+      toast.error("No valid session found");
       navigate('/portal');
       return;
     }
@@ -56,7 +57,7 @@ const PortalAIChat = () => {
     const { data: clientData } = await supabase
       .from('clients')
       .select('id, name, email, business_name')
-      .eq('email', session.user.email!)
+      .eq('email', session.user.email)
       .maybeSingle();
 
     if (!clientData) {

@@ -1,8 +1,19 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+// Get allowed origins from environment or use secure defaults
+const ALLOWED_ORIGINS = Deno.env.get('ALLOWED_ORIGINS')?.split(',') || [
+  'http://localhost:5173',
+  'http://localhost:8080',
+  'https://cozy-web-helper.lovable.app',
+];
+
+const getCorsHeaders = (origin: string | null) => {
+  const isAllowed = origin && ALLOWED_ORIGINS.includes(origin);
+  return {
+    'Access-Control-Allow-Origin': isAllowed ? origin : ALLOWED_ORIGINS[0],
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Credentials': 'true',
+  };
 };
 
 const SYSTEM_PROMPT = `You are a helpful website update assistant for Build me a simple site.
@@ -39,6 +50,9 @@ Follow these rules:
 7. Be conversational until you have all the details, then output the JSON.`;
 
 serve(async (req) => {
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -48,7 +62,8 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
     if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY is not configured');
+      console.error('LOVABLE_API_KEY not configured');
+      throw new Error('Service temporarily unavailable');
     }
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -69,10 +84,16 @@ serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('AI API error:', response.status, errorText);
-      throw new Error('AI API request failed');
+      throw new Error('AI service temporarily unavailable');
     }
 
     const data = await response.json();
+
+    if (!data?.choices?.[0]?.message?.content) {
+      console.error('Invalid AI response format');
+      throw new Error('Invalid response from AI service');
+    }
+
     const message = data.choices[0].message.content;
 
     return new Response(
@@ -82,7 +103,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in portal-ai-chat:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ error: 'An error occurred. Please try again later.' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

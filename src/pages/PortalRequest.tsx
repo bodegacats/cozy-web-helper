@@ -86,8 +86,9 @@ const PortalRequest = () => {
 
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session) {
+
+    if (!session || !session.user.email) {
+      toast.error("No valid session found");
       navigate('/portal');
       return;
     }
@@ -95,7 +96,7 @@ const PortalRequest = () => {
     const { data: clientData } = await supabase
       .from('clients')
       .select('id, name, business_name')
-      .eq('email', session.user.email!)
+      .eq('email', session.user.email)
       .maybeSingle();
 
     if (!clientData) {
@@ -144,9 +145,43 @@ const PortalRequest = () => {
     }
   };
 
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+  const ALLOWED_FILE_TYPES = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/webp',
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'text/plain',
+  ];
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setUploadedFiles([...uploadedFiles, ...Array.from(e.target.files)]);
+    if (!e.target.files) return;
+
+    const files = Array.from(e.target.files);
+    const validFiles: File[] = [];
+
+    for (const file of files) {
+      // Check file size
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error(`${file.name} is too large. Maximum file size is 10MB.`);
+        continue;
+      }
+
+      // Check file type
+      if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+        toast.error(`${file.name} is not an allowed file type. Allowed: images, PDF, Word documents, text files.`);
+        continue;
+      }
+
+      validFiles.push(file);
+    }
+
+    if (validFiles.length > 0) {
+      setUploadedFiles([...uploadedFiles, ...validFiles]);
+      toast.success(`${validFiles.length} file(s) added`);
     }
   };
 
@@ -163,56 +198,79 @@ const PortalRequest = () => {
 
     // Upload files to storage
     const attachmentUrls: string[] = [];
-    
-    for (const file of uploadedFiles) {
-      const filePath = `${client.id}/${Date.now()}_${file.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from('request-attachments')
-        .upload(filePath, file);
+    const uploadedFilePaths: string[] = [];
 
-      if (uploadError) {
-        toast.error(`Failed to upload ${file.name}`);
+    try {
+      for (const file of uploadedFiles) {
+        const filePath = `${client.id}/${Date.now()}_${file.name}`;
+        const { error: uploadError } = await supabase.storage
+          .from('request-attachments')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          toast.error(`Failed to upload ${file.name}`);
+          // Clean up previously uploaded files
+          for (const path of uploadedFilePaths) {
+            await supabase.storage.from('request-attachments').remove([path]);
+          }
+          setUploading(false);
+          return;
+        }
+
+        uploadedFilePaths.push(filePath);
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('request-attachments')
+          .getPublicUrl(filePath);
+
+        attachmentUrls.push(publicUrl);
+      }
+
+      const { error: requestError } = await supabase
+        .from('update_requests')
+        .insert({
+          client_id: client.id,
+          title: form.title,
+          description: form.description,
+          priority: form.priority,
+          size_tier: form.size_tier,
+          quoted_price_cents: calculateQuotedPrice(form.size_tier),
+          status: 'new',
+          attachments: attachmentUrls.map((url, index) => ({
+            url,
+            name: uploadedFiles[index].name,
+            size: uploadedFiles[index].size
+          })),
+          ai_type: aiClassification?.type || null,
+          ai_price_cents: aiClassification ? aiClassification.recommended_price * 100 : null,
+          ai_explanation: aiClassification?.explanation || null,
+          ai_confidence: aiClassification?.confidence || null
+        });
+
+      if (requestError) {
+        console.error('Database error:', requestError);
+        toast.error("Could not send request");
+        // Clean up uploaded files
+        for (const path of uploadedFilePaths) {
+          await supabase.storage.from('request-attachments').remove([path]);
+        }
         setUploading(false);
         return;
       }
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('request-attachments')
-        .getPublicUrl(filePath);
-
-      attachmentUrls.push(publicUrl);
-    }
-
-    const { error: requestError } = await supabase
-      .from('update_requests')
-      .insert({
-        client_id: client.id,
-        title: form.title,
-        description: form.description,
-        priority: form.priority,
-        size_tier: form.size_tier,
-        quoted_price_cents: calculateQuotedPrice(form.size_tier),
-        status: 'new',
-        attachments: attachmentUrls.map((url, index) => ({
-          url,
-          name: uploadedFiles[index].name,
-          size: uploadedFiles[index].size
-        })),
-        ai_type: aiClassification?.type || null,
-        ai_price_cents: aiClassification ? aiClassification.recommended_price * 100 : null,
-        ai_explanation: aiClassification?.explanation || null,
-        ai_confidence: aiClassification?.confidence || null
-      });
-
-    if (requestError) {
-      toast.error("Could not send request");
+      toast.success("Got it. I will review this and get back to you.");
       setUploading(false);
-      return;
+      navigate('/portal');
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast.error("An unexpected error occurred. Please try again.");
+      // Clean up any uploaded files
+      for (const path of uploadedFilePaths) {
+        await supabase.storage.from('request-attachments').remove([path]);
+      }
+      setUploading(false);
     }
-
-    toast.success("Got it. I will review this and get back to you.");
-    setUploading(false);
-    navigate('/portal');
   };
 
   if (loading) {
@@ -380,6 +438,7 @@ const PortalRequest = () => {
                   id="file-input"
                   type="file"
                   multiple
+                  accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.txt"
                   onChange={handleFileSelect}
                   className="hidden"
                 />
