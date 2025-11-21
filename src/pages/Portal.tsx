@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { ExternalLink, ArrowLeft, Trash2 } from "lucide-react";
 import { CancelRequestDialog } from "@/components/CancelRequestDialog";
 import { PortalNav } from "@/components/PortalNav";
+import { useAdminCheck } from "@/lib/auth-helpers";
 
 interface Client {
   id: string;
@@ -28,6 +29,7 @@ interface UpdateRequest {
 
 const Portal = () => {
   const navigate = useNavigate();
+  const { isAdmin, loading: adminLoading } = useAdminCheck();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
@@ -86,10 +88,15 @@ const Portal = () => {
   }, [user]);
 
   useEffect(() => {
-    if (user) {
+    if (user && !adminLoading) {
+      // Redirect admins to admin area
+      if (isAdmin) {
+        navigate('/admin/clients');
+        return;
+      }
       loadClientData();
     }
-  }, [user, loadClientData]);
+  }, [user, adminLoading, isAdmin, loadClientData, navigate]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -148,7 +155,7 @@ const Portal = () => {
     }
   };
 
-  if (loading) {
+  if (loading || adminLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-lg text-muted-foreground">Loading...</div>
