@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import logo from "@/assets/logo.png";
+import { Monitor } from "lucide-react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,8 +27,9 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <NavLink to="/" className="flex items-center">
-            <img src={logo} alt="Build me a simple site" className="h-10" />
+          <NavLink to="/" className="flex items-center gap-2">
+            <Monitor className="h-8 w-8" />
+            <span className="text-xl font-semibold">Build Me a Simple Site</span>
           </NavLink>
 
           {/* Desktop Navigation */}
