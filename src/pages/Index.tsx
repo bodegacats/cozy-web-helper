@@ -13,7 +13,6 @@ import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
 const Index = () => {
   const [pageCount, setPageCount] = useState<number>(1);
   const [contentShaping, setContentShaping] = useState(false);
@@ -26,7 +25,6 @@ const Index = () => {
     email: '',
     notes: ''
   });
-
   const calculatePrice = (pages: number, hasContentShaping: boolean, hasRushDelivery: boolean): number => {
     let price = 500; // Base price includes 1 page
     if (pages > 1) {
@@ -40,51 +38,46 @@ const Index = () => {
     }
     return price;
   };
-
   const currentPrice = calculatePrice(pageCount, contentShaping, rushDelivery);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validation
     if (!formData.name.trim() || !formData.email.trim()) {
       toast.error("Please fill in all required fields");
       return;
     }
-    
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       toast.error("Please enter a valid email address");
       return;
     }
-    
     setIsSubmitting(true);
-    
     try {
-      const { error } = await supabase.from('contact_submissions').insert({
+      const {
+        error
+      } = await supabase.from('contact_submissions').insert({
         name: formData.name.trim(),
         email: formData.email.trim(),
         wish: "Instant quote",
         project_description: "Instant quote submission",
-        selected_options: { 
-          pageCount, 
-          contentShaping, 
-          rushDelivery 
+        selected_options: {
+          pageCount,
+          contentShaping,
+          rushDelivery
         },
         estimate_low: currentPrice,
         estimate_high: currentPrice,
         notes: formData.notes.trim() || null,
         status: "new"
       });
-      
       if (error) throw error;
-      
+
       // Send email notification
       try {
         await supabase.functions.invoke('send-quote-notification', {
@@ -102,17 +95,19 @@ const Index = () => {
         console.log('Email notification not sent:', emailError);
         // Don't show error to user - database insert was successful
       }
-      
       setIsSuccess(true);
       toast.success("Estimate sent successfully!");
-      
+
       // Auto-close after 3 seconds
       setTimeout(() => {
         setIsModalOpen(false);
         setIsSuccess(false);
-        setFormData({ name: '', email: '', notes: '' });
+        setFormData({
+          name: '',
+          email: '',
+          notes: ''
+        });
       }, 3000);
-      
     } catch (error) {
       console.error('Error submitting estimate:', error);
       toast.error("Failed to submit estimate. Please try again.");
@@ -120,7 +115,6 @@ const Index = () => {
       setIsSubmitting(false);
     }
   };
-
   const scrollToContact = () => {
     const element = document.getElementById('contact');
     element?.scrollIntoView({
@@ -128,65 +122,56 @@ const Index = () => {
       block: 'start'
     });
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Helmet>
         <script type="application/ld+json">
           {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": [
-              {
-                "@type": "Question",
-                "name": "How long does it usually take?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Once I have your content (text, images, links), most sites launch within a week. Some take a bit longer depending on how much back and forth we need. If you are slow to send materials or give feedback, that adds time."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "What if I don't have content ready?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "I can help organize and edit what you have, but I don't write copy from scratch. You provide the words, I make them clear and place them well."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Can I update the site myself later?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Yes. I build on platforms that let you log in and change text or images without touching code. I show you how everything works before we launch."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "What platform do you use?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "I use whatever makes sense for your project (usually Webflow, Wix, or WordPress). You own the site and login credentials."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "What happens after launch?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "The site is yours. You can update it yourself or ask me for help. Small fixes (broken link, typo, image swap) are included for the first 30 days. After that, I charge hourly for updates."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "What if my project is bigger than this?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "If you need something more complex (custom features, integrations, or ongoing work), I'll tell you upfront and we can talk through other options or I can refer you to someone better suited."
-                }
-              }
-            ]
-          })}
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [{
+            "@type": "Question",
+            "name": "How long does it usually take?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Once I have your content (text, images, links), most sites launch within a week. Some take a bit longer depending on how much back and forth we need. If you are slow to send materials or give feedback, that adds time."
+            }
+          }, {
+            "@type": "Question",
+            "name": "What if I don't have content ready?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "I can help organize and edit what you have, but I don't write copy from scratch. You provide the words, I make them clear and place them well."
+            }
+          }, {
+            "@type": "Question",
+            "name": "Can I update the site myself later?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. I build on platforms that let you log in and change text or images without touching code. I show you how everything works before we launch."
+            }
+          }, {
+            "@type": "Question",
+            "name": "What platform do you use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "I use whatever makes sense for your project (usually Webflow, Wix, or WordPress). You own the site and login credentials."
+            }
+          }, {
+            "@type": "Question",
+            "name": "What happens after launch?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The site is yours. You can update it yourself or ask me for help. Small fixes (broken link, typo, image swap) are included for the first 30 days. After that, I charge hourly for updates."
+            }
+          }, {
+            "@type": "Question",
+            "name": "What if my project is bigger than this?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "If you need something more complex (custom features, integrations, or ongoing work), I'll tell you upfront and we can talk through other options or I can refer you to someone better suited."
+            }
+          }]
+        })}
         </script>
       </Helmet>
       <Navbar />
@@ -272,12 +257,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-xl font-semibold">Included in every site</h3>
                   <ul className="space-y-3">
-                    {["Most sites end up between 4 and 7 pages (Home, About, Services or Work, Contact, plus anything else you truly need).", "Mobile-friendly responsive design", "Fast loading and clean code", "Basic SEO setup", "Contact form that works", "Simple, clear navigation", "Instructions for making updates"].map((item, i) => (
-                      <li key={i} className="flex items-start gap-3">
+                    {["Most sites end up between 4 and 7 pages (Home, About, Services or Work, Contact, plus anything else you truly need).", "Mobile-friendly responsive design", "Fast loading and clean code", "Basic SEO setup", "Contact form that works", "Simple, clear navigation", "Instructions for making updates"].map((item, i) => <li key={i} className="flex items-start gap-3">
                         <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-base leading-relaxed">{item}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
               </Card>
@@ -286,12 +269,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-xl font-semibold">Types of sites this works for</h3>
                   <ul className="space-y-3">
-                    {["Service businesses (consultants, therapists, contractors)", "Portfolios (artists, photographers, writers)", "Nonprofits and community organizations", "Creative projects (films, books, events)", "Solo professionals (coaches, educators, speakers)", "Small retail or local businesses (no ecommerce)"].map((item, i) => (
-                      <li key={i} className="flex items-start gap-3">
+                    {["Service businesses (consultants, therapists, contractors)", "Portfolios (artists, photographers, writers)", "Nonprofits and community organizations", "Creative projects (films, books, events)", "Solo professionals (coaches, educators, speakers)", "Small retail or local businesses (no ecommerce)"].map((item, i) => <li key={i} className="flex items-start gap-3">
                         <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-base leading-relaxed">{item}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
               </Card>
@@ -420,12 +401,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-xl font-semibold">✅ Good fit if you...</h3>
                   <ul className="space-y-3">
-                    {["Have clear content or can provide it", "Need a professional, working site—not a marketing masterpiece", "Want something that loads fast and works on phones", "Don't want to learn WordPress, Squarespace, or Webflow", "Need ~1–7 pages (most common: 3–5)"].map((item, i) => (
-                      <li key={i} className="flex items-start gap-3">
+                    {["Have clear content or can provide it", "Need a professional, working site—not a marketing masterpiece", "Want something that loads fast and works on phones", "Don't want to learn WordPress, Squarespace, or Webflow", "Need ~1–7 pages (most common: 3–5)"].map((item, i) => <li key={i} className="flex items-start gap-3">
                         <Check className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-base leading-relaxed">{item}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
               </Card>
@@ -434,12 +413,10 @@ const Index = () => {
                 <CardContent className="p-6 space-y-4">
                   <h3 className="text-xl font-semibold">❌ Not a fit if you...</h3>
                   <ul className="space-y-3">
-                    {["Need e-commerce (Shopify is better)", "Want a membership site or complex user logins", "Need heavy custom integrations or APIs", "Want to edit content yourself constantly (then use a CMS)", "Need 20+ pages or a content-heavy blog"].map((item, i) => (
-                      <li key={i} className="flex items-start gap-3">
+                    {["Need e-commerce (Shopify is better)", "Want a membership site or complex user logins", "Need heavy custom integrations or APIs", "Want to edit content yourself constantly (then use a CMS)", "Need 20+ pages or a content-heavy blog"].map((item, i) => <li key={i} className="flex items-start gap-3">
                         <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
                         <span className="text-base leading-relaxed">{item}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
               </Card>
@@ -485,14 +462,7 @@ const Index = () => {
                 </label>
                 
                 <div className="space-y-4">
-                  <Slider
-                    value={[pageCount]}
-                    onValueChange={(value) => setPageCount(value[0])}
-                    min={1}
-                    max={7}
-                    step={1}
-                    className="w-full"
-                  />
+                  <Slider value={[pageCount]} onValueChange={value => setPageCount(value[0])} min={1} max={7} step={1} className="w-full" />
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <span>1 page</span>
                     <span className="font-semibold text-foreground text-base">{pageCount} {pageCount === 1 ? 'page' : 'pages'}</span>
@@ -506,12 +476,7 @@ const Index = () => {
                 <h3 className="text-sm font-semibold text-center mb-3">Optional add-ons:</h3>
                 <div className="space-y-2">
                   <label className="flex items-start gap-3 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      checked={contentShaping}
-                      onChange={(e) => setContentShaping(e.target.checked)}
-                      className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                    />
+                    <input type="checkbox" checked={contentShaping} onChange={e => setContentShaping(e.target.checked)} className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" />
                     <div className="flex-1">
                       <span className="text-sm font-medium group-hover:text-primary transition-colors">
                         I need help shaping my content (+$300)
@@ -523,12 +488,7 @@ const Index = () => {
                   </label>
                   
                   <label className="flex items-start gap-3 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      checked={rushDelivery}
-                      onChange={(e) => setRushDelivery(e.target.checked)}
-                      className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                    />
+                    <input type="checkbox" checked={rushDelivery} onChange={e => setRushDelivery(e.target.checked)} className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" />
                     <div className="flex-1">
                       <span className="text-sm font-medium group-hover:text-primary transition-colors">
                         Rush delivery (+$200)
@@ -547,14 +507,12 @@ const Index = () => {
                   ${currentPrice.toLocaleString()}
                 </div>
                 <div className="text-center">
-                  <a 
-                    href="#how-pricing-works"
-                    className="text-sm text-primary hover:underline font-medium"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      document.getElementById('how-pricing-works')?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                  >
+                  <a href="#how-pricing-works" className="text-sm text-primary hover:underline font-medium" onClick={e => {
+                  e.preventDefault();
+                  document.getElementById('how-pricing-works')?.scrollIntoView({
+                    behavior: 'smooth'
+                  });
+                }}>
                     How pricing works →
                   </a>
                 </div>
@@ -589,8 +547,7 @@ const Index = () => {
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-md">
-                    {!isSuccess ? (
-                      <>
+                    {!isSuccess ? <>
                         <DialogHeader>
                           <DialogTitle>Send me this estimate</DialogTitle>
                           <DialogDescription>
@@ -613,39 +570,17 @@ const Index = () => {
                           <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
                               <Label htmlFor="name">Name *</Label>
-                              <Input
-                                id="name"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                required
-                                placeholder="Your name"
-                              />
+                              <Input id="name" name="name" value={formData.name} onChange={handleInputChange} required placeholder="Your name" />
                             </div>
                             
                             <div className="space-y-2">
                               <Label htmlFor="email">Email *</Label>
-                              <Input
-                                id="email"
-                                name="email"
-                                type="email"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                required
-                                placeholder="your@email.com"
-                              />
+                              <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} required placeholder="your@email.com" />
                             </div>
                             
                             <div className="space-y-2">
                               <Label htmlFor="notes">Notes about your project (optional)</Label>
-                              <Textarea
-                                id="notes"
-                                name="notes"
-                                value={formData.notes}
-                                onChange={handleInputChange}
-                                placeholder="Any additional details..."
-                                rows={3}
-                              />
+                              <Textarea id="notes" name="notes" value={formData.notes} onChange={handleInputChange} placeholder="Any additional details..." rows={3} />
                             </div>
                             
                             <Button type="submit" className="w-full" disabled={isSubmitting}>
@@ -653,9 +588,7 @@ const Index = () => {
                             </Button>
                           </form>
                         </div>
-                      </>
-                    ) : (
-                      <div className="py-8 text-center space-y-4">
+                      </> : <div className="py-8 text-center space-y-4">
                         <DialogHeader>
                           <DialogTitle>Thanks!</DialogTitle>
                           <DialogDescription>
@@ -665,23 +598,20 @@ const Index = () => {
                         <Button onClick={() => setIsModalOpen(false)} variant="outline">
                           Close
                         </Button>
-                      </div>
-                    )}
+                      </div>}
                   </DialogContent>
                 </Dialog>
                 
                 <div className="text-center">
-                  <Button 
-                    asChild 
-                    variant="ghost" 
-                    size="sm"
-                    className="text-sm"
-                  >
+                  <Button asChild variant="ghost" size="sm" className="text-sm">
                     <button onClick={() => {
-                      const element = document.getElementById('how-pricing-works');
-                      element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }}>
-                      View pricing details
+                    const element = document.getElementById('how-pricing-works');
+                    element?.scrollIntoView({
+                      behavior: 'smooth',
+                      block: 'start'
+                    });
+                  }}>
+                      Click here to see how our pricing works        
                     </button>
                   </Button>
                 </div>
@@ -838,8 +768,6 @@ const Index = () => {
           </p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
