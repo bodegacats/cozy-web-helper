@@ -232,7 +232,7 @@ export default function BlogPost() {
             prose-li:text-foreground prose-li:mb-2
             prose-img:rounded-lg prose-img:shadow-md
             prose-code:text-sm prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
-            prose-pre:bg-muted prose-pre:border prose-pre:border-border
+            prose-pre:bg-secondary prose-pre:text-foreground prose-pre:font-sans prose-pre:text-[0.95rem] prose-pre:leading-relaxed prose-pre:px-6 prose-pre:py-5 prose-pre:rounded-xl
             prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic">
             <ReactMarkdown>{stripLeadingTitle(post.content, post.title)}</ReactMarkdown>
           </div>
