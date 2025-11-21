@@ -30,7 +30,6 @@ const Portal = () => {
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSignup, setIsSignup] = useState(false);
   const [client, setClient] = useState<Client | null>(null);
   const [requests, setRequests] = useState<UpdateRequest[]>([]);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
@@ -84,27 +83,10 @@ const Portal = () => {
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (isSignup) {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/portal`
-        }
-      });
-      
-      if (error) {
-        toast.error(error.message);
-      } else {
-        toast.success("Account created! You can now log in.");
-        setIsSignup(false);
-      }
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      
-      if (error) {
-        toast.error(error.message);
-      }
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    
+    if (error) {
+      toast.error(error.message);
     }
   };
 
@@ -177,14 +159,9 @@ const Portal = () => {
           </Button>
           <Card className="w-full">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl">
-              {isSignup ? "Create account" : "Client portal"}
-            </CardTitle>
+            <CardTitle className="text-2xl">Client Portal</CardTitle>
             <CardDescription className="text-base">
-              {isSignup 
-                ? "Set up your client account to access your project."
-                : "If I have already built your site, you can log in here and send change requests."
-              }
+              Access your project dashboard and submit change requests.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -210,20 +187,15 @@ const Portal = () => {
                 />
               </div>
               <Button type="submit" className="w-full">
-                {isSignup ? "Create account" : "Log in"}
-              </Button>
-              <Button 
-                type="button" 
-                variant="ghost" 
-                className="w-full"
-                onClick={() => setIsSignup(!isSignup)}
-              >
-                {isSignup 
-                  ? "Already have an account? Log in" 
-                  : "Need an account? Sign up"
-                }
+                Log in
               </Button>
             </form>
+            <p className="text-sm text-center text-muted-foreground mt-4">
+              Portal access is provided after your project begins.{' '}
+              <a href="mailto:dan@buildmeasimplesite.com" className="text-primary hover:underline">
+                Need login help?
+              </a>
+            </p>
           </CardContent>
         </Card>
         </div>
