@@ -16,6 +16,8 @@ import { toast } from "sonner";
 
 const Index = () => {
   const [pageCount, setPageCount] = useState<number>(1);
+  const [contentShaping, setContentShaping] = useState(false);
+  const [rushDelivery, setRushDelivery] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -25,14 +27,21 @@ const Index = () => {
     notes: ''
   });
 
-  const calculatePrice = (pages: number): number => {
-    if (pages === 1) return 500;
-    if (pages >= 2 && pages <= 4) return 1000;
-    if (pages >= 5 && pages <= 7) return 1500;
-    return 1500; // max
+  const calculatePrice = (pages: number, hasContentShaping: boolean, hasRushDelivery: boolean): number => {
+    let price = 500; // Base price includes 1 page
+    if (pages > 1) {
+      price += (pages - 1) * 150; // Each additional page
+    }
+    if (hasContentShaping) {
+      price += 300;
+    }
+    if (hasRushDelivery) {
+      price += 200;
+    }
+    return price;
   };
 
-  const currentPrice = calculatePrice(pageCount);
+  const currentPrice = calculatePrice(pageCount, contentShaping, rushDelivery);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -63,7 +72,11 @@ const Index = () => {
         email: formData.email.trim(),
         wish: "Instant quote",
         project_description: "Instant quote submission",
-        selected_options: { pageCount },
+        selected_options: { 
+          pageCount, 
+          contentShaping, 
+          rushDelivery 
+        },
         estimate_low: currentPrice,
         estimate_high: currentPrice,
         notes: formData.notes.trim() || null,
@@ -470,14 +483,56 @@ const Index = () => {
                 </div>
               </div>
 
+              {/* Add-on Checkboxes */}
+              <div className="space-y-3 pt-4 border-t">
+                <h3 className="text-sm font-semibold text-center mb-3">Optional add-ons:</h3>
+                <div className="space-y-2">
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={contentShaping}
+                      onChange={(e) => setContentShaping(e.target.checked)}
+                      className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm font-medium group-hover:text-primary transition-colors">
+                        I need help shaping my content (+$300)
+                      </span>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        I'll rewrite or reshape sections that aren't working and help clarify your message.
+                      </p>
+                    </div>
+                  </label>
+                  
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={rushDelivery}
+                      onChange={(e) => setRushDelivery(e.target.checked)}
+                      className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm font-medium group-hover:text-primary transition-colors">
+                        Rush delivery (+$200)
+                      </span>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        48-72 hour turnaround instead of standard 5-7 business days.
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
               {/* Price Display */}
               <div className="text-center py-6">
                 <div className="text-5xl md:text-6xl font-bold text-foreground mb-2">
                   ${currentPrice.toLocaleString()}
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Price updates instantly based on the number of pages.
-                </p>
+                <div className="text-center text-sm text-muted-foreground space-y-1">
+                  <p>Base price $500 includes 1 page.</p>
+                  <p>Each additional page +$150.</p>
+                  <p>Optional: content shaping +$300, rush delivery +$200.</p>
+                </div>
               </div>
 
               {/* Included List */}
@@ -525,6 +580,8 @@ const Index = () => {
                             </p>
                             <p className="text-sm text-muted-foreground">
                               Based on {pageCount} page{pageCount !== 1 ? 's' : ''}
+                              {contentShaping && " + content shaping"}
+                              {rushDelivery && " + rush delivery"}
                             </p>
                           </div>
                           
@@ -623,11 +680,30 @@ const Index = () => {
             <div className="prose prose-lg mx-auto text-muted-foreground">
               <div className="bg-card border-2 rounded-lg p-8 space-y-6 shadow-sm">
                 <div>
-                  <h3 className="text-xl font-semibold text-foreground mb-3">Simple, Tiered Pricing</h3>
+                  <h3 className="text-xl font-semibold text-foreground mb-3">Simple Per-Page Pricing</h3>
                   <ul className="space-y-2 text-base">
-                    <li>• <strong>1 page:</strong> $500</li>
-                    <li>• <strong>2-4 pages:</strong> $1,000</li>
-                    <li>• <strong>5-7 pages:</strong> $1,500</li>
+                    <li>• <strong>Base:</strong> $500 (includes 1 page)</li>
+                    <li>• <strong>Each additional page:</strong> +$150</li>
+                  </ul>
+                  <div className="mt-4 p-3 bg-muted rounded-lg">
+                    <p className="text-sm font-medium mb-2">Price examples:</p>
+                    <ul className="text-sm space-y-1">
+                      <li>1 page = $500</li>
+                      <li>2 pages = $650</li>
+                      <li>3 pages = $800</li>
+                      <li>4 pages = $950</li>
+                      <li>5 pages = $1,100</li>
+                      <li>6 pages = $1,250</li>
+                      <li>7 pages = $1,400</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="pt-4 border-t">
+                  <h3 className="text-xl font-semibold text-foreground mb-3">Optional Add-Ons</h3>
+                  <ul className="space-y-2 text-base">
+                    <li>• <strong>Content shaping:</strong> +$300 <span className="text-sm text-muted-foreground">(I'll rewrite or reshape sections that aren't working)</span></li>
+                    <li>• <strong>Rush delivery:</strong> +$200 <span className="text-sm text-muted-foreground">(48-72 hour turnaround)</span></li>
                   </ul>
                 </div>
                 
