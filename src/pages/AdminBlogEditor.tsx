@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Helmet } from "react-helmet";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,13 +33,7 @@ export default function AdminBlogEditor() {
     published: false,
   });
 
-  useEffect(() => {
-    if (isEditing) {
-      fetchPost();
-    }
-  }, [id]);
-
-  const fetchPost = async () => {
+  const fetchPost = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from("blog_posts")
@@ -72,7 +66,13 @@ export default function AdminBlogEditor() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
+
+  useEffect(() => {
+    if (isEditing && id) {
+      fetchPost();
+    }
+  }, [isEditing, id, fetchPost]);
 
   const generateSlug = (title: string) => {
     return title

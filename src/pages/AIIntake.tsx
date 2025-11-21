@@ -38,35 +38,57 @@ const AIIntake = () => {
   const parseIntakeJSON = (content: string) => {
     // Try to find JSON in the message
     const jsonMatch = content.match(/\{[\s\S]*"name"[\s\S]*"email"[\s\S]*\}/);
-    if (!jsonMatch) return null;
+    if (!jsonMatch) {
+      console.warn("No JSON pattern found in content");
+      return null;
+    }
 
     try {
       const parsed = JSON.parse(jsonMatch[0]);
-      
+
+      // Validate required fields
+      if (!parsed.name || !parsed.email) {
+        console.error("Missing required fields: name or email");
+        return null;
+      }
+
+      // Safely parse pages to integer
+      const pagesEstimate = parsed.pages
+        ? (typeof parsed.pages === 'number' ? parsed.pages : parseInt(String(parsed.pages), 10))
+        : null;
+
+      // Validate pages estimate
+      if (pagesEstimate !== null && (isNaN(pagesEstimate) || pagesEstimate < 0)) {
+        console.warn("Invalid pages estimate:", parsed.pages);
+      }
+
       // Map fields from AI's JSON schema to our database schema
       return {
-        name: parsed.name || "",
-        email: parsed.email || "",
-        business_name: parsed.business_name || null,
-        website_url: parsed.website_url || null,
-        project_description: parsed.project_description || "",
-        goals: parsed.goal || "",
-        pages_estimate: parsed.pages ? parseInt(parsed.pages) : null,
-        content_readiness: parsed.content_ready || "",
-        timeline: parsed.timeline || "",
-        budget_range: parsed.budget || "",
-        design_examples: parsed.design_examples || "",
-        special_needs: parsed.advanced_features || "",
-        tech_comfort: parsed.update_preference || "",
+        name: String(parsed.name || ""),
+        email: String(parsed.email || ""),
+        business_name: parsed.business_name ? String(parsed.business_name) : null,
+        website_url: parsed.website_url ? String(parsed.website_url) : null,
+        project_description: String(parsed.project_description || ""),
+        goals: String(parsed.goal || ""),
+        pages_estimate: pagesEstimate,
+        content_readiness: String(parsed.content_ready || ""),
+        timeline: String(parsed.timeline || ""),
+        budget_range: String(parsed.budget || ""),
+        design_examples: String(parsed.design_examples || ""),
+        special_needs: String(parsed.advanced_features || ""),
+        tech_comfort: String(parsed.update_preference || ""),
         fit_status: parsed.fit === "good" ? "good" : parsed.fit === "maybe" ? "borderline" : "not_fit",
-        suggested_tier: parsed.budget?.includes("1500") || parsed.budget?.includes("$1,500") ? "1500" 
-                      : parsed.budget?.includes("500") || parsed.budget?.includes("$500") ? "500"
+        suggested_tier: (parsed.budget && typeof parsed.budget === 'string')
+                      ? (parsed.budget.includes("1500") || parsed.budget.includes("$1,500") ? "1500"
+                      : parsed.budget.includes("500") || parsed.budget.includes("$500") ? "500"
+                      : "1000")
                       : "1000",
-        raw_summary: parsed.intake_summary || "",
-        raw_conversation: parsed.raw_chat || messages,
+        raw_summary: String(parsed.intake_summary || ""),
+        raw_conversation: Array.isArray(parsed.raw_chat) ? parsed.raw_chat : messages,
       };
     } catch (e) {
       console.error("Failed to parse intake JSON:", e);
+      toast.error("Failed to process intake data");
       return null;
     }
   };

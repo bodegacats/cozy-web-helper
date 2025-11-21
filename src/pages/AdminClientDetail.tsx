@@ -124,7 +124,7 @@ const AdminClientDetail = () => {
       email: clientData.email,
       phone: clientData.phone || "",
       website_url: clientData.website_url || "",
-      setup_fee_dollars: clientData.setup_fee_cents / 100,
+      setup_fee_dollars: (clientData.setup_fee_cents ?? 0) / 100,
       active: clientData.active,
       notes: clientData.notes || "",
       auth_user_id: clientData.auth_user_id,
@@ -221,10 +221,12 @@ const AdminClientDetail = () => {
   };
 
   const generatePassword = () => {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%^&*';
+    const array = new Uint8Array(16); // 16 characters for better security
+    crypto.getRandomValues(array);
     let password = '';
-    for (let i = 0; i < 8; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    for (let i = 0; i < array.length; i++) {
+      password += chars.charAt(array[i] % chars.length);
     }
     return password;
   };

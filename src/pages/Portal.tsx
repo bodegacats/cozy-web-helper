@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,13 +50,9 @@ const Portal = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      loadClientData();
-    }
-  }, [user]);
+  const loadClientData = useCallback(async () => {
+    if (!user?.email) return;
 
-  const loadClientData = async () => {
     const { data: clientData, error: clientError } = await supabase
       .from('clients')
       .select('*')
@@ -65,22 +61,35 @@ const Portal = () => {
 
     if (clientError) {
       console.error('Error loading client:', clientError);
+      toast.error('Failed to load client data');
       return;
     }
 
     setClient(clientData);
 
     if (clientData) {
-      const { data: requestsData } = await supabase
+      const { data: requestsData, error: requestsError } = await supabase
         .from('update_requests')
         .select('id, title, status, created_at')
         .eq('client_id', clientData.id)
         .order('created_at', { ascending: false })
         .limit(5);
 
+      if (requestsError) {
+        console.error('Error loading requests:', requestsError);
+        toast.error('Failed to load requests');
+        return;
+      }
+
       setRequests(requestsData || []);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      loadClientData();
+    }
+  }, [user, loadClientData]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
