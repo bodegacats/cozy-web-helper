@@ -528,10 +528,17 @@ const Index = () => {
                 <div className="text-5xl md:text-6xl font-bold text-foreground mb-2">
                   ${currentPrice.toLocaleString()}
                 </div>
-                <div className="text-center text-sm text-muted-foreground space-y-1">
-                  <p>Base price $500 includes 1 page.</p>
-                  <p>Each additional page +$150.</p>
-                  <p>Optional: content shaping +$300, rush delivery +$200.</p>
+                <div className="text-center">
+                  <a 
+                    href="#how-pricing-works"
+                    className="text-sm text-primary hover:underline font-medium"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById('how-pricing-works')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
+                    How pricing works →
+                  </a>
                 </div>
               </div>
 
@@ -671,7 +678,7 @@ const Index = () => {
         </section>
 
         {/* Pricing Details - How It Works */}
-        <section className="py-20 md:py-28 px-4">
+        <section id="how-pricing-works" className="py-20 md:py-28 px-4">
           <div className="max-w-3xl mx-auto space-y-8">
             <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight text-center">
               How Pricing Works
