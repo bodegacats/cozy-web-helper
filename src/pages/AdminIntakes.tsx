@@ -58,7 +58,7 @@ const AdminIntakes = () => {
   const checkAdminAccess = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      navigate("/login");
+      navigate("/portal");
       return;
     }
 
