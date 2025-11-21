@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -224,8 +225,13 @@ const Portal = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      <PortalNav currentPage="home" client={client} />
+    <>
+      <Helmet>
+        <title>Client Portal | Build Me a Simple Site</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+      <div className="min-h-screen bg-muted/30">
+        <PortalNav currentPage="home" client={client} />
       <div className="max-w-4xl mx-auto py-8 px-4 space-y-6">
         <Card>
           <CardHeader>
@@ -349,7 +355,8 @@ const Portal = () => {
         onConfirm={handleCancelRequest}
         requestTitle={requestToCancel?.title || ""}
       />
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
 import { DndContext, DragEndEvent, closestCorners } from "@dnd-kit/core";
 import { supabase } from "@/integrations/supabase/client";

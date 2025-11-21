@@ -3,68 +3,164 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="index, follow" />
-    
-    <!-- 
-      SEO & SOCIAL SHARING SETUP
-      Replace [Business Name] with your actual business name in the title below
-    -->
+
+    <!-- SEO Meta Tags -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+    <!-- Primary Meta Tags -->
     <title>Build Me a Simple Site | Simple websites for small businesses and solo projects</title>
+    <meta name="title" content="Build Me a Simple Site | Simple websites for small businesses and solo projects" />
     <meta name="description" content="One person website service that builds 5–7 page sites for small businesses and solo projects in about a week. Flat pricing, clear scope, and tiny fixes included." />
-    <meta name="author" content="Dan" />
+    <meta name="keywords" content="simple website, small business website, website builder, affordable web design, fast website development, freelance web developer, custom website, no subscription website" />
+    <meta name="author" content="Dan Mulé" />
+    <meta name="language" content="English" />
+    <meta name="revisit-after" content="7 days" />
     <link rel="canonical" href="https://buildmeasimplesite.com/" />
+
+    <!-- Security & Privacy -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- Mobile Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Build Me a Simple Site" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <meta name="format-detection" content="telephone=no" />
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Resource Hints & Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://qmwkhayegskycrpgudit.supabase.co" />
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     <!-- Schema.org Structured Data -->
     <script type="application/ld+json">
     [{
       "@context": "https://schema.org",
       "@type": "ProfessionalService",
+      "@id": "https://buildmeasimplesite.com/#organization",
       "name": "Build Me a Simple Site",
+      "alternateName": "Build Me a Simple Site - Simple Websites for Small Businesses",
       "url": "https://buildmeasimplesite.com",
+      "logo": "https://buildmeasimplesite.com/logo.png",
       "description": "One person website service that builds 5–7 page sites for small businesses and solo projects in about a week. Flat pricing, clear scope, and tiny fixes included.",
       "founder": {
         "@type": "Person",
-        "name": "Dan Mulé"
-      }
+        "name": "Dan Mulé",
+        "jobTitle": "Web Developer & Designer"
+      },
+      "priceRange": "$500-$1400",
+      "areaServed": {
+        "@type": "Country",
+        "name": "United States"
+      },
+      "sameAs": [],
+      "telephone": "",
+      "email": ""
     },
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
+      "@id": "https://buildmeasimplesite.com/#website",
       "name": "Build Me a Simple Site",
       "url": "https://buildmeasimplesite.com",
+      "description": "One person website service that builds 5–7 page sites for small businesses and solo projects in about a week.",
+      "publisher": {
+        "@id": "https://buildmeasimplesite.com/#organization"
+      },
       "potentialAction": {
         "@type": "SearchAction",
         "target": "https://buildmeasimplesite.com/blog?search={search_term_string}",
         "query-input": "required name=search_term_string"
+      },
+      "inLanguage": "en-US"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "@id": "https://buildmeasimplesite.com/#webpage",
+      "url": "https://buildmeasimplesite.com",
+      "name": "Build Me a Simple Site | Simple websites for small businesses and solo projects",
+      "description": "One person website service that builds 5–7 page sites for small businesses and solo projects in about a week. Flat pricing, clear scope, and tiny fixes included.",
+      "isPartOf": {
+        "@id": "https://buildmeasimplesite.com/#website"
+      },
+      "about": {
+        "@id": "https://buildmeasimplesite.com/#organization"
+      },
+      "inLanguage": "en-US"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "serviceType": "Website Development",
+      "provider": {
+        "@id": "https://buildmeasimplesite.com/#organization"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "United States"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Website Development Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Simple Website Development",
+              "description": "Professional website development for small businesses and solo projects. 1-7 pages, mobile-friendly, fast delivery."
+            }
+          }
+        ]
       }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://buildmeasimplesite.com"
+        }
+      ]
     }]
     </script>
 
     <!-- Open Graph / Social Sharing Meta Tags -->
-    <meta property="og:title" content="Build Me a Simple Site | Simple websites for small businesses and solo projects" />
-    <meta property="og:description" content="One person website service that builds 5–7 page sites for small businesses and solo projects in about a week. Flat pricing, clear scope, and tiny fixes included." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://buildmeasimplesite.com" />
     <meta property="og:site_name" content="Build Me a Simple Site" />
-    <!-- 
-      TODO: Add your social sharing image here
-      1. Create an image at 1200x630px (recommended size for social sharing)
-      2. Save it to /public folder (e.g., /public/og-image.jpg)
-      3. Update the content below to "/og-image.jpg"
-      This image appears when your URL is shared on social media, iMessage, etc.
-    -->
-    <meta property="og:image" content="/placeholder-og-image.jpg" />
+    <meta property="og:title" content="Build Me a Simple Site | Simple websites for small businesses and solo projects" />
+    <meta property="og:description" content="One person website service that builds 5–7 page sites for small businesses and solo projects in about a week. Flat pricing, clear scope, and tiny fixes included." />
+    <meta property="og:image" content="https://buildmeasimplesite.com/og-image.jpg" />
+    <meta property="og:image:secure_url" content="https://buildmeasimplesite.com/og-image.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Build Me a Simple Site - Simple websites for small businesses" />
+    <meta property="og:locale" content="en_US" />
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://buildmeasimplesite.com" />
     <meta name="twitter:title" content="Build Me a Simple Site | Simple websites for small businesses and solo projects" />
     <meta name="twitter:description" content="One person website service that builds 5–7 page sites for small businesses and solo projects in about a week. Flat pricing, clear scope, and tiny fixes included." />
-    <meta name="twitter:image" content="/placeholder-og-image.jpg" />
+    <meta name="twitter:image" content="https://buildmeasimplesite.com/og-image.jpg" />
+    <meta name="twitter:image:alt" content="Build Me a Simple Site - Simple websites for small businesses" />
+    <meta name="twitter:creator" content="@buildmeasimple" />
+    <meta name="twitter:site" content="@buildmeasimple" />
   </head>
 
   <body>

@@ -48,19 +48,64 @@ export default function Blog() {
     <>
       <Helmet>
         <title>Blog - Web Design & Development Insights | Build Me a Simple Site</title>
-        <meta 
-          name="description" 
-          content="Expert insights on web design, development, SEO, and digital strategy. Learn best practices and stay updated with the latest trends." 
+        <meta name="title" content="Blog - Web Design & Development Insights | Build Me a Simple Site" />
+        <meta
+          name="description"
+          content="Expert insights on web design, development, SEO, and digital strategy. Learn best practices and stay updated with the latest trends."
         />
+        <meta name="keywords" content="web design blog, web development, SEO tips, digital strategy, website best practices, web design insights" />
         <link rel="canonical" href="https://buildmeasimplesite.com/blog" />
-        <meta property="og:title" content="Blog - Web Design & Development Insights | Build Me a Simple Site" />
-        <meta property="og:description" content="Expert insights on web design, development, SEO, and digital strategy. Learn best practices and stay updated with the latest trends." />
+        <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+        {/* Open Graph */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://buildmeasimplesite.com/blog" />
         <meta property="og:site_name" content="Build Me a Simple Site" />
+        <meta property="og:title" content="Blog - Web Design & Development Insights | Build Me a Simple Site" />
+        <meta property="og:description" content="Expert insights on web design, development, SEO, and digital strategy. Learn best practices and stay updated with the latest trends." />
+        <meta property="og:image" content="https://buildmeasimplesite.com/og-image.jpg" />
+        <meta property="og:image:secure_url" content="https://buildmeasimplesite.com/og-image.jpg" />
+        <meta property="og:locale" content="en_US" />
+
+        {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://buildmeasimplesite.com/blog" />
         <meta name="twitter:title" content="Blog - Web Design & Development Insights | Build Me a Simple Site" />
         <meta name="twitter:description" content="Expert insights on web design, development, SEO, and digital strategy. Learn best practices and stay updated with the latest trends." />
+        <meta name="twitter:image" content="https://buildmeasimplesite.com/og-image.jpg" />
+        <meta name="twitter:creator" content="@buildmeasimple" />
+        <meta name="twitter:site" content="@buildmeasimple" />
+
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "Blog - Web Design & Development Insights",
+            "description": "Expert insights on web design, development, SEO, and digital strategy.",
+            "url": "https://buildmeasimplesite.com/blog",
+            "isPartOf": {
+              "@id": "https://buildmeasimplesite.com/#website"
+            },
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://buildmeasimplesite.com"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Blog",
+                  "item": "https://buildmeasimplesite.com/blog"
+                }
+              ]
+            }
+          })}
+        </script>
       </Helmet>
 
       <main className="min-h-screen bg-background">
