@@ -20,6 +20,35 @@ interface BlogPost {
   meta_description: string;
 }
 
+const stripLeadingTitle = (markdown: string, title: string): string => {
+  const lines = markdown.split('\n');
+  let firstNonEmptyIndex = 0;
+  
+  // Find first non-empty line
+  while (firstNonEmptyIndex < lines.length && !lines[firstNonEmptyIndex].trim()) {
+    firstNonEmptyIndex++;
+  }
+  
+  if (firstNonEmptyIndex >= lines.length) return markdown;
+  
+  const firstLine = lines[firstNonEmptyIndex].trim();
+  
+  // Check if first line is an H1 that matches the title
+  if (firstLine.startsWith('# ')) {
+    const h1Text = firstLine.substring(2).trim();
+    if (h1Text.toLowerCase() === title.toLowerCase()) {
+      // Remove this line and any following empty lines
+      let nextContentIndex = firstNonEmptyIndex + 1;
+      while (nextContentIndex < lines.length && !lines[nextContentIndex].trim()) {
+        nextContentIndex++;
+      }
+      return lines.slice(nextContentIndex).join('\n');
+    }
+  }
+  
+  return markdown;
+};
+
 export default function BlogPost() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -142,7 +171,7 @@ export default function BlogPost() {
       </Helmet>
 
       <main className="min-h-screen bg-background">
-        <article className="max-w-4xl mx-auto px-6 py-20">
+        <article className="max-w-3xl mx-auto px-6 py-20">
           <Button
             variant="ghost"
             className="mb-8"
@@ -186,22 +215,22 @@ export default function BlogPost() {
             </div>
           )}
 
-          <div className="prose prose-lg max-w-none 
+          <div className="prose prose-lg max-w-prose mx-auto
             prose-headings:font-bold prose-headings:text-foreground prose-headings:tracking-tight
-            prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-8
-            prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-8 prose-h2:border-b prose-h2:border-border prose-h2:pb-2
-            prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-6
-            prose-p:text-foreground prose-p:leading-relaxed prose-p:mb-4
+            prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-12
+            prose-h2:text-3xl prose-h2:mb-5 prose-h2:mt-10 prose-h2:border-b prose-h2:border-border prose-h2:pb-2
+            prose-h3:text-2xl prose-h3:mb-4 prose-h3:mt-8
+            prose-p:text-foreground prose-p:leading-relaxed prose-p:mb-5
             prose-a:text-primary prose-a:font-medium prose-a:no-underline hover:prose-a:underline
             prose-strong:text-foreground prose-strong:font-semibold
-            prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6
-            prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6
+            prose-ul:my-5 prose-ul:list-disc prose-ul:pl-6
+            prose-ol:my-5 prose-ol:list-decimal prose-ol:pl-6
             prose-li:text-foreground prose-li:mb-2
             prose-img:rounded-lg prose-img:shadow-md
             prose-code:text-sm prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
             prose-pre:bg-muted prose-pre:border prose-pre:border-border
             prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic">
-            <ReactMarkdown>{post.content}</ReactMarkdown>
+            <ReactMarkdown>{stripLeadingTitle(post.content, post.title)}</ReactMarkdown>
           </div>
 
           <footer className="mt-16 pt-8 border-t">
