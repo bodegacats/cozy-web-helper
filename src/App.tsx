@@ -17,8 +17,8 @@ import AdminPipeline from "./pages/AdminPipeline";
 import AdminIntakes from "./pages/AdminIntakes";
 import AdminBlog from "./pages/AdminBlog";
 import AdminBlogEditor from "./pages/AdminBlogEditor";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
+// import Blog from "./pages/Blog";
+// import BlogPost from "./pages/BlogPost";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 
@@ -33,8 +33,6 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
             <Route path="/start" element={<AIIntake />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/portal" element={<Portal />} />
           <Route path="/portal/request" element={<PortalRequest />} />
           <Route path="/portal/chat" element={<PortalAIChat />} />
