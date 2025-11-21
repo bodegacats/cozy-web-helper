@@ -30,6 +30,7 @@ interface Intake {
   kanban_stage: string;
   raw_summary: string | null;
   raw_conversation: any;
+  lovable_build_prompt: string | null;
   created_at: string;
 }
 
