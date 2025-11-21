@@ -186,11 +186,17 @@ const Index = () => {
             I will build you a simple website without a subscription.
           </h1>
           <p className="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-2xl mx-auto">
-            No WordPress subscriptions, no monthly fees to pay a platform. I build it, hand you the keys, 
-            and you're done — unless you need updates later (then you just ask). Most sites launch in 5–7 business days.
+            No monthly fees. No platform to learn. I build it, hand you the keys, and you're done. Most sites launch in 5–7 business days.
           </p>
-          <p className="text-sm md:text-base text-muted-foreground/80 max-w-xl mx-auto italic">
-            Not sure you even need a new site? Get a <strong>$50 site checkup</strong> — a quick, practical review of your current website. I'll send you a short written audit covering what's working, what isn't, and what I'd change. Clear, actionable, no jargon. <a href="#contact" className="text-primary hover:underline">Contact me to get started.</a>
+          <p className="text-sm md:text-base text-muted-foreground/80 max-w-xl mx-auto italic font-light">
+            Not sure you need a new site? Start with a{' '}
+            <button
+              onClick={scrollToContact}
+              className="text-primary hover:underline underline-offset-4 font-medium not-italic"
+            >
+              $50 site checkup
+            </button>
+            .
           </p>
           <div className="flex flex-col items-center gap-3 pt-4">
             <Button 
