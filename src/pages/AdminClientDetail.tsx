@@ -28,6 +28,7 @@ interface Client {
   active: boolean;
   pipeline_stage: string;
   notes: string | null;
+  auth_user_id: string | null;
 }
 
 interface UpdateRequest {
@@ -68,7 +69,12 @@ const AdminClientDetail = () => {
     setup_fee_dollars: 0,
     active: true,
     notes: "",
+    auth_user_id: null as string | null,
   });
+
+  const [portalAccessLoading, setPortalAccessLoading] = useState(false);
+  const [tempPassword, setTempPassword] = useState<string | null>(null);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
 
   const [editForm, setEditForm] = useState({
     status: "",
@@ -120,6 +126,7 @@ const AdminClientDetail = () => {
       setup_fee_dollars: clientData.setup_fee_cents / 100,
       active: clientData.active,
       notes: clientData.notes || "",
+      auth_user_id: clientData.auth_user_id,
     });
 
     const { data: requestsData } = await supabase
@@ -209,6 +216,75 @@ const AdminClientDetail = () => {
     if (sizeTier === 'tiny') return 'Free';
     if (sizeTier === 'large' || quotedPriceCents === null) return 'Quote pending';
     return formatCurrency(quotedPriceCents);
+  };
+
+  const generatePassword = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+    let password = '';
+    for (let i = 0; i < 8; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
+  };
+
+  const handleCreatePortalAccess = async () => {
+    if (!client) return;
+    
+    setPortalAccessLoading(true);
+    
+    try {
+      const tempPass = generatePassword();
+      
+      // Create auth user
+      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+        email: client.email,
+        password: tempPass,
+        email_confirm: true,
+        user_metadata: {
+          name: client.name,
+          created_by_admin: true
+        }
+      });
+      
+      if (authError) throw authError;
+      
+      // Update client record with auth_user_id
+      const { error: updateError } = await supabase
+        .from('clients')
+        .update({ auth_user_id: authData.user.id })
+        .eq('id', client.id);
+      
+      if (updateError) throw updateError;
+      
+      setTempPassword(tempPass);
+      setShowPasswordDialog(true);
+      
+      toast.success("Portal access created!");
+      loadClientData();
+      
+    } catch (error: any) {
+      console.error('Error creating portal access:', error);
+      toast.error(error.message || "Failed to create portal access");
+    } finally {
+      setPortalAccessLoading(false);
+    }
+  };
+
+  const handleSendPasswordReset = async () => {
+    if (!client) return;
+    
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        client.email,
+        { redirectTo: `${window.location.origin}/portal` }
+      );
+      
+      if (error) throw error;
+      
+      toast.success(`Password reset email sent to ${client.email}`);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to send password reset");
+    }
   };
 
   const handleAddRequest = async () => {
@@ -344,6 +420,31 @@ const AdminClientDetail = () => {
                 <Label htmlFor="active" className="cursor-pointer">
                   Active client
                 </Label>
+              </div>
+
+              <div className="border-t pt-4">
+                <Label>Portal Access</Label>
+                {clientForm.auth_user_id ? (
+                  <div className="flex items-center gap-2 mt-2">
+                    <Badge variant="default" className="bg-green-600">Portal access: Active</Badge>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleSendPasswordReset}
+                    >
+                      Send password reset
+                    </Button>
+                  </div>
+                ) : (
+                  <Button 
+                    onClick={handleCreatePortalAccess}
+                    variant="outline"
+                    className="mt-2 w-full"
+                    disabled={portalAccessLoading}
+                  >
+                    {portalAccessLoading ? "Creating..." : "Create portal access"}
+                  </Button>
+                )}
               </div>
 
               <div className="border-t pt-4 space-y-2">
@@ -626,6 +727,50 @@ const AdminClientDetail = () => {
                 Cancel
               </Button>
               <Button onClick={handleAddRequest}>Add request</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Password display dialog */}
+      <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Portal Access Created</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Portal access has been created for <strong>{client?.email}</strong>
+            </p>
+            <div className="bg-muted p-4 rounded-lg">
+              <Label className="text-xs uppercase text-muted-foreground">Temporary Password</Label>
+              <p className="text-lg font-mono font-semibold mt-1 select-all">
+                {tempPassword}
+              </p>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Send this password to your client. They can log in at{' '}
+              <code className="text-xs bg-muted px-1 py-0.5 rounded">
+                {window.location.origin}/portal
+              </code>
+            </p>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  navigator.clipboard.writeText(`Email: ${client?.email}\nPassword: ${tempPassword}\nLogin: ${window.location.origin}/portal`);
+                  toast.success("Credentials copied to clipboard");
+                }}
+              >
+                Copy credentials
+              </Button>
+              <Button
+                className="flex-1"
+                onClick={() => setShowPasswordDialog(false)}
+              >
+                Done
+              </Button>
             </div>
           </div>
         </DialogContent>
