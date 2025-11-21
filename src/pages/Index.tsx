@@ -678,7 +678,7 @@ const Index = () => {
                     className="text-sm"
                   >
                     <button onClick={() => {
-                      const element = document.getElementById('pricing');
+                      const element = document.getElementById('how-pricing-works');
                       element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }}>
                       View pricing details
