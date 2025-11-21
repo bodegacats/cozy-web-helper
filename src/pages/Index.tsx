@@ -191,23 +191,24 @@ const Index = () => {
           <p className="text-sm md:text-base text-muted-foreground/80 max-w-xl mx-auto italic">
             Not sure you even need a new site? Get a <strong>$50 site checkup</strong> — a quick, practical review of your current website. I'll send you a short written audit covering what's working, what isn't, and what I'd change. Clear, actionable, no jargon. <a href="#contact" className="text-primary hover:underline">Contact me to get started.</a>
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <div className="flex flex-col items-center gap-2">
-              <Button size="lg" onClick={() => window.location.href = '/start'} className="shadow-base" aria-label="Start website intake process with AI assistant">
-                Talk to the intake AI
-              </Button>
-              <p className="text-xs text-muted-foreground max-w-[200px] text-center">
-                Quick questions. Helps you figure out what you need.
-              </p>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <Button size="lg" variant="outline" onClick={scrollToContact} className="border-2" aria-label="Scroll to contact form to discuss your website">
-                Talk to me directly
-              </Button>
-              <p className="text-xs text-muted-foreground max-w-[200px] text-center">
-                If you prefer human-first help.
-              </p>
-            </div>
+          <div className="flex flex-col items-center gap-3 pt-4">
+            <Button 
+              size="lg" 
+              onClick={() => window.location.href = '/start'} 
+              className="shadow-base" 
+              aria-label="Start your project with AI intake assistant"
+            >
+              Start your project
+            </Button>
+            <p className="text-sm text-muted-foreground">
+              or{' '}
+              <button
+                onClick={scrollToContact}
+                className="text-primary hover:underline underline-offset-4 font-medium"
+              >
+                email me directly
+              </button>
+            </p>
           </div>
         </div>
       </header>
