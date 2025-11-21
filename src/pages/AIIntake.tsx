@@ -6,7 +6,7 @@ import { Loader2, Send, Bot, User, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
+import { markdownToHtml } from "@/lib/markdown-utils";
 import { Helmet } from "react-helmet";
 
 interface Message {
@@ -272,9 +272,10 @@ const AIIntake = () => {
                         {msg.content}
                       </p>
                     ) : (
-                      <div className="text-sm leading-relaxed prose prose-sm max-w-none prose-p:my-2 prose-strong:font-semibold">
-                        <ReactMarkdown>{msg.content}</ReactMarkdown>
-                      </div>
+                      <div 
+                        className="text-sm leading-relaxed prose prose-sm max-w-none prose-p:my-2 prose-strong:font-semibold"
+                        dangerouslySetInnerHTML={{ __html: markdownToHtml(msg.content) }}
+                      />
                     )}
                   </div>
                 </div>

@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Save, Eye } from "lucide-react";
 import { toast } from "sonner";
-import ReactMarkdown from "react-markdown";
+import { markdownToHtml } from "@/lib/markdown-utils";
 
 export default function AdminBlogEditor() {
   const navigate = useNavigate();
@@ -259,9 +259,10 @@ export default function AdminBlogEditor() {
                 />
               </TabsContent>
               <TabsContent value="preview">
-                <div className="min-h-[400px] p-4 border rounded-lg prose prose-sm max-w-none">
-                  <ReactMarkdown>{formData.content}</ReactMarkdown>
-                </div>
+                <div 
+                  className="min-h-[400px] p-4 border rounded-lg prose prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: markdownToHtml(formData.content) }}
+                />
               </TabsContent>
             </Tabs>
           </Card>
