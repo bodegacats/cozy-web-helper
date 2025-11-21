@@ -8,9 +8,10 @@ const corsHeaders = {
 interface ContactNotificationRequest {
   name: string;
   email: string;
-  projectDescription: string;
+  projectDescription?: string;
   websiteUrl?: string;
-  wish: string;
+  wish?: string;
+  submissionType?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -20,7 +21,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { name, email, projectDescription, websiteUrl, wish }: ContactNotificationRequest = await req.json();
+    const { name, email, projectDescription, websiteUrl, wish, submissionType }: ContactNotificationRequest = await req.json();
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
 
     if (!resendApiKey) {
@@ -36,23 +37,40 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Sending contact notification for:", email);
 
-    const emailHtml = `
-      <h2>New Website Inquiry</h2>
-      <p><strong>Name:</strong> ${name}</p>
-      <p><strong>Email:</strong> ${email}</p>
-      
-      <h3>What they do/their project:</h3>
-      <p>${projectDescription}</p>
-      
-      <h3>Current website:</h3>
-      <p>${websiteUrl || "None provided"}</p>
-      
-      <h3>What they wish their website did better:</h3>
-      <p>${wish}</p>
-      
-      <hr />
-      <p><em>Submitted at: ${new Date().toISOString()}</em></p>
-    `;
+    // Determine subject line and email content based on submission type
+    let subject = "New contact form submission";
+    let emailHtml = "";
+
+    if (submissionType === 'checkup') {
+      subject = "New site checkup request";
+      emailHtml = `
+        <h2>New Site Checkup Request</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Website URL:</strong> ${websiteUrl || "None provided"}</p>
+        
+        <hr />
+        <p><em>Submitted at: ${new Date().toISOString()}</em></p>
+      `;
+    } else {
+      emailHtml = `
+        <h2>New Website Inquiry</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        
+        <h3>What they do/their project:</h3>
+        <p>${projectDescription || "Not provided"}</p>
+        
+        <h3>Current website:</h3>
+        <p>${websiteUrl || "None provided"}</p>
+        
+        <h3>What they wish their website did better:</h3>
+        <p>${wish || "Not provided"}</p>
+        
+        <hr />
+        <p><em>Submitted at: ${new Date().toISOString()}</em></p>
+      `;
+    }
 
     const emailResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -63,7 +81,7 @@ const handler = async (req: Request): Promise<Response> => {
       body: JSON.stringify({
         from: "Website Inquiries <onboarding@resend.dev>",
         to: ["dannymule@gmail.com"],
-        subject: "New contact form submission",
+        subject: subject,
         html: emailHtml,
       }),
     });

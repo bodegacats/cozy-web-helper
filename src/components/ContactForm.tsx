@@ -67,6 +67,7 @@ export const ContactForm = () => {
           project_description: data.projectDescription,
           website_url: data.websiteUrl || null,
           wish: data.wish,
+          submission_type: "contact",
         });
 
       if (dbError) throw dbError;

@@ -133,6 +133,7 @@ export type Database = {
           project_description: string
           selected_options: Json | null
           status: string
+          submission_type: string
           website_url: string | null
           wish: string
         }
@@ -147,6 +148,7 @@ export type Database = {
           project_description: string
           selected_options?: Json | null
           status?: string
+          submission_type?: string
           website_url?: string | null
           wish: string
         }
@@ -161,6 +163,7 @@ export type Database = {
           project_description?: string
           selected_options?: Json | null
           status?: string
+          submission_type?: string
           website_url?: string | null
           wish?: string
         }

@@ -74,7 +74,8 @@ const Index = () => {
         estimate_low: currentPrice,
         estimate_high: currentPrice,
         notes: formData.notes.trim() || null,
-        status: "new"
+        status: "new",
+        submission_type: "quote"
       });
       if (error) throw error;
 
@@ -212,6 +213,114 @@ const Index = () => {
       </header>
 
       <main>
+        {/* Site Checkup Section */}
+        <section className="py-16 md:py-20 px-4 bg-muted/20">
+          <div className="max-w-3xl mx-auto text-center space-y-6">
+            <h2 className="text-3xl md:text-4xl font-semibold leading-tight tracking-tight">
+              Not sure you need a new site?
+            </h2>
+            <p className="text-base md:text-lg leading-relaxed text-muted-foreground max-w-2xl mx-auto">
+              Start with a <strong>$50 site checkup</strong>. Send me your current website and I'll record a 10-minute video walkthrough pointing out what's working, what's not, and whether a rebuild makes sense. You'll get specific fixes you can make yourself—or a clear case for starting fresh. Either way, you'll know what to do next.
+            </p>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="lg" className="shadow-base mt-4">
+                  Get a site checkup
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>$50 Site Checkup</DialogTitle>
+                  <DialogDescription>
+                    Send me your website URL and I'll record a detailed video review.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  const checkupData = {
+                    name: formData.get('checkupName') as string,
+                    email: formData.get('checkupEmail') as string,
+                    websiteUrl: formData.get('checkupWebsiteUrl') as string,
+                  };
+                  
+                  if (!checkupData.name?.trim() || !checkupData.email?.trim() || !checkupData.websiteUrl?.trim()) {
+                    toast.error("Please fill in all fields");
+                    return;
+                  }
+                  
+                  try {
+                    const { error } = await supabase.from('contact_submissions').insert({
+                      name: checkupData.name.trim(),
+                      email: checkupData.email.trim(),
+                      website_url: checkupData.websiteUrl.trim(),
+                      wish: "I'd like a site checkup",
+                      project_description: "Site checkup request",
+                      submission_type: 'checkup',
+                      status: 'new'
+                    });
+                    
+                    if (error) throw error;
+                    
+                    // Send email notification
+                    try {
+                      await supabase.functions.invoke('send-contact-notification', {
+                        body: {
+                          name: checkupData.name.trim(),
+                          email: checkupData.email.trim(),
+                          websiteUrl: checkupData.websiteUrl.trim(),
+                          submissionType: 'checkup'
+                        }
+                      });
+                    } catch (emailError) {
+                      console.log('Email notification not sent:', emailError);
+                    }
+                    
+                    toast.success("Site checkup request received! I'll be in touch soon.");
+                    (e.target as HTMLFormElement).reset();
+                  } catch (error) {
+                    console.error('Error submitting checkup request:', error);
+                    toast.error("Failed to submit request. Please try again.");
+                  }
+                }} className="space-y-4 mt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="checkupName">Your name</Label>
+                    <Input 
+                      id="checkupName" 
+                      name="checkupName" 
+                      placeholder="Your name" 
+                      required 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="checkupEmail">Your email</Label>
+                    <Input 
+                      id="checkupEmail" 
+                      name="checkupEmail" 
+                      type="email" 
+                      placeholder="your@email.com" 
+                      required 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="checkupWebsiteUrl">Your current website URL</Label>
+                    <Input 
+                      id="checkupWebsiteUrl" 
+                      name="checkupWebsiteUrl" 
+                      type="url" 
+                      placeholder="https://yoursite.com" 
+                      required 
+                    />
+                  </div>
+                  <Button type="submit" className="w-full">
+                    Request checkup
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </section>
+
         {/* How This Works */}
         <section id="how-it-works" className="py-20 md:py-28 px-4">
           <div className="max-w-4xl mx-auto">
