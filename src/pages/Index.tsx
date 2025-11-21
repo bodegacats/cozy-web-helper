@@ -85,6 +85,24 @@ const Index = () => {
       
       if (error) throw error;
       
+      // Send email notification
+      try {
+        await supabase.functions.invoke('send-quote-notification', {
+          body: {
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            pageCount,
+            contentShaping,
+            rushDelivery,
+            totalPrice: currentPrice,
+            notes: formData.notes.trim() || null
+          }
+        });
+      } catch (emailError) {
+        console.log('Email notification not sent:', emailError);
+        // Don't show error to user - database insert was successful
+      }
+      
       setIsSuccess(true);
       toast.success("Estimate sent successfully!");
       
