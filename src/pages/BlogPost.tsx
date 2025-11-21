@@ -203,7 +203,7 @@ export default function BlogPost() {
             <p className="text-xl text-muted-foreground">{post.excerpt}</p>
           </header>
 
-          {post.featured_image_url && (
+          {post.featured_image_url && post.featured_image_url.trim() !== '' && (
             <div className="mb-12 rounded-lg overflow-hidden">
               <img
                 src={post.featured_image_url}
@@ -211,6 +211,10 @@ export default function BlogPost() {
                 className="w-full h-auto"
                 width="1200"
                 height="675"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.parentElement!.style.display = 'none';
+                }}
               />
             </div>
           )}
