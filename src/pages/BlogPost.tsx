@@ -261,24 +261,35 @@ export default function BlogPost() {
             </header>
           </div>
 
-          <div 
-            className="prose prose-lg prose-slate dark:prose-invert max-w-none mx-auto
-    prose-headings:font-bold prose-headings:text-foreground prose-headings:scroll-mt-20
-    prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:border-b prose-h2:pb-3 prose-h2:border-border
-    prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4
-    prose-p:text-foreground prose-p:leading-relaxed prose-p:mb-6 prose-p:text-lg
-    prose-a:text-primary prose-a:font-medium hover:prose-a:underline prose-a:transition-colors
-    prose-ul:my-6 prose-ul:list-disc prose-ul:pl-6 prose-ul:space-y-2
-    prose-ol:my-6 prose-ol:list-decimal prose-ol:pl-6 prose-ol:space-y-2
-    prose-li:mb-2 prose-li:leading-relaxed
-    prose-strong:text-foreground prose-strong:font-semibold
-    prose-code:text-primary prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
-    prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:my-6
-    first:prose-p:first-letter:text-5xl first:prose-p:first-letter:font-bold first:prose-p:first-letter:mr-1 first:prose-p:first-letter:float-left"
-            dangerouslySetInnerHTML={{ 
-              __html: marked(stripLeadingTitle(post.content, post.title))
-            }}
-          />
+          <div className="bg-card rounded-2xl p-8 md:p-12 border shadow-soft-xl">
+            <div 
+              className="
+                prose prose-lg max-w-none
+                prose-headings:font-bold prose-headings:text-foreground
+                prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:pb-4 prose-h2:border-b-2 prose-h2:border-primary/20
+                prose-h3:text-2xl prose-h3:mt-10 prose-h3:mb-4 prose-h3:text-foreground
+                prose-h4:text-xl prose-h4:mt-8 prose-h4:mb-3 prose-h4:text-foreground
+                prose-p:text-foreground/90 prose-p:leading-[1.8] prose-p:mb-6 prose-p:text-[1.125rem]
+                prose-a:text-primary prose-a:font-medium prose-a:no-underline prose-a:border-b-2 prose-a:border-primary/30 hover:prose-a:border-primary prose-a:transition-all prose-a:pb-0.5
+                prose-strong:text-foreground prose-strong:font-semibold
+                prose-em:text-foreground/80 prose-em:italic
+                prose-ul:my-8 prose-ul:space-y-3
+                prose-ol:my-8 prose-ol:space-y-3
+                prose-li:text-foreground/90 prose-li:leading-relaxed prose-li:text-[1.0625rem]
+                prose-li::marker:text-primary prose-li::marker:font-semibold
+                prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-muted/50 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:my-8 prose-blockquote:italic prose-blockquote:rounded-r-lg
+                prose-blockquote:text-foreground/80
+                prose-code:text-primary prose-code:bg-primary/10 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm prose-code:font-mono prose-code:before:content-[''] prose-code:after:content-['']
+                prose-pre:bg-muted prose-pre:border prose-pre:border-border prose-pre:rounded-lg prose-pre:p-6 prose-pre:my-8 prose-pre:overflow-x-auto
+                prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8 prose-img:w-full
+                prose-hr:border-border prose-hr:my-12
+                first:prose-p:text-xl first:prose-p:leading-relaxed first:prose-p:text-foreground
+              "
+              dangerouslySetInnerHTML={{ 
+                __html: marked(stripLeadingTitle(post.content, post.title))
+              }}
+            />
+          </div>
 
           <footer className="mt-20 pt-12 border-t-2 border-border">
             <div className="flex justify-between items-center">
