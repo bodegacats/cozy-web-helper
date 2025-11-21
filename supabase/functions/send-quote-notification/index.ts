@@ -5,12 +5,14 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface ContactNotificationRequest {
+interface QuoteNotificationRequest {
   name: string;
   email: string;
-  projectDescription: string;
-  websiteUrl?: string;
-  wish: string;
+  pageCount: number;
+  contentShaping: boolean;
+  rushDelivery: boolean;
+  totalPrice: number;
+  notes?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -20,7 +22,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { name, email, projectDescription, websiteUrl, wish }: ContactNotificationRequest = await req.json();
+    const { name, email, pageCount, contentShaping, rushDelivery, totalPrice, notes }: QuoteNotificationRequest = await req.json();
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
 
     if (!resendApiKey) {
@@ -34,21 +36,23 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    console.log("Sending contact notification for:", email);
+    console.log("Sending quote notification for:", email);
 
     const emailHtml = `
-      <h2>New Website Inquiry</h2>
+      <h2>New Instant Quote Submission</h2>
       <p><strong>Name:</strong> ${name}</p>
       <p><strong>Email:</strong> ${email}</p>
       
-      <h3>What they do/their project:</h3>
-      <p>${projectDescription}</p>
+      <h3>Quote Details:</h3>
+      <p><strong>Page count:</strong> ${pageCount} ${pageCount === 1 ? 'page' : 'pages'}</p>
+      <p><strong>Content shaping:</strong> ${contentShaping ? 'Yes' : 'No'}</p>
+      <p><strong>Rush delivery:</strong> ${rushDelivery ? 'Yes' : 'No'}</p>
+      <p><strong>Total estimated price:</strong> $${totalPrice.toLocaleString()}</p>
       
-      <h3>Current website:</h3>
-      <p>${websiteUrl || "None provided"}</p>
-      
-      <h3>What they wish their website did better:</h3>
-      <p>${wish}</p>
+      ${notes ? `
+        <h3>Notes:</h3>
+        <p>${notes}</p>
+      ` : '<p><em>No notes provided</em></p>'}
       
       <hr />
       <p><em>Submitted at: ${new Date().toISOString()}</em></p>
@@ -61,9 +65,9 @@ const handler = async (req: Request): Promise<Response> => {
         "Authorization": `Bearer ${resendApiKey}`,
       },
       body: JSON.stringify({
-        from: "Website Inquiries <onboarding@resend.dev>",
+        from: "Quote Submissions <onboarding@resend.dev>",
         to: ["dannymule@gmail.com"],
-        subject: "New contact form submission",
+        subject: "New instant quote submission",
         html: emailHtml,
       }),
     });
@@ -85,7 +89,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
     });
   } catch (error: any) {
-    console.error("Error in send-contact-notification function:", error);
+    console.error("Error in send-quote-notification function:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {
@@ -97,4 +101,3 @@ const handler = async (req: Request): Promise<Response> => {
 };
 
 serve(handler);
-
