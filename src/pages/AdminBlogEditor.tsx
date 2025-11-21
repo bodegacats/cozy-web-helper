@@ -11,7 +11,13 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Save, Eye } from "lucide-react";
 import { toast } from "sonner";
-import { markdownToHtml } from "@/lib/markdown-utils";
+import { marked } from 'marked';
+
+// Configure marked for good defaults
+marked.setOptions({
+  breaks: true,
+  gfm: true
+});
 
 export default function AdminBlogEditor() {
   const navigate = useNavigate();
@@ -261,7 +267,7 @@ export default function AdminBlogEditor() {
               <TabsContent value="preview">
                 <div 
                   className="min-h-[400px] p-4 border rounded-lg prose prose-sm max-w-none"
-                  dangerouslySetInnerHTML={{ __html: markdownToHtml(formData.content) }}
+                  dangerouslySetInnerHTML={{ __html: marked(formData.content) }}
                 />
               </TabsContent>
             </Tabs>

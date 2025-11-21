@@ -7,8 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Loader2, Send, Bot, User, Paperclip, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { markdownToHtml } from "@/lib/markdown-utils";
+import { marked } from 'marked';
 import { PortalNav } from "@/components/PortalNav";
+
+// Configure marked for good defaults
+marked.setOptions({
+  breaks: true,
+  gfm: true
+});
 
 interface Message {
   role: "user" | "assistant";
@@ -267,7 +273,7 @@ const PortalAIChat = () => {
                     ) : (
                       <div 
                         className="text-sm leading-relaxed prose prose-sm max-w-none prose-p:my-2 prose-strong:font-semibold"
-                        dangerouslySetInnerHTML={{ __html: markdownToHtml(msg.content) }}
+                        dangerouslySetInnerHTML={{ __html: marked(msg.content) }}
                       />
                     )}
                   </div>

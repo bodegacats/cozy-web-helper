@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, Clock } from "lucide-react";
 import { getCategoryStyles } from "@/components/blog/getCategoryStyles";
+import { marked } from 'marked';
+
+// Configure marked for good defaults
+marked.setOptions({
+  breaks: true,
+  gfm: true
+});
 
 interface BlogPost {
   id: string;
@@ -266,15 +273,10 @@ export default function BlogPost() {
     prose-li:mb-2 prose-li:leading-relaxed
     prose-strong:text-foreground prose-strong:font-semibold
     prose-code:text-primary prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+    prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:my-6
     first:prose-p:first-letter:text-5xl first:prose-p:first-letter:font-bold first:prose-p:first-letter:mr-1 first:prose-p:first-letter:float-left"
             dangerouslySetInnerHTML={{ 
-              __html: stripLeadingTitle(post.content, post.title)
-                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-                .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
-                .replace(/\*(.*)\*/gim, '<em>$1</em>')
-                .replace(/\n/gim, '<br />')
+              __html: marked(stripLeadingTitle(post.content, post.title))
             }}
           />
 
