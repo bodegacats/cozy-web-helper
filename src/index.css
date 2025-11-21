@@ -40,6 +40,23 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
+    /* Blog Category Colors */
+    --category-tips: 221 83% 53%;
+    --category-tips-light: 221 83% 90%;
+    --category-business: 262 83% 58%;
+    --category-business-light: 262 83% 90%;
+    --category-seo: 158 64% 52%;
+    --category-seo-light: 158 64% 90%;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(262 83% 58%) 100%);
+    --gradient-card: linear-gradient(180deg, transparent 0%, hsl(var(--background)) 100%);
+    
+    /* Enhanced shadows */
+    --shadow-colored-tips: 0 8px 24px hsla(221, 83%, 53%, 0.15);
+    --shadow-colored-business: 0 8px 24px hsla(262, 83%, 58%, 0.15);
+    --shadow-colored-seo: 0 8px 24px hsla(158, 64%, 52%, 0.15);
+
     --sidebar-background: 0 0% 98%;
 
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -144,6 +161,24 @@ All colors MUST be HSL.
     to {
       opacity: 1;
       transform: scale(1);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
     }
   }
 

@@ -5,7 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, Clock } from "lucide-react";
+import { getCategoryStyles } from "@/components/blog/getCategoryStyles";
 
 interface BlogPost {
   id: string;
@@ -109,35 +110,45 @@ export default function Blog() {
       </Helmet>
 
       <main className="min-h-screen bg-background">
-        <section className="py-20 px-6">
-          <div className="max-w-6xl mx-auto">
+        {/* Hero Section with Gradient */}
+        <section className="relative overflow-hidden bg-gradient-hero py-24 px-6">
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-3xl" />
+          <div className="relative max-w-6xl mx-auto">
             <Button
               variant="ghost"
               onClick={() => navigate("/")}
-              className="mb-6"
+              className="mb-8 bg-background/50 hover:bg-background/80 backdrop-blur-sm"
               aria-label="Return to homepage"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
             </Button>
             
-            <div className="text-center mb-16">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">Blog</h1>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <div className="text-center">
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+                Blog
+              </h1>
+              <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                 Insights, tips, and best practices for web design and development
               </p>
             </div>
+          </div>
+        </section>
+
+        {/* Posts Section */}
+        <section className="py-20 px-6 -mt-12">
+          <div className="max-w-6xl mx-auto">
 
             {loading ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[1, 2, 3].map((i) => (
-                  <Card key={i} className="overflow-hidden">
+                  <Card key={i} className="overflow-hidden border-t-4">
                     <div className="animate-pulse">
-                      <div className="aspect-video bg-muted" />
+                      <div className="aspect-video bg-gradient-to-br from-muted to-muted/50" />
                       <div className="p-6 space-y-4">
-                        <div className="h-4 bg-muted rounded w-3/4" />
-                        <div className="h-3 bg-muted rounded" />
-                        <div className="h-3 bg-muted rounded w-5/6" />
+                        <div className="h-4 bg-muted rounded w-3/4 animate-shimmer" />
+                        <div className="h-3 bg-muted rounded animate-shimmer" />
+                        <div className="h-3 bg-muted rounded w-5/6 animate-shimmer" />
                       </div>
                     </div>
                   </Card>
@@ -152,50 +163,63 @@ export default function Blog() {
               </Card>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {posts.map((post) => (
-                  <Card 
-                    key={post.id} 
-                    className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
-                    onClick={() => navigate(`/blog/${post.slug}`)}
-                  >
-                    {post.featured_image_url && (
-                      <div className="aspect-video overflow-hidden">
-                        <img
-                          src={post.featured_image_url}
-                          alt={post.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          loading="lazy"
-                          width="800"
-                          height="450"
-                        />
-                      </div>
-                    )}
-                    <div className="p-6">
-                      <div className="flex items-center gap-2 mb-3">
-                        {post.category && (
-                          <Badge variant="secondary">{post.category}</Badge>
-                        )}
-                        <span className="text-sm text-muted-foreground">
+                {posts.map((post, index) => {
+                  const styles = getCategoryStyles(post.category);
+                  const estimatedReadTime = Math.max(1, Math.ceil(post.excerpt.split(' ').length / 200 * 5));
+                  
+                  return (
+                    <Card 
+                      key={post.id} 
+                      className={`overflow-hidden cursor-pointer group border-t-4 ${styles.borderClass} ${styles.shadowClass} transition-all duration-300 hover:-translate-y-1 animate-fade-in-up`}
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                      onClick={() => navigate(`/blog/${post.slug}`)}
+                    >
+                      {post.featured_image_url && (
+                        <div className="aspect-video overflow-hidden relative">
+                          <div className="absolute inset-0 bg-gradient-card opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+                          <img
+                            src={post.featured_image_url}
+                            alt={post.title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            loading="lazy"
+                            width="800"
+                            height="450"
+                          />
+                        </div>
+                      )}
+                      <div className="p-6">
+                        <div className="flex items-center gap-2 mb-3 flex-wrap">
+                          {post.category && (
+                            <Badge className={`${styles.badgeClass} border`}>
+                              {post.category}
+                            </Badge>
+                          )}
+                          <span className="text-sm text-muted-foreground flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {estimatedReadTime} min read
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 mb-3 text-xs text-muted-foreground">
                           {new Date(post.published_at).toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",
                             year: "numeric"
                           })}
-                        </span>
+                        </div>
+                        <h2 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors leading-snug">
+                          {post.title}
+                        </h2>
+                        <p className="text-muted-foreground mb-4 line-clamp-3 leading-relaxed">
+                          {post.excerpt}
+                        </p>
+                        <Button variant="ghost" className="p-0 h-auto font-semibold text-primary group/btn">
+                          Read more
+                          <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
+                        </Button>
                       </div>
-                      <h2 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
-                        {post.title}
-                      </h2>
-                      <p className="text-muted-foreground mb-4 line-clamp-3">
-                        {post.excerpt}
-                      </p>
-                      <Button variant="ghost" className="p-0 h-auto font-semibold group/btn">
-                        Read more
-                        <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                      </Button>
-                    </div>
-                  </Card>
-                ))}
+                    </Card>
+                  );
+                })}
               </div>
             )}
           </div>
