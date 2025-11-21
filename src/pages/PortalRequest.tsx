@@ -211,7 +211,7 @@ const PortalRequest = () => {
 
     toast.success("Got it. I will review this and get back to you.");
     setUploading(false);
-    navigate('/portal/home');
+    navigate('/portal');
   };
 
   if (loading) {
@@ -233,7 +233,7 @@ const PortalRequest = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => navigate('/portal/home')} variant="outline" className="w-full">
+            <Button onClick={() => navigate('/portal')} variant="outline" className="w-full">
               Back to home
             </Button>
           </CardContent>

@@ -151,6 +151,7 @@ const AdminClientDetail = () => {
         setup_fee_cents: dollarsToCents(clientForm.setup_fee_dollars),
         active: clientForm.active,
         notes: clientForm.notes || null,
+        auth_user_id: clientForm.auth_user_id,
       })
       .eq('id', id);
 
@@ -284,6 +285,28 @@ const AdminClientDetail = () => {
       toast.success(`Password reset email sent to ${client.email}`);
     } catch (error: any) {
       toast.error(error.message || "Failed to send password reset");
+    }
+  };
+
+  const handleSendInviteEmail = async () => {
+    if (!client || !tempPassword) return;
+    
+    try {
+      const { error } = await supabase.functions.invoke('send-portal-invite', {
+        body: {
+          clientName: client.name,
+          clientEmail: client.email,
+          tempPassword: tempPassword,
+          portalUrl: `${window.location.origin}/portal`
+        }
+      });
+      
+      if (error) throw error;
+      
+      toast.success(`Invite email sent to ${client.email}`);
+    } catch (error: any) {
+      console.error('Error sending invite:', error);
+      toast.error(error.message || "Failed to send invite email");
     }
   };
 
@@ -757,7 +780,6 @@ const AdminClientDetail = () => {
             <div className="flex gap-2">
               <Button
                 variant="outline"
-                className="flex-1"
                 onClick={() => {
                   navigator.clipboard.writeText(`Email: ${client?.email}\nPassword: ${tempPassword}\nLogin: ${window.location.origin}/portal`);
                   toast.success("Credentials copied to clipboard");
@@ -766,7 +788,13 @@ const AdminClientDetail = () => {
                 Copy credentials
               </Button>
               <Button
-                className="flex-1"
+                variant="default"
+                onClick={handleSendInviteEmail}
+              >
+                Send invite email
+              </Button>
+              <Button
+                variant="outline"
                 onClick={() => setShowPasswordDialog(false)}
               >
                 Done

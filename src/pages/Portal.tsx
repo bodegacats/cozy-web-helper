@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { ExternalLink, ArrowLeft, Trash2 } from "lucide-react";
 import { CancelRequestDialog } from "@/components/CancelRequestDialog";
+import { PortalNav } from "@/components/PortalNav";
 
 interface Client {
   id: string;
@@ -223,29 +224,62 @@ const Portal = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30 py-8 px-4">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-muted/30">
+      <PortalNav currentPage="home" client={client} />
+      <div className="max-w-4xl mx-auto py-8 px-4 space-y-6">
         <Card>
           <CardHeader>
-            <div className="flex items-start justify-between">
-              <div>
-                <CardTitle className="text-2xl">Hi, {client.name}.</CardTitle>
-                {client.website_url && (
-                  <div className="mt-4">
-                    <Button asChild variant="outline">
-                      <a href={client.website_url} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        Open my site
-                      </a>
-                    </Button>
-                  </div>
-                )}
+            <CardTitle className="text-2xl">Hi, {client.name}.</CardTitle>
+            {client.website_url && (
+              <div className="mt-4">
+                <Button asChild variant="outline">
+                  <a href={client.website_url} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Open my site
+                  </a>
+                </Button>
               </div>
-              <Button variant="outline" onClick={() => supabase.auth.signOut()}>
-                Log out
-              </Button>
-            </div>
+            )}
           </CardHeader>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>What your request status means</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2 text-sm">
+              <div>
+                <span className="font-semibold">New</span> – I've received your request but haven't started yet
+              </div>
+              <div>
+                <span className="font-semibold">In progress</span> – I'm working on it
+              </div>
+              <div>
+                <span className="font-semibold">Waiting on you</span> – I need something from you (I'll note what)
+              </div>
+              <div>
+                <span className="font-semibold">Done</span> – The update is finished
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>What small fixes are always free</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-1 text-sm list-disc list-inside">
+              <li>Fixing typos</li>
+              <li>Swapping one image</li>
+              <li>Changing a sentence</li>
+              <li>Adjusting spacing</li>
+            </ul>
+            <p className="text-sm text-muted-foreground mt-3">
+              Anything larger gets an instant quote before I start.
+            </p>
+          </CardContent>
         </Card>
 
         <Card>
