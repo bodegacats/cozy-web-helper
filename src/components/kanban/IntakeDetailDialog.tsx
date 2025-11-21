@@ -6,8 +6,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Copy, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface Intake {
   id: string;
@@ -29,6 +30,7 @@ interface Intake {
   kanban_stage: string;
   raw_summary: string | null;
   raw_conversation: any;
+  lovable_build_prompt: string | null;
   created_at: string;
 }
 
@@ -48,6 +50,7 @@ export const IntakeDetailDialog = ({
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [requestTitle, setRequestTitle] = useState("");
   const [requestDescription, setRequestDescription] = useState("");
+  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
 
   if (!intake) return null;
@@ -58,6 +61,15 @@ export const IntakeDetailDialog = ({
       setShowRequestForm(false);
       setRequestTitle("");
       setRequestDescription("");
+    }
+  };
+
+  const handleCopyPrompt = async () => {
+    if (intake.lovable_build_prompt) {
+      await navigator.clipboard.writeText(intake.lovable_build_prompt);
+      setCopied(true);
+      toast.success("Prompt copied to clipboard!");
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
@@ -80,6 +92,41 @@ export const IntakeDetailDialog = ({
         </DialogHeader>
 
         <div className="space-y-6">
+          {/* Lovable Build Prompt */}
+          {intake.lovable_build_prompt && (
+            <div className="p-4 bg-primary/5 border-2 border-primary/20 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <Label className="text-base font-semibold">🚀 Lovable Build Prompt</Label>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyPrompt}
+                  className="gap-2"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      Copy to Clipboard
+                    </>
+                  )}
+                </Button>
+              </div>
+              <Textarea
+                value={intake.lovable_build_prompt}
+                readOnly
+                className="min-h-[200px] font-mono text-xs bg-background"
+              />
+              <p className="text-xs text-muted-foreground mt-2">
+                Copy this prompt and paste it into Lovable to start building.
+              </p>
+            </div>
+          )}
+
           {/* Status Controls */}
           <div className="grid grid-cols-3 gap-4">
             <div>

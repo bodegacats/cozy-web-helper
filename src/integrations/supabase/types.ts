@@ -185,6 +185,7 @@ export type Database = {
           goals: string | null
           id: string
           kanban_stage: string
+          lovable_build_prompt: string | null
           name: string
           pages_estimate: number | null
           project_description: string | null
@@ -208,6 +209,7 @@ export type Database = {
           goals?: string | null
           id?: string
           kanban_stage?: string
+          lovable_build_prompt?: string | null
           name: string
           pages_estimate?: number | null
           project_description?: string | null
@@ -231,6 +233,7 @@ export type Database = {
           goals?: string | null
           id?: string
           kanban_stage?: string
+          lovable_build_prompt?: string | null
           name?: string
           pages_estimate?: number | null
           project_description?: string | null
