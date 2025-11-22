@@ -221,13 +221,16 @@ const Index = () => {
                 <form onSubmit={async (e) => {
                   e.preventDefault();
                   const formData = new FormData(e.currentTarget);
-                  const checkupData = {
+                console.log("=== CHECKUP FORM SUBMISSION ===");
+                const checkupData = {
                     name: formData.get('checkupName') as string,
                     email: formData.get('checkupEmail') as string,
-                    websiteUrl: formData.get('checkupWebsiteUrl') as string,
+                    website_url: formData.get('checkupWebsiteUrl') as string,
                   };
                   
-                  if (!checkupData.name?.trim() || !checkupData.email?.trim() || !checkupData.websiteUrl?.trim()) {
+                  console.log("Checkup form data:", checkupData);
+                  
+                  if (!checkupData.name?.trim() || !checkupData.email?.trim() || !checkupData.website_url?.trim()) {
                     toast.error("Please fill in all fields");
                     return;
                   }
@@ -238,10 +241,12 @@ const Index = () => {
                       payload: {
                         name: checkupData.name,
                         email: checkupData.email,
-                        websiteUrl: checkupData.websiteUrl,
+                        website_url: checkupData.website_url,
+                        wish: "I'd like a $50 site checkup",
                       },
                       successMessage: "Thanks — I'll reach out soon.",
                     });
+                    console.log("Checkup submitted successfully");
                     (e.target as HTMLFormElement).reset();
                   } catch (error) {
                     console.error('Error submitting checkup request:', error);
