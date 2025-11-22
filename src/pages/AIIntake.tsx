@@ -91,6 +91,12 @@ const AIIntake = () => {
                       : "1000",
         raw_summary: String(parsed.intake_summary || ""),
         raw_conversation: Array.isArray(parsed.raw_chat) ? parsed.raw_chat : messages,
+        lovable_build_prompt: String(parsed.lovable_build_prompt || ""),
+        vibe: String(parsed.vibe || ""),
+        inspiration_sites: String(parsed.inspiration_sites || ""),
+        color_preferences: String(parsed.color_style_preferences || ""),
+        discount_offered: Boolean(parsed.discount_offered),
+        discount_amount: Number(parsed.discount_amount) || 0,
       };
     } catch (e) {
       console.error("Failed to parse intake JSON:", e);
@@ -122,6 +128,11 @@ const AIIntake = () => {
           raw_summary: intakeData.raw_summary,
           raw_conversation: intakeData.raw_conversation,
           design_prompt: intakeData.lovable_build_prompt,
+          vibe_description: intakeData.vibe,
+          inspiration_sites: intakeData.inspiration_sites,
+          color_preferences: intakeData.color_preferences,
+          discount_offered: intakeData.discount_offered,
+          discount_amount: intakeData.discount_amount,
           estimated_price: intakeData.suggested_tier === "500" ? 50000 : 
                           intakeData.suggested_tier === "1000" ? 100000 : 
                           intakeData.suggested_tier === "1500" ? 150000 : null,

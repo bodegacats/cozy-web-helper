@@ -194,6 +194,8 @@ export type Database = {
           converted_to_client_id: string | null
           created_at: string | null
           design_prompt: string | null
+          discount_amount: number | null
+          discount_offered: boolean | null
           email: string
           estimated_price: number | null
           fit_status: string | null
@@ -229,6 +231,8 @@ export type Database = {
           converted_to_client_id?: string | null
           created_at?: string | null
           design_prompt?: string | null
+          discount_amount?: number | null
+          discount_offered?: boolean | null
           email: string
           estimated_price?: number | null
           fit_status?: string | null
@@ -264,6 +268,8 @@ export type Database = {
           converted_to_client_id?: string | null
           created_at?: string | null
           design_prompt?: string | null
+          discount_amount?: number | null
+          discount_offered?: boolean | null
           email?: string
           estimated_price?: number | null
           fit_status?: string | null
