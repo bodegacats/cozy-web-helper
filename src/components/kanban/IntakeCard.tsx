@@ -10,6 +10,9 @@ interface IntakeCardProps {
     business_name: string | null;
     fit_status: "good" | "borderline" | "not_fit";
     suggested_tier: "500" | "1000" | "1500" | null;
+    source?: string | null;
+    discount_offered?: boolean | null;
+    discount_amount?: number | null;
     created_at: string;
   };
   onClick: () => void;
@@ -66,6 +69,16 @@ export const IntakeCard = ({ intake, onClick }: IntakeCardProps) => {
               {intake.suggested_tier && (
                 <Badge variant="secondary" className="text-xs">
                   ${intake.suggested_tier}
+                </Badge>
+              )}
+              {intake.source && (
+                <Badge variant="outline" className="text-xs capitalize">
+                  {intake.source.replace(/_/g, " ")}
+                </Badge>
+              )}
+              {intake.discount_offered && (
+                <Badge variant="secondary" className="text-xs">
+                  -${intake.discount_amount || 0}
                 </Badge>
               )}
             </div>

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { marked } from 'marked';
 import { Helmet } from "react-helmet";
+import { submitLead } from "@/lib/lead-submission";
 
 // Configure marked for good defaults
 marked.setOptions({
@@ -24,7 +25,7 @@ const AIIntake = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hi! I'm here to help you figure out if a simple website project is right for your needs. I'll ask you some questions about what you're looking for, and at the end we'll see if we're a good match. Sound good?",
+      content: "Hi! I'm here to help you figure out if a simple website project is right for your needs. I'll ask you some questions about what you're looking for, and at the end we'll see if we're a good match. Most simple sites use Home, About, Services, and Contact—want to add anything like a gallery or FAQ?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -107,51 +108,14 @@ const AIIntake = () => {
 
   const createIntake = async (intakeData: any) => {
     try {
-      // Insert into leads table
-      const { data: leadData, error: leadError } = await supabase
-        .from("leads")
-        .insert({
-          name: intakeData.name,
-          email: intakeData.email,
-          source: "ai_intake",
-          business_name: intakeData.business_name,
-          business_description: intakeData.project_description,
-          goals: intakeData.goals,
-          page_count: intakeData.pages_estimate,
-          content_readiness: intakeData.content_readiness,
-          timeline: intakeData.timeline,
-          budget_range: intakeData.budget_range,
-          special_needs: intakeData.special_needs,
-          tech_comfort: intakeData.tech_comfort,
-          fit_status: intakeData.fit_status,
-          suggested_tier: intakeData.suggested_tier,
-          raw_summary: intakeData.raw_summary,
-          raw_conversation: intakeData.raw_conversation,
-          design_prompt: intakeData.lovable_build_prompt,
-          vibe_description: intakeData.vibe,
-          inspiration_sites: intakeData.inspiration_sites,
-          color_preferences: intakeData.color_preferences,
-          discount_offered: intakeData.discount_offered,
-          discount_amount: intakeData.discount_amount,
-          estimated_price: intakeData.suggested_tier === "500" ? 50000 : 
-                          intakeData.suggested_tier === "1000" ? 100000 : 
-                          intakeData.suggested_tier === "1500" ? 150000 : null,
-        })
-        .select()
-        .single();
-
-      if (leadError) throw leadError;
-
-      // Send notification
-      await supabase.functions.invoke("send-lead-notification", {
-        body: { lead: leadData },
+      await submitLead({
+        type: "ai_intake",
+        payload: intakeData,
+        successMessage: "Intake submitted! I'll review and follow up by email soon.",
       });
-
       setIsComplete(true);
-      toast.success("Intake submitted! I'll review and follow up by email soon.");
     } catch (error) {
       console.error("Error creating intake:", error);
-      toast.error("Failed to save your intake. Please try again.");
     }
   };
 

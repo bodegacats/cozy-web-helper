@@ -12,8 +12,8 @@ import { Helmet } from "react-helmet";
 import logo from "@/assets/logo.png";
 import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { submitLead } from "@/lib/lead-submission";
 const Index = () => {
   const [pageCount, setPageCount] = useState<number>(1);
   const [contentShaping, setContentShaping] = useState(false);
@@ -60,35 +60,21 @@ const Index = () => {
     }
     setIsSubmitting(true);
     try {
-      // Insert into leads table
-      const { data: leadData, error: leadError } = await supabase
-        .from("leads")
-        .insert({
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          source: "quote",
-          page_count: pageCount,
-          content_shaping: contentShaping,
-          rush: rushDelivery,
-          estimated_price: currentPrice * 100, // Convert to cents
-          project_notes: formData.notes.trim() || null,
-        })
-        .select()
-        .single();
-
-      if (leadError) throw leadError;
-
-      // Send notification
-      try {
-        await supabase.functions.invoke('send-lead-notification', {
-          body: { lead: leadData }
-        });
-      } catch (emailError) {
-        console.log('Email notification not sent:', emailError);
-      }
+      await submitLead({
+        type: "quote",
+        payload: {
+          name: formData.name,
+          email: formData.email,
+          pageCount,
+          contentShaping,
+          rushDelivery,
+          estimatedPriceCents: currentPrice * 100,
+          notes: formData.notes,
+        },
+        successMessage: "Thanks — I'll reach out soon.",
+      });
 
       setIsSuccess(true);
-      toast.success("Thanks — I'll reach out soon.");
 
       // Reset form and close modal
       setTimeout(() => {
@@ -102,7 +88,6 @@ const Index = () => {
       }, 2000);
     } catch (error) {
       console.error('Error submitting estimate:', error);
-      toast.error("Failed to submit. Please try again or email me directly.");
     } finally {
       setIsSubmitting(false);
     }
@@ -248,36 +233,18 @@ const Index = () => {
                   }
                   
                   try {
-                    // Insert into leads table
-                    const { data: leadData, error: leadError } = await supabase
-                      .from("leads")
-                      .insert({
-                        name: checkupData.name.trim(),
-                        email: checkupData.email.trim(),
-                        source: "checkup",
-                        website_url: checkupData.websiteUrl.trim(),
-                        wish: "I'd like a site checkup",
-                        estimated_price: 5000, // $50 in cents
-                      })
-                      .select()
-                      .single();
-
-                    if (leadError) throw leadError;
-                    
-                    // Send notification
-                    try {
-                      await supabase.functions.invoke('send-lead-notification', {
-                        body: { lead: leadData }
-                      });
-                    } catch (emailError) {
-                      console.log('Email notification not sent:', emailError);
-                    }
-                    
-                    toast.success("Thanks — I'll reach out soon.");
+                    await submitLead({
+                      type: "checkup",
+                      payload: {
+                        name: checkupData.name,
+                        email: checkupData.email,
+                        websiteUrl: checkupData.websiteUrl,
+                      },
+                      successMessage: "Thanks — I'll reach out soon.",
+                    });
                     (e.target as HTMLFormElement).reset();
                   } catch (error) {
                     console.error('Error submitting checkup request:', error);
-                    toast.error("Failed to submit. Please try again or email me directly.");
                   }
                 }} className="space-y-4 mt-4">
                   <div className="space-y-2">
