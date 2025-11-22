@@ -2,20 +2,9 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.83.0";
 
-// Get allowed origins from environment or use secure defaults
-const ALLOWED_ORIGINS = Deno.env.get('ALLOWED_ORIGINS')?.split(',') || [
-  'http://localhost:5173',
-  'http://localhost:8080',
-  'https://cozy-web-helper.lovable.app',
-];
-
-const getCorsHeaders = (origin: string | null) => {
-  const isAllowed = origin && ALLOWED_ORIGINS.includes(origin);
-  return {
-    'Access-Control-Allow-Origin': isAllowed ? origin : ALLOWED_ORIGINS[0],
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-    'Access-Control-Allow-Credentials': 'true',
-  };
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
 // Unified pricing engine - Per-page model
@@ -376,9 +365,6 @@ Map their vibe description to one of these style frameworks or describe custom:
 Fill in ALL placeholders with actual data from the conversation. If optional information is missing (like target audience or inspiration sites), gracefully omit or use fallback text like "None provided" or "Open to designer's choice".`;
 
 serve(async (req) => {
-  const origin = req.headers.get('origin');
-  const corsHeaders = getCorsHeaders(origin);
-
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
