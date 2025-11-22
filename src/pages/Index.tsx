@@ -60,43 +60,33 @@ const Index = () => {
     }
     setIsSubmitting(true);
     try {
-      const {
-        error
-      } = await supabase.from('contact_submissions').insert({
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        wish: "Instant quote",
-        project_description: "Instant quote submission",
-        selected_options: {
-          pageCount,
-          contentShaping,
-          rushDelivery
-        },
-        estimate_low: currentPrice,
-        estimate_high: currentPrice,
-        notes: formData.notes.trim() || null,
-        status: "new",
-        submission_type: "quote"
-      });
-      if (error) throw error;
+      // Insert into leads table
+      const { data: leadData, error: leadError } = await supabase
+        .from("leads")
+        .insert({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          source: "quote",
+          page_count: pageCount,
+          content_shaping: contentShaping,
+          rush: rushDelivery,
+          estimated_price: currentPrice * 100, // Convert to cents
+          project_notes: formData.notes.trim() || null,
+        })
+        .select()
+        .single();
 
-      // Send email notification
+      if (leadError) throw leadError;
+
+      // Send notification
       try {
-        await supabase.functions.invoke('send-quote-notification', {
-          body: {
-            name: formData.name.trim(),
-            email: formData.email.trim(),
-            pageCount,
-            contentShaping,
-            rushDelivery,
-            totalPrice: currentPrice,
-            notes: formData.notes.trim() || null
-          }
+        await supabase.functions.invoke('send-lead-notification', {
+          body: { lead: leadData }
         });
       } catch (emailError) {
         console.log('Email notification not sent:', emailError);
-        // Don't show error to user - database insert was successful
       }
+
       setIsSuccess(true);
       toast.success("Thanks — I'll reach out soon.");
 
@@ -258,27 +248,26 @@ const Index = () => {
                   }
                   
                   try {
-                    const { error } = await supabase.from('contact_submissions').insert({
-                      name: checkupData.name.trim(),
-                      email: checkupData.email.trim(),
-                      website_url: checkupData.websiteUrl.trim(),
-                      wish: "I'd like a site checkup",
-                      project_description: "Site checkup request",
-                      submission_type: 'checkup',
-                      status: 'new'
-                    });
+                    // Insert into leads table
+                    const { data: leadData, error: leadError } = await supabase
+                      .from("leads")
+                      .insert({
+                        name: checkupData.name.trim(),
+                        email: checkupData.email.trim(),
+                        source: "checkup",
+                        website_url: checkupData.websiteUrl.trim(),
+                        wish: "I'd like a site checkup",
+                        estimated_price: 5000, // $50 in cents
+                      })
+                      .select()
+                      .single();
+
+                    if (leadError) throw leadError;
                     
-                    if (error) throw error;
-                    
-                    // Send email notification
+                    // Send notification
                     try {
-                      await supabase.functions.invoke('send-contact-notification', {
-                        body: {
-                          name: checkupData.name.trim(),
-                          email: checkupData.email.trim(),
-                          websiteUrl: checkupData.websiteUrl.trim(),
-                          submissionType: 'checkup'
-                        }
+                      await supabase.functions.invoke('send-lead-notification', {
+                        body: { lead: leadData }
                       });
                     } catch (emailError) {
                       console.log('Email notification not sent:', emailError);

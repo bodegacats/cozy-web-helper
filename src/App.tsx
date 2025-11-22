@@ -15,6 +15,7 @@ import AdminClientDetail from "./pages/AdminClientDetail";
 import AdminRequests from "./pages/AdminRequests";
 import AdminPipeline from "./pages/AdminPipeline";
 import AdminIntakes from "./pages/AdminIntakes";
+import AdminLeads from "./pages/AdminLeads";
 import AdminBlog from "./pages/AdminBlog";
 import AdminBlogEditor from "./pages/AdminBlogEditor";
 // import Blog from "./pages/Blog";
@@ -58,6 +59,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <AdminClientDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/leads"
+            element={
+              <ProtectedRoute>
+                <AdminLeads />
               </ProtectedRoute>
             }
           />

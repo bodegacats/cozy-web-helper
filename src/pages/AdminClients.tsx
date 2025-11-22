@@ -83,11 +83,11 @@ const AdminClients = () => {
               <Plus className="w-4 h-4 mr-2" />
               Create Client
             </Button>
-            <Button variant="outline" onClick={() => navigate('/admin/pipeline')}>
-              Pipeline
+            <Button variant="outline" onClick={() => navigate('/admin/leads')}>
+              Leads
             </Button>
-            <Button variant="outline" onClick={() => navigate('/admin/submissions')}>
-              Submissions
+            <Button variant="outline" onClick={() => navigate('/admin/requests')}>
+              Requests
             </Button>
             <Button variant="outline" onClick={() => supabase.auth.signOut()}>
               Log out

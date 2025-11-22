@@ -81,6 +81,7 @@ export type Database = {
           phone: string | null
           pipeline_stage: string
           setup_fee_cents: number | null
+          source_lead_id: string | null
           source_submission_id: string | null
           website_url: string | null
         }
@@ -96,6 +97,7 @@ export type Database = {
           phone?: string | null
           pipeline_stage?: string
           setup_fee_cents?: number | null
+          source_lead_id?: string | null
           source_submission_id?: string | null
           website_url?: string | null
         }
@@ -111,10 +113,18 @@ export type Database = {
           phone?: string | null
           pipeline_stage?: string
           setup_fee_cents?: number | null
+          source_lead_id?: string | null
           source_submission_id?: string | null
           website_url?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "clients_source_lead_id_fkey"
+            columns: ["source_lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "clients_source_submission_id_fkey"
             columns: ["source_submission_id"]
@@ -171,6 +181,122 @@ export type Database = {
           wish?: string
         }
         Relationships: []
+      }
+      leads: {
+        Row: {
+          budget_range: string | null
+          business_description: string | null
+          business_name: string | null
+          color_preferences: string | null
+          content_readiness: string | null
+          content_shaping: boolean | null
+          converted_at: string | null
+          converted_to_client_id: string | null
+          created_at: string | null
+          design_prompt: string | null
+          email: string
+          estimated_price: number | null
+          fit_status: string | null
+          goals: string | null
+          id: string
+          inspiration_sites: string | null
+          lead_score: number | null
+          name: string
+          page_count: number | null
+          project_notes: string | null
+          raw_conversation: Json | null
+          raw_summary: string | null
+          rush: boolean | null
+          source: string
+          special_needs: string | null
+          status: string | null
+          suggested_tier: string | null
+          tech_comfort: string | null
+          timeline: string | null
+          updated_at: string | null
+          vibe_description: string | null
+          website_url: string | null
+          wish: string | null
+        }
+        Insert: {
+          budget_range?: string | null
+          business_description?: string | null
+          business_name?: string | null
+          color_preferences?: string | null
+          content_readiness?: string | null
+          content_shaping?: boolean | null
+          converted_at?: string | null
+          converted_to_client_id?: string | null
+          created_at?: string | null
+          design_prompt?: string | null
+          email: string
+          estimated_price?: number | null
+          fit_status?: string | null
+          goals?: string | null
+          id?: string
+          inspiration_sites?: string | null
+          lead_score?: number | null
+          name: string
+          page_count?: number | null
+          project_notes?: string | null
+          raw_conversation?: Json | null
+          raw_summary?: string | null
+          rush?: boolean | null
+          source: string
+          special_needs?: string | null
+          status?: string | null
+          suggested_tier?: string | null
+          tech_comfort?: string | null
+          timeline?: string | null
+          updated_at?: string | null
+          vibe_description?: string | null
+          website_url?: string | null
+          wish?: string | null
+        }
+        Update: {
+          budget_range?: string | null
+          business_description?: string | null
+          business_name?: string | null
+          color_preferences?: string | null
+          content_readiness?: string | null
+          content_shaping?: boolean | null
+          converted_at?: string | null
+          converted_to_client_id?: string | null
+          created_at?: string | null
+          design_prompt?: string | null
+          email?: string
+          estimated_price?: number | null
+          fit_status?: string | null
+          goals?: string | null
+          id?: string
+          inspiration_sites?: string | null
+          lead_score?: number | null
+          name?: string
+          page_count?: number | null
+          project_notes?: string | null
+          raw_conversation?: Json | null
+          raw_summary?: string | null
+          rush?: boolean | null
+          source?: string
+          special_needs?: string | null
+          status?: string | null
+          suggested_tier?: string | null
+          tech_comfort?: string | null
+          timeline?: string | null
+          updated_at?: string | null
+          vibe_description?: string | null
+          website_url?: string | null
+          wish?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_converted_to_client_id_fkey"
+            columns: ["converted_to_client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       project_intakes: {
         Row: {
