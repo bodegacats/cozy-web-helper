@@ -17,6 +17,7 @@ interface Intake {
   email: string;
   business_name: string | null;
   project_description: string | null;
+  website_url: string | null;
   goals: string | null;
   pages_estimate: number | null;
   content_readiness: string | null;
@@ -29,9 +30,11 @@ interface Intake {
   suggested_tier: "500" | "1000" | "1500" | null;
   kanban_stage: string;
   raw_summary: string | null;
-  raw_conversation: any;
+  raw_conversation: unknown;
   lovable_build_prompt: string | null;
   source: string | null;
+  status: string | null;
+  intake_json?: unknown;
   discount_offered: boolean | null;
   discount_amount: number | null;
   created_at: string;

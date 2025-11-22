@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { marked } from 'marked';
 import { Helmet } from "react-helmet";
-import { submitLead } from "@/lib/lead-submission";
+import { submitLead, type AiIntakePayload } from "@/lib/lead-submission";
 
 // Configure marked for good defaults
 marked.setOptions({
@@ -20,6 +20,12 @@ interface Message {
   role: "user" | "assistant";
   content: string;
 }
+
+const INITIAL_ASSISTANT_MESSAGE: Message = {
+  role: "assistant",
+  content:
+    "Hi! I'm here to help you figure out if a simple website project is right for your needs. I'll ask you some questions about what you're looking for, and at the end we'll see if we're a good match. Most simple sites use Home, About, Services, and Contact—want to add anything like a gallery or FAQ?",
+};
 
 // Calculate price helper (matching pricing engine)
 const calculatePrice = (pages: number, contentReadiness: string, rush: boolean): number => {
@@ -36,7 +42,7 @@ const calculatePrice = (pages: number, contentReadiness: string, rush: boolean):
   return price * 100; // Return in cents
 };
 
-const parseIntakeJSON = (content: string): any | null => {
+const parseIntakeJSON = (content: string): AiIntakePayload | null => {
   try {
     console.log("=== PARSING AI INTAKE JSON ===");
     console.log("Raw content:", content);
@@ -73,6 +79,7 @@ const parseIntakeJSON = (content: string): any | null => {
       fit_status: String(parsed.fit || "good"),
       inspiration_sites: String(parsed.inspiration_sites || ""), // Fixed: was "design_examples"
       color_preferences: String(parsed.color_preferences || ""), // Fixed: was "color_style_preferences"
+      intake_json: parsed,
     };
     
     console.log("Mapped result:", result);
@@ -84,12 +91,7 @@ const parseIntakeJSON = (content: string): any | null => {
 };
 
 const AIIntake = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      content: "Hi! I'm here to help you figure out if a simple website project is right for your needs. I'll ask you some questions about what you're looking for, and at the end we'll see if we're a good match. Most simple sites use Home, About, Services, and Contact—want to add anything like a gallery or FAQ?",
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([INITIAL_ASSISTANT_MESSAGE]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -104,7 +106,7 @@ const AIIntake = () => {
     scrollToBottom();
   }, [messages]);
 
-  const createIntake = async (intakeData: any) => {
+  const createIntake = async (intakeData: AiIntakePayload) => {
     try {
       console.log("=== CREATING INTAKE ===");
       console.log("Intake data:", intakeData);
@@ -112,11 +114,13 @@ const AIIntake = () => {
       await submitLead({
         type: "ai_intake",
         payload: intakeData,
-        successMessage: "Intake submitted! I'll review and follow up by email soon.",
       });
-      
+
       console.log("Intake created successfully");
+      setMessages([INITIAL_ASSISTANT_MESSAGE]);
+      setInput("");
       setIsComplete(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       console.error("Error creating intake:", error);
     }
@@ -158,7 +162,7 @@ const AIIntake = () => {
         console.log("Final intake data detected, creating intake...");
         await createIntake(intakeData);
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error in AI intake:", error);
       toast.error("Something went wrong. Please try again.");
     } finally {

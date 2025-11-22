@@ -34,6 +34,7 @@ type LeadPayloadMap = {
     name: string;
     email: string;
     business_name?: string | null;
+    website_url?: string | null;
     business_description?: string | null;
     project_description?: string | null;
     goals?: string | null;
@@ -49,19 +50,20 @@ type LeadPayloadMap = {
     fit_status?: "good" | "borderline" | "not_fit" | string;
     suggested_tier?: "500" | "1000" | "1500" | string | null;
     raw_summary?: string | null;
-    raw_conversation?: any;
+    raw_conversation?: IntakeInsert["raw_conversation"];
     lovable_build_prompt?: string | null;
     vibe?: string | null;
-    website_url?: string | null;
     discount_offered?: boolean;
     discount_amount?: number;
+    intake_json?: IntakeInsert["intake_json"];
   };
 };
+
+export type AiIntakePayload = LeadPayloadMap["ai_intake"];
 
 interface SubmitLeadOptions<T extends LeadType> {
   type: T;
   payload: LeadPayloadMap[T];
-  successMessage?: string;
 }
 
 const NOTIFICATION_FUNCTIONS: Record<LeadType, string> = {
@@ -156,7 +158,9 @@ const buildIntakeInsert = (payload: LeadPayloadMap["ai_intake"]): IntakeInsert =
   name: payload.name.trim(),
   email: payload.email.trim(),
   source: "ai_intake",
+  status: "new",
   business_name: payload.business_name || null,
+  website_url: payload.website_url || null,
   project_description: payload.project_description || payload.business_description || null,
   goals: payload.goals || null,
   pages_estimate: payload.pages_estimate || null,
@@ -170,6 +174,7 @@ const buildIntakeInsert = (payload: LeadPayloadMap["ai_intake"]): IntakeInsert =
   suggested_tier: payload.suggested_tier as IntakeInsert["suggested_tier"],
   raw_summary: payload.raw_summary || null,
   raw_conversation: payload.raw_conversation || null,
+  intake_json: (payload.intake_json || payload) as IntakeInsert["intake_json"],
   lovable_build_prompt: payload.lovable_build_prompt || null,
   kanban_stage: "new",
   discount_offered: Boolean(payload.discount_offered),
@@ -179,7 +184,6 @@ const buildIntakeInsert = (payload: LeadPayloadMap["ai_intake"]): IntakeInsert =
 export async function submitLead<T extends LeadType>({
   type,
   payload,
-  successMessage = "Thanks! I'll reach out soon.",
 }: SubmitLeadOptions<T>) {
   try {
     console.log("=== LEAD SUBMISSION START ===");
@@ -239,12 +243,12 @@ export async function submitLead<T extends LeadType>({
     }
 
     console.log("=== LEAD SUBMISSION COMPLETE ===");
-    toast.success(successMessage);
+    toast.success("Thanks! I'll reach out soon.");
     return { lead, intake };
   } catch (error) {
     console.error("=== LEAD SUBMISSION FAILED ===");
     console.error("Error details:", error);
-    toast.error("Failed to submit. Please try again or email me directly.");
+    toast.error("Something went wrong submitting your intake. Please try again.");
     throw error;
   }
 }

@@ -71,7 +71,6 @@ const Index = () => {
           estimatedPriceCents: currentPrice * 100,
           notes: formData.notes,
         },
-        successMessage: "Thanks — I'll reach out soon.",
       });
 
       setIsSuccess(true);
@@ -244,7 +243,6 @@ const Index = () => {
                         website_url: checkupData.website_url,
                         wish: "I'd like a $50 site checkup",
                       },
-                      successMessage: "Thanks — I'll reach out soon.",
                     });
                     console.log("Checkup submitted successfully");
                     (e.target as HTMLFormElement).reset();
