@@ -45,6 +45,8 @@ interface Lead {
   status: string;
   converted_to_client_id: string | null;
   converted_at: string | null;
+  discount_offered: boolean | null;
+  discount_amount: number | null;
 }
 
 const AdminLeads = () => {
@@ -320,7 +322,7 @@ const AdminLeads = () => {
               </div>
 
               {/* Pricing Info */}
-              {(selectedLead.estimated_price || selectedLead.page_count) && (
+              {(selectedLead.estimated_price || selectedLead.page_count || selectedLead.discount_offered) && (
                 <>
                   <Separator />
                   <div>
@@ -332,6 +334,21 @@ const AdminLeads = () => {
                           <p className="text-xl font-semibold">
                             ${(selectedLead.estimated_price / 100).toFixed(0)}
                           </p>
+                        </div>
+                      )}
+                      {selectedLead.discount_offered && (
+                        <div>
+                          <p className="text-sm text-muted-foreground">Discount Offered</p>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary" className="text-base">
+                              ${selectedLead.discount_amount}
+                            </Badge>
+                            {selectedLead.estimated_price && selectedLead.discount_amount && (
+                              <p className="text-sm text-muted-foreground">
+                                (Final: ${((selectedLead.estimated_price / 100) - selectedLead.discount_amount).toFixed(0)})
+                              </p>
+                            )}
+                          </div>
                         </div>
                       )}
                       {selectedLead.page_count && (
@@ -398,7 +415,19 @@ const AdminLeads = () => {
                 <>
                   <Separator />
                   <div>
-                    <h3 className="font-semibold mb-3">AI-Generated Design Prompt</h3>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-semibold">AI-Generated Design Prompt</h3>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          navigator.clipboard.writeText(selectedLead.design_prompt || "");
+                          toast.success("Build prompt copied to clipboard!");
+                        }}
+                      >
+                        Copy Build Prompt
+                      </Button>
+                    </div>
                     <div className="bg-muted p-4 rounded-md">
                       <pre className="whitespace-pre-wrap text-sm font-mono">
                         {selectedLead.design_prompt}

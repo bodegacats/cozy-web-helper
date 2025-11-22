@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
+import { Resend } from "npm:resend@3.2.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 const adminEmail = Deno.env.get("ADMIN_EMAIL");
@@ -25,6 +25,8 @@ interface Lead {
   design_prompt?: string;
   fit_status?: string;
   suggested_tier?: string;
+  discount_offered?: boolean;
+  discount_amount?: number;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -51,6 +53,7 @@ const handler = async (req: Request): Promise<Response> => {
           <p><strong>Fit Status:</strong> ${lead.fit_status || "N/A"}</p>
           <p><strong>Suggested Tier:</strong> ${lead.suggested_tier || "N/A"}</p>
           <p><strong>Estimated Price:</strong> $${lead.estimated_price ? (lead.estimated_price / 100).toFixed(2) : "N/A"}</p>
+          ${lead.discount_offered ? `<p><strong>💰 Discount Offered:</strong> $${lead.discount_amount} (Total: $${lead.estimated_price && lead.discount_amount ? ((lead.estimated_price / 100) - lead.discount_amount).toFixed(2) : "N/A"})</p>` : ""}
           ${lead.business_description ? `<p><strong>Description:</strong> ${lead.business_description}</p>` : ""}
           ${lead.design_prompt ? `<hr><h3>Design Prompt</h3><pre style="background: #f5f5f5; padding: 12px; border-radius: 4px; white-space: pre-wrap;">${lead.design_prompt}</pre>` : ""}
         `;

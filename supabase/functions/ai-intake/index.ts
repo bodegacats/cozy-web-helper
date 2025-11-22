@@ -106,14 +106,33 @@ Step 3: Ask clarifying questions ONLY when:
 
 Ask ONE question at a time. Keep it friendly.
 
-DESIGN PREFERENCE QUESTIONS
+DESIGN PREFERENCE QUESTIONS & PAGE REQUIREMENTS
 
 As you gather requirements, naturally weave in these questions (don't ask all at once):
 
 1. "Describe the vibe or feeling you want the site to have" (e.g., professional, friendly, bold, minimal, warm, edgy, elegant, playful)
 2. "Share 1-3 websites you like the look of" (inspiration sites)
 3. "Any specific colors, fonts, or visual styles you want or want to avoid?"
-4. "What pages do you need and what should each one do?" (already being asked, but ensure you capture detailed page requirements)
+
+PAGE STRUCTURE - SIMPLIFIED APPROACH:
+
+Default page assumption: Home, About, Services, Contact
+
+When asking about pages, use this approach:
+
+"I'm planning a standard site with: Home, About, Services, and Contact. 
+
+Do you want to add anything specific like:
+- Gallery or portfolio
+- FAQs
+- Pricing page
+- Testimonials
+- Blog
+
+Or are those four core pages enough?"
+
+NEVER ask "what should each page do?" or request page-by-page purpose descriptions.
+Just note which pages they want and move on.
 
 HANDLING PASTED AI CONVERSATIONS
 
@@ -212,6 +231,42 @@ Always:
 - Sound calm and transparent, never salesy
 - DO NOT reference tiers or tier names
 
+DISCOUNT OFFERING RULES
+
+You may offer a one-time discount ONLY IF the user:
+- Says the price is too high
+- Says they need to think about it due to cost
+- Explicitly states budget concerns
+- Compares to cheaper alternatives
+
+Discount parameters:
+- Amount: $50-$100 (use judgment based on total price)
+- Framing: "first-project courtesy discount"
+- NEVER offer proactively
+- NEVER offer more than $100
+
+When offering:
+
+"I can offer you a $[amount] first-project courtesy discount, which brings your total to $[new_total]. 
+
+If you're good with this, I'll get your details and lock in the project so Dan can follow up within one business day."
+
+After they accept, include these fields in final JSON:
+- "discount_offered": true
+- "discount_amount": [amount in dollars, e.g. 50 or 100]
+
+If no discount offered:
+- "discount_offered": false
+- "discount_amount": 0
+
+CLOSING LANGUAGE
+
+After presenting the quote (with or without discount):
+
+"If you're good with this, I'll get your details and lock in the project so Dan can follow up within one business day."
+
+Sound confident and helpful, not pushy.
+
 PUSHING TOWARD COMMITMENT
 
 After you've presented the quote and handled any objections, move toward a decision:
@@ -304,6 +359,8 @@ After all information is collected, output this exact schema:
   "inspiration_sites": "",
   "color_style_preferences": "",
   "page_details": "",
+  "discount_offered": false,
+  "discount_amount": 0,
   "lovable_build_prompt": ""
 }
 
@@ -312,7 +369,9 @@ Rules:
 - "raw_chat" must contain full conversation as array of {role, content} objects
 - "fit" must be one of: "good", "borderline", or "not a fit"
 - "intake_summary" should be 2–3 sentences summarizing the project
-- "lovable_build_prompt" must be generated using the template below
+- "discount_offered" must be true if discount was offered, false otherwise
+- "discount_amount" must be the dollar amount (50 or 100) if offered, 0 otherwise
+- "lovable_build_prompt" must be generated using the template below (CRITICAL: This field must be filled!)
 - Output ONLY the JSON, no extra text
 
 LOVABLE BUILD PROMPT GENERATION
@@ -370,7 +429,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, action, intakeData } = await req.json();
+    const { messages } = await req.json();
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
@@ -378,110 +437,7 @@ serve(async (req) => {
       throw new Error('Service temporarily unavailable');
     }
 
-    // Handle intake creation action
-    if (action === 'create_intake' && intakeData) {
-      const supabaseUrl = Deno.env.get('SUPABASE_URL');
-      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-
-      if (!supabaseUrl || !supabaseKey) {
-        console.error('Supabase environment variables not configured');
-        throw new Error('Service temporarily unavailable');
-      }
-
-      const supabase = createClient(supabaseUrl, supabaseKey);
-
-      // Find or create client
-      const { data: existingClient } = await supabase
-        .from('clients')
-        .select('id')
-        .ilike('email', intakeData.email)
-        .maybeSingle();
-
-      let clientId = existingClient?.id;
-
-      if (!existingClient) {
-        const { data: newClient, error: clientError } = await supabase
-          .from('clients')
-          .insert({
-            name: intakeData.name,
-            email: intakeData.email.toLowerCase(),
-            business_name: intakeData.business_name || null,
-            website_url: intakeData.website_url || null,
-            plan_type: 'build_only',
-            monthly_fee_cents: 0,
-            setup_fee_cents: 0,
-            active: true,
-            pipeline_stage: 'lead'
-          })
-          .select('id')
-          .single();
-
-        if (clientError) {
-          console.error('Error creating client:', clientError);
-          throw clientError;
-        }
-
-        clientId = newClient.id;
-      }
-
-      // Create intake record
-      const kanbanStage = ['good', 'borderline'].includes(intakeData.fit_status) ? 'qualified' : 'new';
-      
-      const { data: intake, error: intakeError } = await supabase
-        .from('project_intakes')
-        .insert({
-          client_id: clientId,
-          name: intakeData.name,
-          email: intakeData.email.toLowerCase(),
-          business_name: intakeData.business_name,
-          project_description: intakeData.project_description,
-          goals: intakeData.goals,
-          pages_estimate: intakeData.pages_estimate,
-          content_readiness: intakeData.content_readiness,
-          timeline: intakeData.timeline,
-          budget_range: intakeData.budget_range,
-          design_examples: intakeData.design_examples,
-          special_needs: intakeData.special_needs,
-          tech_comfort: intakeData.tech_comfort,
-          fit_status: intakeData.fit_status,
-          suggested_tier: intakeData.suggested_tier,
-          kanban_stage: kanbanStage,
-          raw_summary: intakeData.raw_summary,
-          raw_conversation: intakeData.raw_conversation,
-          lovable_build_prompt: intakeData.lovable_build_prompt || null
-        })
-        .select()
-        .single();
-
-      if (intakeError) {
-        console.error('Error creating intake:', intakeError);
-        throw intakeError;
-      }
-
-      // Send notification email if qualified
-      if (kanbanStage === 'qualified') {
-        try {
-          await supabase.functions.invoke('send-intake-notification', {
-            body: {
-              intake,
-              client_id: clientId
-            }
-          });
-        } catch (emailError) {
-          console.error('Error sending notification email:', emailError);
-          // Don't fail the whole operation if email fails
-        }
-      }
-
-      return new Response(
-        JSON.stringify({ success: true, intake_id: intake.id }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
-
-    // Handle chat conversation
+    // Handle chat conversation only - frontend handles database writes
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
