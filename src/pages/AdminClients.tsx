@@ -5,7 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAdminCheck } from "@/lib/auth-helpers";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Plus } from "lucide-react";
+import { CreateClientDialog } from "@/components/CreateClientDialog";
 
 interface Client {
   id: string;
@@ -21,6 +22,7 @@ const AdminClients = () => {
   const { isAdmin, loading: adminLoading } = useAdminCheck();
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!adminLoading && !isAdmin) {
@@ -49,6 +51,11 @@ const AdminClients = () => {
     setLoading(false);
   };
 
+  const handleClientCreated = (clientId: string) => {
+    loadClients();
+    navigate(`/admin/clients/${clientId}`);
+  };
+
   if (adminLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -72,6 +79,10 @@ const AdminClients = () => {
             </p>
           </div>
           <div className="flex gap-2">
+            <Button onClick={() => setCreateDialogOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Create Client
+            </Button>
             <Button variant="outline" onClick={() => navigate('/admin/pipeline')}>
               Pipeline
             </Button>
@@ -153,6 +164,12 @@ const AdminClients = () => {
             )}
           </CardContent>
         </Card>
+
+        <CreateClientDialog
+          open={createDialogOpen}
+          onOpenChange={setCreateDialogOpen}
+          onClientCreated={handleClientCreated}
+        />
       </div>
     </div>
   );

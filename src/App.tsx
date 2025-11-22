@@ -32,7 +32,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-            <Route path="/start" element={<AIIntake />} />
+          <Route path="/start" element={<AIIntake />} />
+          <Route path="/admin" element={<Navigate to="/admin/clients" replace />} />
           <Route path="/portal" element={<Portal />} />
           <Route path="/portal/request" element={<PortalRequest />} />
           <Route path="/portal/chat" element={<PortalAIChat />} />
