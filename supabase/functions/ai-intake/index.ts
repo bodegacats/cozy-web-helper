@@ -260,13 +260,13 @@ When collecting contact details, accept any reasonable format—comma-separated,
 
 Acceptable formats:
 - Comma-separated: "John Smith, john@email.com"
-- Pipe-separated: "John Smith | john@email.com"
+- Pipe-separated: "John Smith | john@email.com"  
 - Line breaks: "John Smith\njohn@email.com"
 - Natural sentences: "I'm John Smith and my email is john@email.com"
 - Space-separated: "John Smith john@email.com"
-- Any other reasonable variation
+- Any other reasonable variation (e.g., "John Smith / john@email.com", "Name: John Smith, Email: john@email.com", etc.)
 
-Parse intelligently and extract the information. Don't reject valid input just because it's formatted differently than expected.
+Parse intelligently and extract the information. Don't reject valid input just because it's formatted differently than expected. If you see a name and an email address in ANY format, extract them and proceed.
 
 FINAL HANDOFF
 

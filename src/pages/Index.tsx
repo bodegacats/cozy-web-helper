@@ -98,9 +98,9 @@ const Index = () => {
         // Don't show error to user - database insert was successful
       }
       setIsSuccess(true);
-      toast.success("Estimate sent successfully!");
+      toast.success("Thanks — I'll reach out soon.");
 
-      // Auto-close after 3 seconds
+      // Reset form and close modal
       setTimeout(() => {
         setIsModalOpen(false);
         setIsSuccess(false);
@@ -109,10 +109,10 @@ const Index = () => {
           email: '',
           notes: ''
         });
-      }, 3000);
+      }, 2000);
     } catch (error) {
       console.error('Error submitting estimate:', error);
-      toast.error("Failed to submit estimate. Please try again.");
+      toast.error("Failed to submit. Please try again or email me directly.");
     } finally {
       setIsSubmitting(false);
     }
@@ -284,11 +284,11 @@ const Index = () => {
                       console.log('Email notification not sent:', emailError);
                     }
                     
-                    toast.success("Site checkup request received! I'll be in touch soon.");
+                    toast.success("Thanks — I'll reach out soon.");
                     (e.target as HTMLFormElement).reset();
                   } catch (error) {
                     console.error('Error submitting checkup request:', error);
-                    toast.error("Failed to submit request. Please try again.");
+                    toast.error("Failed to submit. Please try again or email me directly.");
                   }
                 }} className="space-y-4 mt-4">
                   <div className="space-y-2">

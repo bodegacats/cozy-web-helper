@@ -104,7 +104,13 @@ const Portal = () => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     
     if (error) {
-      toast.error(error.message);
+      if (error.message.includes("Invalid login credentials")) {
+        toast.error("Invalid email or password. Please check and try again.");
+      } else if (error.message.includes("Email not confirmed")) {
+        toast.error("Please check your email to confirm your account.");
+      } else {
+        toast.error("Login failed. Please try again or contact support.");
+      }
     }
   };
 
@@ -119,7 +125,7 @@ const Portal = () => {
 
     if (error) {
       console.error('Cancel error:', error);
-      toast.error(error.message || "Could not cancel request.");
+      toast.error("Unable to cancel request. Please try again.");
       return;
     }
 
@@ -224,14 +230,20 @@ const Portal = () => {
   if (!client) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
-        <Card className="w-full max-w-2xl">
-          <CardContent className="pt-6">
-            <p className="text-lg text-center text-muted-foreground">
-              You are logged in, but I do not see a client record for this email yet. If this seems wrong, send me a note.
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>Portal access not found</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground">
+              Portal access is provided after your project begins. If you're starting a new website, use the homepage or the AI intake to get started.
             </p>
-            <div className="mt-6 text-center">
-              <Button onClick={() => supabase.auth.signOut()}>
-                Log out
+            <div className="flex flex-col gap-2">
+              <Button onClick={() => navigate('/start')} className="w-full">
+                Start your project
+              </Button>
+              <Button onClick={() => navigate('/')} variant="outline" className="w-full">
+                Return to homepage
               </Button>
             </div>
           </CardContent>

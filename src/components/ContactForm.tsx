@@ -88,10 +88,10 @@ export const ContactForm = () => {
         // Don't show error to user - the form submission was successful
       }
 
-      toast.success("Got it. I will read this and get back to you.");
+      toast.success("Thanks — I'll reach out soon.");
       reset();
     } catch (error: any) {
-      toast.error(error.message || "Failed to submit form. Please try again.");
+      toast.error("Failed to submit. Please try again or email me directly.");
     } finally {
       setIsSubmitting(false);
     }
