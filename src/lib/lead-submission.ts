@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { PROJECT_INTAKES_TABLE } from "@/constants/tables";
 import type { Database } from "@/integrations/supabase/types";
 
 type LeadInsert = Database["public"]["Tables"]["leads"]["Insert"];
@@ -213,7 +214,7 @@ export async function submitLead<T extends LeadType>({
       console.log("Intake insert object:", JSON.stringify(intakeInsert, null, 2));
       
       const { data: intakeData, error: intakeError } = await supabase
-        .from("project_intakes")
+        .from(PROJECT_INTAKES_TABLE)
         .insert(intakeInsert)
         .select()
         .single();
