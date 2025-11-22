@@ -50,6 +50,7 @@ const handler = async (req: Request): Promise<Response> => {
         <li><strong>Budget:</strong> ${intake.budget_range || 'N/A'}</li>
         <li><strong>Special needs:</strong> ${intake.special_needs || 'None mentioned'}</li>
         <li><strong>Tech comfort:</strong> ${intake.tech_comfort || 'N/A'}</li>
+        <li><strong>Discount:</strong> ${intake.discount_offered ? `$${intake.discount_amount || 0} offered` : 'No discount offered'}</li>
       </ul>
 
       <div style="margin-top: 24px; padding: 16px; background: #e0f2fe; border-radius: 8px;">

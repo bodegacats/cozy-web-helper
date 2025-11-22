@@ -31,6 +31,9 @@ interface Intake {
   raw_summary: string | null;
   raw_conversation: any;
   lovable_build_prompt: string | null;
+  source: string | null;
+  discount_offered: boolean | null;
+  discount_amount: number | null;
   created_at: string;
 }
 
@@ -92,6 +95,31 @@ export const IntakeDetailDialog = ({
         </DialogHeader>
 
         <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <Label>Source</Label>
+              <div className="mt-2">
+                <Badge variant="outline" className="capitalize">
+                  {intake.source?.replace(/_/g, " ") || "ai intake"}
+                </Badge>
+              </div>
+            </div>
+            <div>
+              <Label>Submitted</Label>
+              <p className="text-sm mt-2 text-muted-foreground">
+                {new Date(intake.created_at).toLocaleString()}
+              </p>
+            </div>
+            <div>
+              <Label>Discount</Label>
+              <p className="text-sm mt-2">
+                {intake.discount_offered
+                  ? `-$${intake.discount_amount || 0} courtesy`
+                  : "No discount offered"}
+              </p>
+            </div>
+          </div>
+
           {/* Lovable Build Prompt */}
           {intake.lovable_build_prompt && (
             <div className="p-4 bg-primary/5 border-2 border-primary/20 rounded-lg">

@@ -311,6 +311,8 @@ export type Database = {
           client_id: string | null
           content_readiness: string | null
           created_at: string | null
+          discount_amount: number | null
+          discount_offered: boolean | null
           design_examples: string | null
           email: string
           fit_status: string
@@ -335,6 +337,8 @@ export type Database = {
           client_id?: string | null
           content_readiness?: string | null
           created_at?: string | null
+          discount_amount?: number | null
+          discount_offered?: boolean | null
           design_examples?: string | null
           email: string
           fit_status?: string
@@ -359,6 +363,8 @@ export type Database = {
           client_id?: string | null
           content_readiness?: string | null
           created_at?: string | null
+          discount_amount?: number | null
+          discount_offered?: boolean | null
           design_examples?: string | null
           email?: string
           fit_status?: string

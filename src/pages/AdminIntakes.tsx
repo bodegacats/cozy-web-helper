@@ -31,6 +31,9 @@ interface Intake {
   raw_summary: string | null;
   raw_conversation: any;
   lovable_build_prompt: string | null;
+  source: string | null;
+  discount_offered: boolean | null;
+  discount_amount: number | null;
   created_at: string;
 }
 

@@ -8,6 +8,9 @@ interface Intake {
   business_name: string | null;
   fit_status: "good" | "borderline" | "not_fit";
   suggested_tier: "500" | "1000" | "1500" | null;
+  source?: string | null;
+  discount_offered?: boolean | null;
+  discount_amount?: number | null;
   created_at: string;
 }
 

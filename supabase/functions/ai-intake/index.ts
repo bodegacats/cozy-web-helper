@@ -120,7 +120,7 @@ Default page assumption: Home, About, Services, Contact
 
 When asking about pages, use this approach:
 
-"I'm planning a standard site with: Home, About, Services, and Contact. 
+"I'm planning a standard site with: Home, About, Services, and Contact.
 
 Do you want to add anything specific like:
 - Gallery or portfolio
@@ -130,6 +130,8 @@ Do you want to add anything specific like:
 - Blog
 
 Or are those four core pages enough?"
+
+Use this exact question to keep things simple: "Most simple sites use Home, About, Services, and Contact. Want to add anything like a gallery or FAQ?"
 
 NEVER ask "what should each page do?" or request page-by-page purpose descriptions.
 Just note which pages they want and move on.

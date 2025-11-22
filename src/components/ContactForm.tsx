@@ -2,13 +2,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { toast } from "sonner";
+import { submitLead } from "@/lib/lead-submission";
 
 const contactFormSchema = z.object({
   name: z.string().min(1, "Name is required").max(100, "Name is too long"),
@@ -58,37 +57,20 @@ export const ContactForm = () => {
     setIsSubmitting(true);
 
     try {
-      // Insert into leads table
-      const { data: leadData, error: leadError } = await supabase
-        .from("leads")
-        .insert({
+      await submitLead({
+        type: "contact",
+        payload: {
           name: data.name,
           email: data.email,
-          source: "contact",
-          business_description: data.projectDescription,
-          website_url: data.websiteUrl || null,
+          projectDescription: data.projectDescription,
+          websiteUrl: data.websiteUrl,
           wish: data.wish,
-        })
-        .select()
-        .single();
-
-      if (leadError) throw leadError;
-
-      // Send notification
-      try {
-        await supabase.functions.invoke("send-lead-notification", {
-          body: { lead: leadData },
-        });
-      } catch (emailError) {
-        console.error("Email notification failed:", emailError);
-        // Continue even if email fails
-      }
-
-      toast.success("Thanks — I'll reach out soon.");
+        },
+        successMessage: "Thanks — I'll reach out soon.",
+      });
       reset();
     } catch (error) {
       console.error("Error submitting contact form:", error);
-      toast.error("Failed to submit. Please try again or email me directly.");
     } finally {
       setIsSubmitting(false);
     }
