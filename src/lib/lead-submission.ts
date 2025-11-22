@@ -20,7 +20,8 @@ type LeadPayloadMap = {
   checkup: {
     name: string;
     email: string;
-    websiteUrl: string;
+    website_url: string;
+    wish: string;
   };
   contact: {
     name: string;
@@ -92,8 +93,8 @@ const buildLeadInsert = (type: LeadType, payload: LeadPayloadMap[LeadType]): Lea
       name: checkupPayload.name.trim(),
       email: checkupPayload.email.trim(),
       source: "checkup",
-      website_url: checkupPayload.websiteUrl.trim(),
-      wish: "I'd like a site checkup",
+      website_url: checkupPayload.website_url.trim(),
+      wish: checkupPayload.wish,
       estimated_price: 5000,
       status: "new",
     };
@@ -175,53 +176,74 @@ const buildIntakeInsert = (payload: LeadPayloadMap["ai_intake"]): IntakeInsert =
   discount_amount: payload.discount_amount ?? 0,
 });
 
-export async function submitLead<T extends LeadType>({ type, payload, successMessage }: SubmitLeadOptions<T>) {
+export async function submitLead<T extends LeadType>({
+  type,
+  payload,
+  successMessage = "Thanks! I'll reach out soon.",
+}: SubmitLeadOptions<T>) {
   try {
+    console.log("=== LEAD SUBMISSION START ===");
+    console.log("Type:", type);
+    console.log("Payload:", JSON.stringify(payload, null, 2));
+    
     const leadInsert = buildLeadInsert(type, payload);
+    console.log("Lead insert object:", JSON.stringify(leadInsert, null, 2));
+    
     const { data: lead, error: leadError } = await supabase
       .from("leads")
       .insert(leadInsert)
       .select()
       .single();
 
-    if (leadError) throw leadError;
+    if (leadError) {
+      console.error("Lead insert failed:", leadError);
+      throw leadError;
+    }
+    
+    console.log("Lead inserted successfully:", lead);
 
-    let intake: IntakeInsert | null = null;
-
+    let intake = null;
     if (type === "ai_intake") {
+      console.log("Creating project intake...");
       const intakeInsert = buildIntakeInsert(payload as LeadPayloadMap["ai_intake"]);
+      console.log("Intake insert object:", JSON.stringify(intakeInsert, null, 2));
+      
       const { data: intakeData, error: intakeError } = await supabase
         .from("project_intakes")
         .insert(intakeInsert)
         .select()
         .single();
 
-      if (intakeError) throw intakeError;
+      if (intakeError) {
+        console.error("Intake insert failed:", intakeError);
+        throw intakeError;
+      }
+      
+      console.log("Intake inserted successfully:", intakeData);
       intake = intakeData;
     }
 
-    try {
-      const notification = NOTIFICATION_FUNCTIONS[type];
-      await supabase.functions.invoke(notification, {
-        body: type === "ai_intake"
-          ? { intake, lead }
-          : { lead },
+    // Send notification
+    const notification = NOTIFICATION_FUNCTIONS[type];
+    if (notification) {
+      console.log("Invoking notification:", notification);
+      const { data: response, error: notificationError } = await supabase.functions.invoke(notification, {
+        body: { lead },
       });
-
-      if (type === "ai_intake") {
-        await supabase.functions.invoke("send-lead-notification", { body: { lead } });
+      
+      if (notificationError) {
+        console.error("Failed to send notification:", notificationError);
+      } else {
+        console.log("Notification sent successfully:", response);
       }
-    } catch (notificationError) {
-      console.error("Notification failed:", notificationError);
     }
 
-    if (successMessage) {
-      toast.success(successMessage);
-    }
-
+    console.log("=== LEAD SUBMISSION COMPLETE ===");
+    toast.success(successMessage);
     return { lead, intake };
   } catch (error) {
-    console.error("Lead submission failed:", error);
+    console.error("=== LEAD SUBMISSION FAILED ===");
+    console.error("Error details:", error);
     toast.error("Failed to submit. Please try again or email me directly.");
     throw error;
   }

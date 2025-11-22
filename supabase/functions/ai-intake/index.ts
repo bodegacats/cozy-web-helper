@@ -509,22 +509,24 @@ serve(async (req) => {
     }
 
     const data = await response.json();
+    console.log('=== AI RESPONSE RECEIVED ===');
+    console.log('Response data:', JSON.stringify(data, null, 2));
 
-    if (!data?.choices?.[0]?.message?.content) {
+    if (!data?.choices?.[0]?.message) {
       console.error('Invalid AI response format');
       throw new Error('Invalid response from service');
     }
 
-    let aiMessage = data.choices[0].message.content;
-
-    // Handle tool calls if present
-    if (data.choices[0].message.tool_calls) {
-      const toolCall = data.choices[0].message.tool_calls[0];
+    const aiMessage = data.choices[0].message;
+    
+    if (aiMessage.tool_calls) {
+      console.log('=== TOOL CALL DETECTED ===');
+      const toolCall = aiMessage.tool_calls[0];
+      
       if (toolCall.function.name === 'get_pricing_estimate') {
         const args = JSON.parse(toolCall.function.arguments);
         const estimate = calculateEstimate(args);
         
-        // Enhanced response with breakdown
         const enhancedEstimate = {
           ...estimate,
           breakdown_text: `Base (1 page): $500` +
@@ -534,7 +536,6 @@ serve(async (req) => {
               .join('')
         };
         
-        // Make a second request with the tool result
         const followUpResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
           method: 'POST',
           headers: {
@@ -546,7 +547,7 @@ serve(async (req) => {
             messages: [
               { role: 'system', content: SYSTEM_PROMPT },
               ...messages,
-              data.choices[0].message,
+              aiMessage,
               {
                 role: 'tool',
                 tool_call_id: toolCall.id,
@@ -557,20 +558,19 @@ serve(async (req) => {
           }),
         });
         
-        if (!followUpResponse.ok) {
-          console.error('Follow-up AI request failed:', await followUpResponse.text());
-        } else {
-          const followUpData = await followUpResponse.json();
-          aiMessage = followUpData.choices[0].message.content;
-        }
+        const followUpData = await followUpResponse.json();
+        console.log('Follow-up response:', followUpData);
+        
+        return new Response(
+          JSON.stringify({ message: followUpData.choices[0].message.content }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
     }
 
     return new Response(
-      JSON.stringify({ message: aiMessage }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      JSON.stringify({ message: aiMessage.content || "" }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {

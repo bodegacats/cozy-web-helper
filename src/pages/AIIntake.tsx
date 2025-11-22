@@ -21,6 +21,68 @@ interface Message {
   content: string;
 }
 
+// Calculate price helper (matching pricing engine)
+const calculatePrice = (pages: number, contentReadiness: string, rush: boolean): number => {
+  let price = 500; // Base price includes 1 page
+  if (pages > 1) {
+    price += (pages - 1) * 150; // Each additional page
+  }
+  if (contentReadiness === "heavy") {
+    price += 300; // Content shaping
+  }
+  if (rush) {
+    price += 200;
+  }
+  return price * 100; // Return in cents
+};
+
+const parseIntakeJSON = (content: string): any | null => {
+  try {
+    console.log("=== PARSING AI INTAKE JSON ===");
+    console.log("Raw content:", content);
+    
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.error("No JSON found in content");
+      return null;
+    }
+    
+    const parsed = JSON.parse(jsonMatch[0]);
+    console.log("Parsed JSON:", parsed);
+    
+    const result = {
+      name: String(parsed.name || ""),
+      email: String(parsed.email || ""),
+      business_name: String(parsed.business_name || ""),
+      website_url: String(parsed.website_url || ""),
+      project_description: String(parsed.project_description || ""),
+      goals: String(parsed.goals || ""), // Fixed: was "goal"
+      pages_estimate: Number(parsed.pages || 0),
+      content_readiness: String(parsed.content_readiness || ""), // Fixed: was "content_ready"
+      timeline: String(parsed.timeline || ""),
+      budget_range: String(parsed.budget_range || ""), // Fixed: was "budget"
+      vibe: String(parsed.vibe || ""),
+      lovable_build_prompt: String(parsed.lovable_build_prompt || ""),
+      raw_summary: String(parsed.intake_summary || ""),
+      raw_conversation: parsed.raw_chat || [],
+      suggested_tier: null,
+      discount_offered: Boolean(parsed.discount_offered),
+      discount_amount: Number(parsed.discount_amount || 0),
+      special_needs: String(parsed.advanced_features || ""),
+      tech_comfort: String(parsed.update_preference || ""),
+      fit_status: String(parsed.fit || "good"),
+      inspiration_sites: String(parsed.inspiration_sites || ""), // Fixed: was "design_examples"
+      color_preferences: String(parsed.color_preferences || ""), // Fixed: was "color_style_preferences"
+    };
+    
+    console.log("Mapped result:", result);
+    return result;
+  } catch (error) {
+    console.error("Failed to parse AI intake JSON:", error);
+    return null;
+  }
+};
+
 const AIIntake = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -42,77 +104,18 @@ const AIIntake = () => {
     scrollToBottom();
   }, [messages]);
 
-  const parseIntakeJSON = (content: string) => {
-    // Try to find JSON in the message
-    const jsonMatch = content.match(/\{[\s\S]*"name"[\s\S]*"email"[\s\S]*\}/);
-    if (!jsonMatch) {
-      console.warn("No JSON pattern found in content");
-      return null;
-    }
-
-    try {
-      const parsed = JSON.parse(jsonMatch[0]);
-
-      // Validate required fields
-      if (!parsed.name || !parsed.email) {
-        console.error("Missing required fields: name or email");
-        return null;
-      }
-
-      // Safely parse pages to integer
-      const pagesEstimate = parsed.pages
-        ? (typeof parsed.pages === 'number' ? parsed.pages : parseInt(String(parsed.pages), 10))
-        : null;
-
-      // Validate pages estimate
-      if (pagesEstimate !== null && (isNaN(pagesEstimate) || pagesEstimate < 0)) {
-        console.warn("Invalid pages estimate:", parsed.pages);
-      }
-
-      // Map fields from AI's JSON schema to our database schema
-      return {
-        name: String(parsed.name || ""),
-        email: String(parsed.email || ""),
-        business_name: parsed.business_name ? String(parsed.business_name) : null,
-        website_url: parsed.website_url ? String(parsed.website_url) : null,
-        project_description: String(parsed.project_description || ""),
-        goals: String(parsed.goal || ""),
-        pages_estimate: pagesEstimate,
-        content_readiness: String(parsed.content_ready || ""),
-        timeline: String(parsed.timeline || ""),
-        budget_range: String(parsed.budget || ""),
-        design_examples: String(parsed.design_examples || ""),
-        special_needs: String(parsed.advanced_features || ""),
-        tech_comfort: String(parsed.update_preference || ""),
-        fit_status: parsed.fit === "good" ? "good" : parsed.fit === "maybe" ? "borderline" : "not_fit",
-        suggested_tier: (parsed.budget && typeof parsed.budget === 'string')
-                      ? (parsed.budget.includes("1500") || parsed.budget.includes("$1,500") ? "1500"
-                      : parsed.budget.includes("500") || parsed.budget.includes("$500") ? "500"
-                      : "1000")
-                      : "1000",
-        raw_summary: String(parsed.intake_summary || ""),
-        raw_conversation: Array.isArray(parsed.raw_chat) ? parsed.raw_chat : messages,
-        lovable_build_prompt: String(parsed.lovable_build_prompt || ""),
-        vibe: String(parsed.vibe || ""),
-        inspiration_sites: String(parsed.inspiration_sites || ""),
-        color_preferences: String(parsed.color_style_preferences || ""),
-        discount_offered: Boolean(parsed.discount_offered),
-        discount_amount: Number(parsed.discount_amount) || 0,
-      };
-    } catch (e) {
-      console.error("Failed to parse intake JSON:", e);
-      toast.error("Failed to process intake data");
-      return null;
-    }
-  };
-
   const createIntake = async (intakeData: any) => {
     try {
+      console.log("=== CREATING INTAKE ===");
+      console.log("Intake data:", intakeData);
+      
       await submitLead({
         type: "ai_intake",
         payload: intakeData,
         successMessage: "Intake submitted! I'll review and follow up by email soon.",
       });
+      
+      console.log("Intake created successfully");
       setIsComplete(true);
     } catch (error) {
       console.error("Error creating intake:", error);
@@ -122,33 +125,41 @@ const AIIntake = () => {
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
-    const userMessage = input.trim();
+    console.log("=== AI INTAKE SEND ===");
+    const userMessage: Message = { role: "user", content: input.trim() };
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setIsLoading(true);
 
     try {
+      console.log("Messages being sent:", [...messages, userMessage]);
+      
       const { data, error } = await supabase.functions.invoke("ai-intake", {
-        body: {
-          messages: [...messages, { role: "user", content: userMessage }],
-        },
+        body: { messages: [...messages, userMessage] },
       });
 
-      if (error) throw error;
-
-      if (data.message) {
-        const assistantMessage = { role: "assistant" as const, content: data.message };
-        setMessages((prev) => [...prev, assistantMessage]);
-
-        // Check if the message contains the final JSON output
-        const intakeData = parseIntakeJSON(data.message);
-        if (intakeData && intakeData.email && intakeData.name) {
-          // Automatically create the intake
-          await createIntake(intakeData);
-        }
+      if (error) {
+        console.error("Edge function error:", error);
+        throw error;
       }
-    } catch (error) {
-      console.error("Error:", error);
+
+      console.log("AI response received:", data);
+
+      const assistantMessage: Message = {
+        role: "assistant",
+        content: data.message,
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+
+      // Check if the response contains the final JSON
+      const intakeData = parseIntakeJSON(data.message);
+      if (intakeData) {
+        console.log("Final intake data detected, creating intake...");
+        await createIntake(intakeData);
+      }
+    } catch (error: any) {
+      console.error("Error in AI intake:", error);
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
