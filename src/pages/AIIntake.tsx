@@ -148,7 +148,6 @@ const AIIntake = () => {
       }
 
       console.log("AI response received:", data);
-
       // Check if the assistant response is the final JSON summary
       const intakeData = parseIntakeJSON(data.message);
 
