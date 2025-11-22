@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
 import { DndContext, DragEndEvent, closestCorners } from "@dnd-kit/core";
 import { supabase } from "@/integrations/supabase/client";
+import { PROJECT_INTAKES_TABLE } from "@/constants/tables";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -83,7 +84,7 @@ const AdminIntakes = () => {
   const fetchIntakes = async () => {
     try {
       const { data, error } = await supabase
-        .from("project_intakes")
+        .from(PROJECT_INTAKES_TABLE)
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -113,7 +114,7 @@ const AdminIntakes = () => {
 
     try {
       const { error } = await supabase
-        .from("project_intakes")
+        .from(PROJECT_INTAKES_TABLE)
         .update({ kanban_stage: newStage })
         .eq("id", intakeId);
 
@@ -131,7 +132,7 @@ const AdminIntakes = () => {
 
     try {
       const { error } = await supabase
-        .from("project_intakes")
+        .from(PROJECT_INTAKES_TABLE)
         .update(updatedIntake)
         .eq("id", selectedIntake.id);
 
