@@ -149,19 +149,21 @@ const AIIntake = () => {
 
       console.log("AI response received:", data);
 
+      // Check if the assistant response is the final JSON summary
+      const intakeData = parseIntakeJSON(data.message);
+
+      if (intakeData) {
+        console.log("Final intake data detected, creating intake...");
+        await createIntake(intakeData);
+        return; // prevent rendering JSON to the page
+      }
+
+      // Otherwise it's a normal assistant message
       const assistantMessage: Message = {
         role: "assistant",
         content: data.message,
       };
-
       setMessages((prev) => [...prev, assistantMessage]);
-
-      // Check if the response contains the final JSON
-      const intakeData = parseIntakeJSON(data.message);
-      if (intakeData) {
-        console.log("Final intake data detected, creating intake...");
-        await createIntake(intakeData);
-      }
     } catch (error) {
       console.error("Error in AI intake:", error);
       toast.error("Something went wrong. Please try again.");
