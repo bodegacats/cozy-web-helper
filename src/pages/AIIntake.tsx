@@ -101,14 +101,40 @@ const AIIntake = () => {
 
   const createIntake = async (intakeData: any) => {
     try {
-      const { error } = await supabase.functions.invoke("ai-intake", {
-        body: {
-          action: "create_intake",
-          intakeData,
-        },
-      });
+      // Insert into leads table
+      const { data: leadData, error: leadError } = await supabase
+        .from("leads")
+        .insert({
+          name: intakeData.name,
+          email: intakeData.email,
+          source: "ai_intake",
+          business_name: intakeData.business_name,
+          business_description: intakeData.project_description,
+          goals: intakeData.goals,
+          page_count: intakeData.pages_estimate,
+          content_readiness: intakeData.content_readiness,
+          timeline: intakeData.timeline,
+          budget_range: intakeData.budget_range,
+          special_needs: intakeData.special_needs,
+          tech_comfort: intakeData.tech_comfort,
+          fit_status: intakeData.fit_status,
+          suggested_tier: intakeData.suggested_tier,
+          raw_summary: intakeData.raw_summary,
+          raw_conversation: intakeData.raw_conversation,
+          design_prompt: intakeData.lovable_build_prompt,
+          estimated_price: intakeData.suggested_tier === "500" ? 50000 : 
+                          intakeData.suggested_tier === "1000" ? 100000 : 
+                          intakeData.suggested_tier === "1500" ? 150000 : null,
+        })
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (leadError) throw leadError;
+
+      // Send notification
+      await supabase.functions.invoke("send-lead-notification", {
+        body: { lead: leadData },
+      });
 
       setIsComplete(true);
       toast.success("Intake submitted! I'll review and follow up by email soon.");

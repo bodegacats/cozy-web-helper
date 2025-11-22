@@ -58,39 +58,36 @@ export const ContactForm = () => {
     setIsSubmitting(true);
 
     try {
-      // Save to database
-      const { error: dbError } = await supabase
-        .from("contact_submissions")
+      // Insert into leads table
+      const { data: leadData, error: leadError } = await supabase
+        .from("leads")
         .insert({
           name: data.name,
           email: data.email,
-          project_description: data.projectDescription,
+          source: "contact",
+          business_description: data.projectDescription,
           website_url: data.websiteUrl || null,
           wish: data.wish,
-          submission_type: "contact",
-        });
+        })
+        .select()
+        .single();
 
-      if (dbError) throw dbError;
+      if (leadError) throw leadError;
 
-      // Send email notification (will fail silently if not configured)
+      // Send notification
       try {
-        await supabase.functions.invoke("send-contact-notification", {
-          body: {
-            name: data.name,
-            email: data.email,
-            projectDescription: data.projectDescription,
-            websiteUrl: data.websiteUrl,
-            wish: data.wish,
-          },
+        await supabase.functions.invoke("send-lead-notification", {
+          body: { lead: leadData },
         });
       } catch (emailError) {
-        console.log("Email notification not sent:", emailError);
-        // Don't show error to user - the form submission was successful
+        console.error("Email notification failed:", emailError);
+        // Continue even if email fails
       }
 
       toast.success("Thanks — I'll reach out soon.");
       reset();
-    } catch (error: any) {
+    } catch (error) {
+      console.error("Error submitting contact form:", error);
       toast.error("Failed to submit. Please try again or email me directly.");
     } finally {
       setIsSubmitting(false);
