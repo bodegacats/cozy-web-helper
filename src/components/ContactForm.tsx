@@ -55,8 +55,11 @@ export const ContactForm = () => {
 
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
-
+    
     try {
+      console.log("=== CONTACT FORM SUBMISSION ===");
+      console.log("Contact form data:", data);
+      
       await submitLead({
         type: "contact",
         payload: {
@@ -66,11 +69,12 @@ export const ContactForm = () => {
           websiteUrl: data.websiteUrl,
           wish: data.wish,
         },
-        successMessage: "Thanks — I'll reach out soon.",
       });
+      
+      console.log("Contact form submitted successfully");
       reset();
     } catch (error) {
-      console.error("Error submitting contact form:", error);
+      console.error("Contact form submission error:", error);
     } finally {
       setIsSubmitting(false);
     }
