@@ -55,7 +55,7 @@ const PortalAIChat = () => {
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session || !session.user.email) {
-      toast.error("No valid session found");
+      toast.error("Please log in to access this page.");
       navigate('/portal');
       return;
     }
@@ -67,7 +67,7 @@ const PortalAIChat = () => {
       .maybeSingle();
 
     if (!clientData) {
-      toast.error("No client record found");
+      toast.error("Portal access not found. Please contact support.");
       navigate('/portal');
       return;
     }

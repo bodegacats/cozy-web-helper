@@ -88,7 +88,7 @@ const PortalRequest = () => {
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session || !session.user.email) {
-      toast.error("No valid session found");
+      toast.error("Please log in to access this page.");
       navigate('/portal');
       return;
     }

@@ -324,12 +324,12 @@ const AIIntake = () => {
             )}
 
             {isComplete && (
-              <div className="p-4 rounded-lg bg-primary/5 border-2 border-primary/20 text-center">
-                <p className="text-base font-medium mb-2">All set!</p>
-                <p className="text-sm text-muted-foreground mb-4">
-                  I'll review your answers and email you within a day or two. If I'm not the right fit, I'll say so directly.
+              <div className="p-6 rounded-lg bg-primary/5 border-2 border-primary/20 text-center">
+                <h2 className="text-2xl font-semibold mb-3">Thanks — your project details are submitted</h2>
+                <p className="text-base text-muted-foreground mb-6">
+                  Dan will follow up within one business day.
                 </p>
-                <Button onClick={() => navigate("/")}>Back to Home</Button>
+                <Button onClick={() => navigate("/")} size="lg">Return to homepage</Button>
               </div>
             )}
           </CardContent>
