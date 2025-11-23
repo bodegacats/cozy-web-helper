@@ -16,6 +16,7 @@ import { PortalNav } from "@/components/PortalNav";
 interface Client {
   id: string;
   name: string;
+  email: string;
   business_name: string | null;
 }
 
@@ -95,7 +96,7 @@ const PortalRequest = () => {
 
     const { data: clientData } = await supabase
       .from('clients')
-      .select('id, name, business_name')
+      .select('id, name, email, business_name')
       .eq('email', session.user.email)
       .maybeSingle();
 
@@ -227,7 +228,7 @@ const PortalRequest = () => {
         attachmentUrls.push(publicUrl);
       }
 
-      const { error: requestError } = await supabase
+      const { data: insertedRequest, error: requestError } = await supabase
         .from('update_requests')
         .insert({
           client_id: client.id,
@@ -246,7 +247,9 @@ const PortalRequest = () => {
           ai_price_cents: aiClassification ? aiClassification.recommended_price * 100 : null,
           ai_explanation: aiClassification?.explanation || null,
           ai_confidence: aiClassification?.confidence || null
-        });
+        })
+        .select()
+        .single();
 
       if (requestError) {
         console.error('Database error:', requestError);
@@ -257,6 +260,24 @@ const PortalRequest = () => {
         }
         setUploading(false);
         return;
+      }
+
+      // Send notification email
+      try {
+        await supabase.functions.invoke('send-request-notification', {
+          body: {
+            type: 'new_request',
+            request: insertedRequest,
+            client: {
+              name: client.name,
+              email: client.email,
+              business_name: client.business_name
+            }
+          }
+        });
+      } catch (notifError) {
+        console.error('Notification error (non-blocking):', notifError);
+        // Don't block the user on notification failure
       }
 
       toast.success("Got it. I will review this and get back to you.");

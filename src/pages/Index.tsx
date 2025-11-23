@@ -14,6 +14,7 @@ import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
 import { toast } from "sonner";
 import { submitLead } from "@/lib/lead-submission";
+import { quoteFormSchema, type QuoteFormData } from "@/schemas/quoteSchema";
 const Index = () => {
   const [pageCount, setPageCount] = useState<number>(1);
   const [contentShaping, setContentShaping] = useState(false);
@@ -49,27 +50,27 @@ const Index = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
-    if (!formData.name.trim() || !formData.email.trim()) {
-      toast.error("Please fill in all required fields");
+    // Validation using Zod schema
+    const validationResult = quoteFormSchema.safeParse(formData);
+    
+    if (!validationResult.success) {
+      const firstError = validationResult.error.errors[0];
+      toast.error(firstError.message);
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      toast.error("Please enter a valid email address");
-      return;
-    }
+
     setIsSubmitting(true);
     try {
       await submitLead({
         type: "quote",
         payload: {
-          name: formData.name,
-          email: formData.email,
+          name: validationResult.data.name,
+          email: validationResult.data.email,
           pageCount,
           contentShaping,
           rushDelivery,
           estimatedPriceCents: currentPrice * 100,
-          notes: formData.notes,
+          notes: validationResult.data.notes || "",
         },
       });
 
@@ -87,6 +88,7 @@ const Index = () => {
       }, 2000);
     } catch (error) {
       console.error('Error submitting estimate:', error);
+      toast.error("Failed to submit quote request. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

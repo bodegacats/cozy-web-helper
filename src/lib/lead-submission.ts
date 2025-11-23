@@ -52,7 +52,6 @@ type LeadPayloadMap = {
     suggested_tier?: "500" | "1000" | "1500" | string | null;
     raw_summary?: string | null;
     raw_conversation?: IntakeInsert["raw_conversation"];
-    intake_json?: IntakeInsert["intake_json"];
     lovable_build_prompt?: string | null;
     vibe?: string | null;
     discount_offered?: boolean;
@@ -183,9 +182,6 @@ const buildIntakeInsert = (
   raw_conversation:
     (payload.raw_conversation || null) as any,
 
-  intake_json:
-    (payload.intake_json || payload) as any,
-
   lovable_build_prompt: payload.lovable_build_prompt || null,
   kanban_stage: "new",
 
@@ -242,16 +238,24 @@ export async function submitLead<T extends LeadType>({
     // Send notification
     const notification = NOTIFICATION_FUNCTIONS[type];
     if (notification) {
-      console.log("Invoking notification:", notification);
-      const { data: response, error: notificationError } = await supabase.functions.invoke(notification, {
-        body: { lead },
-      });
-      
-      if (notificationError) {
-        console.error("Failed to send notification:", notificationError);
-      } else {
-        console.log("Notification sent successfully:", response);
+      console.log(`[lead-submission] Invoking notification: ${notification}`);
+      try {
+        const { data: response, error: notificationError } = await supabase.functions.invoke(notification, {
+          body: { lead },
+        });
+        
+        if (notificationError) {
+          console.error(`[lead-submission] Notification error for ${type}:`, notificationError);
+          // Don't block submission on notification failure
+        } else {
+          console.log(`[lead-submission] Notification sent successfully for ${type}:`, response);
+        }
+      } catch (err) {
+        console.error(`[lead-submission] Failed to send notification for ${type}:`, err);
+        // Don't block submission on notification failure
       }
+    } else {
+      console.warn(`[lead-submission] No notification function configured for type: ${type}`);
     }
 
     console.log("=== LEAD SUBMISSION COMPLETE ===");
