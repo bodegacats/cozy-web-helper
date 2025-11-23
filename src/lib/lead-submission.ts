@@ -66,11 +66,11 @@ interface SubmitLeadOptions<T extends LeadType> {
   payload: LeadPayloadMap[T];
 }
 
-const NOTIFICATION_FUNCTIONS: Record<LeadType, string> = {
-  quote: "send-lead-notification",
-  checkup: "send-lead-notification",
-  contact: "send-lead-notification",
-  ai_intake: "send-intake-notification",
+const NOTIFICATION_TYPES: Record<LeadType, 'lead' | 'intake'> = {
+  quote: "lead",
+  checkup: "lead",
+  contact: "lead",
+  ai_intake: "intake",
 };
 
 const buildLeadInsert = (type: LeadType, payload: LeadPayloadMap[LeadType]): LeadInsert => {
@@ -192,33 +192,15 @@ const buildIntakeInsert = (
 export async function submitLead<T extends LeadType>({
   type,
   payload,
-}: SubmitLeadOptions<T>) {
+}: SubmitLeadOptions<T>): Promise<{ success: boolean; leadId?: string; intakeId?: string }> {
   try {
-    console.log("=== LEAD SUBMISSION START ===");
-    console.log("Type:", type);
-    console.log("Payload:", JSON.stringify(payload, null, 2));
-    
-    const leadInsert = buildLeadInsert(type, payload);
-    console.log("Lead insert object:", JSON.stringify(leadInsert, null, 2));
-    
-    const { data: lead, error: leadError } = await supabase
-      .from("leads")
-      .insert(leadInsert)
-      .select()
-      .single();
+    let insertedId: string;
+    let intakeId: string | undefined;
+    let dataForNotification: any;
 
-    if (leadError) {
-      console.error("Lead insert failed:", leadError);
-      throw leadError;
-    }
-    
-    console.log("Lead inserted successfully:", lead);
-
-    let intake = null;
-    if (type === "ai_intake") {
-      console.log("Creating project intake...");
-      const intakeInsert = buildIntakeInsert(payload as LeadPayloadMap["ai_intake"]);
-      console.log("Intake insert object:", JSON.stringify(intakeInsert, null, 2));
+    // AI Intake: insert only into project_intakes
+    if (type === "ai_intake" && "raw_conversation" in payload) {
+      const intakeInsert = buildIntakeInsert(payload);
       
       const { data: intakeData, error: intakeError } = await supabase
         .from(PROJECT_INTAKES_TABLE)
@@ -227,44 +209,68 @@ export async function submitLead<T extends LeadType>({
         .single();
 
       if (intakeError) {
-        console.error("Intake insert failed:", intakeError);
-        throw intakeError;
+        console.error("[submitLead] Error inserting intake:", intakeError);
+        toast.error("Failed to submit. Please try again.");
+        return { success: false };
       }
-      
-      console.log("Intake inserted successfully:", intakeData);
-      intake = intakeData;
+
+      console.log("[submitLead] Intake inserted successfully:", intakeData.id);
+      insertedId = intakeData.id;
+      intakeId = intakeData.id;
+      dataForNotification = intakeData;
+    } 
+    // Other lead types: insert into leads table
+    else {
+      const leadInsert = buildLeadInsert(type, payload);
+
+      const { data: leadData, error: leadError } = await supabase
+        .from("leads")
+        .insert(leadInsert)
+        .select()
+        .single();
+
+      if (leadError) {
+        console.error("[submitLead] Error inserting lead:", leadError);
+        toast.error("Failed to submit. Please try again.");
+        return { success: false };
+      }
+
+      console.log("[submitLead] Lead inserted successfully:", leadData.id);
+      insertedId = leadData.id;
+      dataForNotification = leadData;
     }
 
-    // Send notification
-    const notification = NOTIFICATION_FUNCTIONS[type];
-    if (notification) {
-      console.log(`[lead-submission] Invoking notification: ${notification}`);
-      try {
-        const { data: response, error: notificationError } = await supabase.functions.invoke(notification, {
-          body: { lead },
-        });
-        
-        if (notificationError) {
-          console.error(`[lead-submission] Notification error for ${type}:`, notificationError);
-          // Don't block submission on notification failure
-        } else {
-          console.log(`[lead-submission] Notification sent successfully for ${type}:`, response);
+    // Send unified notification
+    const notificationType = NOTIFICATION_TYPES[type];
+    console.log(`[submitLead] Invoking unified notification (type: ${notificationType})`);
+    
+    const { data: notificationData, error: notificationError } = await supabase.functions.invoke(
+      "send-notification",
+      { 
+        body: { 
+          type: notificationType,
+          data: dataForNotification 
         }
-      } catch (err) {
-        console.error(`[lead-submission] Failed to send notification for ${type}:`, err);
-        // Don't block submission on notification failure
       }
+    );
+
+    if (notificationError) {
+      console.error("[submitLead] Notification failed:", notificationError);
+      // Continue since data was created successfully
     } else {
-      console.warn(`[lead-submission] No notification function configured for type: ${type}`);
+      console.log("[submitLead] Notification sent:", notificationData);
     }
 
-    console.log("=== LEAD SUBMISSION COMPLETE ===");
     toast.success("Thanks! I'll reach out soon.");
-    return { lead, intake };
+
+    return { 
+      success: true, 
+      leadId: type === "ai_intake" ? undefined : insertedId,
+      intakeId 
+    };
   } catch (error) {
-    console.error("=== LEAD SUBMISSION FAILED ===");
-    console.error("Error details:", error);
+    console.error("[submitLead] Unexpected error:", error);
     toast.error("Something went wrong submitting your intake. Please try again.");
-    throw error;
+    return { success: false };
   }
 }
