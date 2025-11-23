@@ -18,7 +18,6 @@ interface Intake {
   email: string;
   business_name: string | null;
   project_description: string | null;
-  website_url: string | null;
   goals: string | null;
   pages_estimate: number | null;
   content_readiness: string | null;
@@ -127,21 +126,24 @@ const AdminIntakes = () => {
     }
   };
 
-  const handleUpdateIntake = async (updatedIntake: Partial<Intake>) => {
+  const handleUpdateIntake = async (
+    updatedIntake: Partial<Intake>
+  ) => {
     if (!selectedIntake) return;
 
     try {
-      // Cast unknown types to Json for Supabase compatibility
       const updatePayload: any = {
         ...updatedIntake,
       };
-      
+
       if (updatedIntake.raw_conversation !== undefined) {
-        updatePayload.raw_conversation = updatedIntake.raw_conversation as any;
+        updatePayload.raw_conversation =
+          updatedIntake.raw_conversation as any;
       }
-      
+
       if (updatedIntake.intake_json !== undefined) {
-        updatePayload.intake_json = updatedIntake.intake_json as any;
+        updatePayload.intake_json =
+          updatedIntake.intake_json as any;
       }
 
       const { error } = await supabase
@@ -159,7 +161,11 @@ const AdminIntakes = () => {
         )
       );
 
-      setSelectedIntake({ ...selectedIntake, ...updatedIntake } as Intake);
+      setSelectedIntake({
+        ...selectedIntake,
+        ...updatedIntake,
+      } as Intake);
+
       toast.success("Intake updated");
     } catch (error) {
       console.error("Error updating intake:", error);

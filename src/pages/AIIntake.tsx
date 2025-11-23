@@ -70,7 +70,7 @@ const parseIntakeJSON = (content: string): AiIntakePayload | null => {
       vibe: String(parsed.vibe || ""),
       lovable_build_prompt: String(parsed.lovable_build_prompt || ""),
       raw_summary: String(parsed.intake_summary || ""),
-      raw_conversation: parsed.raw_chat || [],
+      raw_conversation: (parsed.raw_chat || []) as any,
       suggested_tier: null,
       discount_offered: Boolean(parsed.discount_offered),
       discount_amount: Number(parsed.discount_amount || 0),
@@ -79,7 +79,7 @@ const parseIntakeJSON = (content: string): AiIntakePayload | null => {
       fit_status: String(parsed.fit || "good"),
       inspiration_sites: String(parsed.inspiration_sites || ""), // Fixed: was "design_examples"
       color_preferences: String(parsed.color_preferences || ""), // Fixed: was "color_style_preferences"
-      intake_json: parsed,
+      intake_json: parsed as any,
     };
     
     console.log("Mapped result:", result);
