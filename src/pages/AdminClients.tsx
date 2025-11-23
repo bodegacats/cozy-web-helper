@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAdminCheck } from "@/lib/auth-helpers";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ExternalLink, Plus, Trash2, Loader2 } from "lucide-react";
+import { ExternalLink, Plus, Trash2, Loader2, LayoutGrid, Table as TableIcon } from "lucide-react";
 import { CreateClientDialog } from "@/components/CreateClientDialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -19,6 +19,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { ClientKanbanView } from "@/components/clients/ClientKanbanView";
 
 interface Client {
   id: string;
@@ -27,6 +28,9 @@ interface Client {
   email: string;
   website_url: string | null;
   created_at: string;
+  active: boolean | null;
+  pipeline_stage: string;
+  open_requests_count?: number;
 }
 
 const AdminClients = () => {
@@ -35,13 +39,16 @@ const AdminClients = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<string | null>(null);
+  const [selectedClients, setSelectedClients] = useState<Set<string>>(new Set());
   const [isDeleting, setIsDeleting] = useState(false);
-  const [selectedClientIds, setSelectedClientIds] = useState<string[]>([]);
+  const [viewMode, setViewMode] = useState<"table" | "kanban">(() => {
+    return (localStorage.getItem("clientsViewMode") as "table" | "kanban") || "table";
+  });
 
   useEffect(() => {
     if (!adminLoading && !isAdmin) {
-      // Don't reveal this is an admin area
       navigate('/');
     }
   }, [isAdmin, adminLoading, navigate]);
@@ -54,15 +61,29 @@ const AdminClients = () => {
 
   const loadClients = async () => {
     const { data, error } = await supabase
-      .from('clients')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .from("clients")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error('Error loading clients:', error);
-    } else {
-      setClients(data || []);
+      toast.error("Failed to load clients");
+      return;
     }
+
+    // Load open requests count for each client
+    const clientsWithCounts = await Promise.all(
+      (data || []).map(async (client) => {
+        const { count } = await supabase
+          .from("update_requests")
+          .select("*", { count: "exact", head: true })
+          .eq("client_id", client.id)
+          .neq("status", "done");
+
+        return { ...client, open_requests_count: count || 0 };
+      })
+    );
+
+    setClients(clientsWithCounts);
     setLoading(false);
   };
 
@@ -79,13 +100,14 @@ const AdminClients = () => {
       const { error } = await supabase
         .from("clients")
         .delete()
-        .eq("id", clientToDelete.id);
+        .eq("id", clientToDelete);
 
       if (error) throw error;
 
       toast.success("Client deleted");
-      setClients((prev) => prev.filter((client) => client.id !== clientToDelete.id));
+      loadClients();
       setClientToDelete(null);
+      setDeleteDialogOpen(false);
     } catch (error) {
       console.error("Error deleting client:", error);
       toast.error("Failed to delete client");
@@ -95,21 +117,22 @@ const AdminClients = () => {
   };
 
   const handleBulkDelete = async () => {
-    if (selectedClientIds.length === 0) return;
+    if (selectedClients.size === 0) return;
 
     setIsDeleting(true);
     try {
       const { error } = await supabase
         .from("clients")
         .delete()
-        .in("id", selectedClientIds);
+        .in("id", Array.from(selectedClients));
 
       if (error) throw error;
 
-      toast.success(`${selectedClientIds.length} client(s) deleted`);
-      setClients((prev) => prev.filter((client) => !selectedClientIds.includes(client.id)));
-      setSelectedClientIds([]);
+      toast.success(`${selectedClients.size} client(s) deleted`);
+      setSelectedClients(new Set());
       setClientToDelete(null);
+      setDeleteDialogOpen(false);
+      loadClients();
     } catch (error) {
       console.error("Error deleting clients:", error);
       toast.error("Failed to delete clients");
@@ -119,17 +142,29 @@ const AdminClients = () => {
   };
 
   const toggleClientSelection = (clientId: string) => {
-    setSelectedClientIds((prev) =>
-      prev.includes(clientId) ? prev.filter((id) => id !== clientId) : [...prev, clientId]
-    );
+    setSelectedClients((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(clientId)) {
+        newSet.delete(clientId);
+      } else {
+        newSet.add(clientId);
+      }
+      return newSet;
+    });
   };
 
   const toggleSelectAll = () => {
-    if (selectedClientIds.length === clients.length) {
-      setSelectedClientIds([]);
+    if (selectedClients.size === clients.length) {
+      setSelectedClients(new Set());
     } else {
-      setSelectedClientIds(clients.map((client) => client.id));
+      setSelectedClients(new Set(clients.map(c => c.id)));
     }
+  };
+
+  const handleViewModeChange = (mode: "table" | "kanban") => {
+    setViewMode(mode);
+    localStorage.setItem("clientsViewMode", mode);
+    setSelectedClients(new Set());
   };
 
   if (adminLoading || loading) {
@@ -146,6 +181,9 @@ const AdminClients = () => {
 
   return (
     <div className="min-h-screen bg-muted/30 py-8 px-4">
+      <Helmet>
+        <title>Clients | Admin</title>
+      </Helmet>
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -155,15 +193,24 @@ const AdminClients = () => {
             </p>
           </div>
           <div className="flex gap-2">
-            {selectedClientIds.length > 0 && (
+            <div className="flex items-center gap-2 border rounded-md p-1 bg-muted/30">
               <Button
-                variant="destructive"
-                onClick={() => setClientToDelete({ id: "bulk" } as Client)}
+                variant={viewMode === "table" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => handleViewModeChange("table")}
               >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete {selectedClientIds.length} selected
+                <TableIcon className="w-4 h-4 mr-2" />
+                Table
               </Button>
-            )}
+              <Button
+                variant={viewMode === "kanban" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => handleViewModeChange("kanban")}
+              >
+                <LayoutGrid className="w-4 h-4 mr-2" />
+                Pipeline
+              </Button>
+            </div>
             <Button onClick={() => setCreateDialogOpen(true)}>
               <Plus className="w-4 h-4 mr-2" />
               Create Client
@@ -174,107 +221,132 @@ const AdminClients = () => {
             <Button variant="outline" onClick={() => navigate('/admin/requests')}>
               Requests
             </Button>
+            {viewMode === "table" && selectedClients.size > 0 && (
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  setClientToDelete(null);
+                  setDeleteDialogOpen(true);
+                }}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete ({selectedClients.size})
+              </Button>
+            )}
             <Button variant="outline" onClick={() => supabase.auth.signOut()}>
               Log out
             </Button>
           </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>All clients</CardTitle>
-            <CardDescription>
-              {clients.length} {clients.length === 1 ? 'client' : 'clients'} total
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {clients.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No clients yet.</p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b text-left">
-                      <th className="pb-3 w-[50px]">
-                        <Checkbox
-                          checked={selectedClientIds.length === clients.length && clients.length > 0}
-                          onCheckedChange={toggleSelectAll}
-                        />
-                      </th>
-                      <th className="pb-3 font-semibold">Name</th>
-                      <th className="pb-3 font-semibold">Business/Project</th>
-                      <th className="pb-3 font-semibold">Email</th>
-                      <th className="pb-3 font-semibold">Website</th>
-                      <th className="pb-3 font-semibold">Created</th>
-                      <th className="pb-3"></th>
-                      <th className="pb-3 w-[50px]"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {clients.map((client) => (
-                      <tr key={client.id} className="border-b last:border-0">
-                        <td className="py-3">
+        {viewMode === "table" ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>All clients</CardTitle>
+              <CardDescription>
+                {clients.length} {clients.length === 1 ? 'client' : 'clients'} total
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {clients.length === 0 ? (
+                <p className="text-muted-foreground text-center py-8">No clients yet.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b text-left">
+                        <th className="pb-3 w-[50px]">
                           <Checkbox
-                            checked={selectedClientIds.includes(client.id)}
-                            onCheckedChange={() => toggleClientSelection(client.id)}
+                            checked={selectedClients.size === clients.length && clients.length > 0}
+                            onCheckedChange={toggleSelectAll}
                           />
-                        </td>
-                        <td className="py-3">{client.name}</td>
-                        <td className="py-3 text-muted-foreground">
-                          {client.business_name || '—'}
-                        </td>
-                        <td className="py-3">
-                          <a href={`mailto:${client.email}`} className="text-primary hover:underline">
-                            {client.email}
-                          </a>
-                        </td>
-                        <td className="py-3">
-                          {client.website_url ? (
-                            <a
-                              href={client.website_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-primary hover:underline inline-flex items-center gap-1"
-                            >
-                              Link <ExternalLink className="w-3 h-3" />
-                            </a>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </td>
-                        <td className="py-3 text-muted-foreground">
-                          {new Date(client.created_at).toLocaleDateString()}
-                        </td>
-                        <td className="py-3">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => navigate(`/admin/clients/${client.id}`)}
-                          >
-                            View
-                          </Button>
-                        </td>
-                        <td className="py-3">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setClientToDelete(client);
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </td>
+                        </th>
+                        <th className="pb-3 font-semibold">Name</th>
+                        <th className="pb-3 font-semibold">Business/Project</th>
+                        <th className="pb-3 font-semibold">Email</th>
+                        <th className="pb-3 font-semibold">Website</th>
+                        <th className="pb-3 font-semibold">Open Requests</th>
+                        <th className="pb-3 font-semibold">Created</th>
+                        <th className="pb-3"></th>
+                        <th className="pb-3 w-[50px]"></th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                    </thead>
+                    <tbody>
+                      {clients.map((client) => (
+                        <tr key={client.id} className="border-b last:border-0">
+                          <td className="py-3">
+                            <Checkbox
+                              checked={selectedClients.has(client.id)}
+                              onCheckedChange={() => toggleClientSelection(client.id)}
+                            />
+                          </td>
+                          <td className="py-3">{client.name}</td>
+                          <td className="py-3 text-muted-foreground">
+                            {client.business_name || '—'}
+                          </td>
+                          <td className="py-3">
+                            <a href={`mailto:${client.email}`} className="text-primary hover:underline">
+                              {client.email}
+                            </a>
+                          </td>
+                          <td className="py-3">
+                            {client.website_url ? (
+                              <a
+                                href={client.website_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary hover:underline inline-flex items-center gap-1"
+                              >
+                                Link <ExternalLink className="w-3 h-3" />
+                              </a>
+                            ) : (
+                              <span className="text-muted-foreground">—</span>
+                            )}
+                          </td>
+                          <td className="py-3">
+                            {client.open_requests_count! > 0 ? (
+                              <span className="font-medium">{client.open_requests_count}</span>
+                            ) : (
+                              <span className="text-muted-foreground">—</span>
+                            )}
+                          </td>
+                          <td className="py-3 text-muted-foreground">
+                            {new Date(client.created_at).toLocaleDateString()}
+                          </td>
+                          <td className="py-3">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => navigate(`/admin/clients/${client.id}`)}
+                            >
+                              View
+                            </Button>
+                          </td>
+                          <td className="py-3">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setClientToDelete(client.id);
+                                setDeleteDialogOpen(true);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ) : (
+          <ClientKanbanView clients={clients} onUpdate={loadClients} />
+        )}
 
         <CreateClientDialog
           open={createDialogOpen}
@@ -282,20 +354,18 @@ const AdminClients = () => {
           onClientCreated={handleClientCreated}
         />
 
-        {/* Delete Confirmation Dialog */}
-        <AlertDialog open={!!clientToDelete} onOpenChange={() => setClientToDelete(null)}>
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Delete Client{selectedClientIds.length > 1 ? "s" : ""}?</AlertDialogTitle>
+              <AlertDialogTitle>Delete Client{selectedClients.size > 1 ? "s" : ""}?</AlertDialogTitle>
               <AlertDialogDescription>
-                {clientToDelete?.id === "bulk" ? (
+                {selectedClients.size > 1 || !clientToDelete ? (
                   <>
-                    Are you sure you want to delete {selectedClientIds.length} selected client(s)? This will also delete all their requests. This action cannot be undone.
+                    Are you sure you want to delete {selectedClients.size} selected client(s)? This will also delete all their requests. This action cannot be undone.
                   </>
                 ) : (
                   <>
-                    Are you sure you want to delete{" "}
-                    <span className="font-semibold">{clientToDelete?.name}</span>? This will also delete all their requests. This action cannot be undone.
+                    Are you sure you want to delete this client? This will also delete all their requests. This action cannot be undone.
                   </>
                 )}
               </AlertDialogDescription>
@@ -303,7 +373,7 @@ const AdminClients = () => {
             <AlertDialogFooter>
               <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
               <AlertDialogAction
-                onClick={clientToDelete?.id === "bulk" ? handleBulkDelete : handleDeleteClient}
+                onClick={selectedClients.size > 1 || !clientToDelete ? handleBulkDelete : handleDeleteClient}
                 disabled={isDeleting}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
