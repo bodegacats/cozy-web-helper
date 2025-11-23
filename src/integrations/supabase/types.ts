@@ -317,7 +317,6 @@ export type Database = {
           email: string
           fit_status: string
           goals: string | null
-          intake_json: Json | null
           id: string
           kanban_stage: string
           lovable_build_prompt: string | null
@@ -327,12 +326,10 @@ export type Database = {
           raw_conversation: Json | null
           raw_summary: string | null
           source: string | null
-          status: string | null
           special_needs: string | null
           suggested_tier: string | null
           tech_comfort: string | null
           timeline: string | null
-          website_url: string | null
         }
         Insert: {
           budget_range?: string | null
@@ -346,7 +343,6 @@ export type Database = {
           email: string
           fit_status?: string
           goals?: string | null
-          intake_json?: Json | null
           id?: string
           kanban_stage?: string
           lovable_build_prompt?: string | null
@@ -356,12 +352,10 @@ export type Database = {
           raw_conversation?: Json | null
           raw_summary?: string | null
           source?: string | null
-          status?: string | null
           special_needs?: string | null
           suggested_tier?: string | null
           tech_comfort?: string | null
           timeline?: string | null
-          website_url?: string | null
         }
         Update: {
           budget_range?: string | null
@@ -375,7 +369,6 @@ export type Database = {
           email?: string
           fit_status?: string
           goals?: string | null
-          intake_json?: Json | null
           id?: string
           kanban_stage?: string
           lovable_build_prompt?: string | null
@@ -385,12 +378,10 @@ export type Database = {
           raw_conversation?: Json | null
           raw_summary?: string | null
           source?: string | null
-          status?: string | null
           special_needs?: string | null
           suggested_tier?: string | null
           tech_comfort?: string | null
           timeline?: string | null
-          website_url?: string | null
         }
         Relationships: [
           {

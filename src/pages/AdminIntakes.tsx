@@ -131,9 +131,22 @@ const AdminIntakes = () => {
     if (!selectedIntake) return;
 
     try {
+      // Cast unknown types to Json for Supabase compatibility
+      const updatePayload: any = {
+        ...updatedIntake,
+      };
+      
+      if (updatedIntake.raw_conversation !== undefined) {
+        updatePayload.raw_conversation = updatedIntake.raw_conversation as any;
+      }
+      
+      if (updatedIntake.intake_json !== undefined) {
+        updatePayload.intake_json = updatedIntake.intake_json as any;
+      }
+
       const { error } = await supabase
         .from(PROJECT_INTAKES_TABLE)
-        .update(updatedIntake)
+        .update(updatePayload)
         .eq("id", selectedIntake.id);
 
       if (error) throw error;

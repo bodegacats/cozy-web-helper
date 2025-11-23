@@ -56,7 +56,6 @@ type LeadPayloadMap = {
     vibe?: string | null;
     discount_offered?: boolean;
     discount_amount?: number;
-    intake_json?: IntakeInsert["intake_json"];
   };
 };
 
@@ -159,9 +158,7 @@ const buildIntakeInsert = (payload: LeadPayloadMap["ai_intake"]): IntakeInsert =
   name: payload.name.trim(),
   email: payload.email.trim(),
   source: "ai_intake",
-  status: "new",
   business_name: payload.business_name || null,
-  website_url: payload.website_url || null,
   project_description: payload.project_description || payload.business_description || null,
   goals: payload.goals || null,
   pages_estimate: payload.pages_estimate || null,
@@ -174,8 +171,7 @@ const buildIntakeInsert = (payload: LeadPayloadMap["ai_intake"]): IntakeInsert =
   fit_status: (payload.fit_status as IntakeInsert["fit_status"]) || "good",
   suggested_tier: payload.suggested_tier as IntakeInsert["suggested_tier"],
   raw_summary: payload.raw_summary || null,
-  raw_conversation: payload.raw_conversation || null,
-  intake_json: (payload.intake_json || payload) as IntakeInsert["intake_json"],
+  raw_conversation: (payload.raw_conversation || null) as IntakeInsert["raw_conversation"],
   lovable_build_prompt: payload.lovable_build_prompt || null,
   kanban_stage: "new",
   discount_offered: Boolean(payload.discount_offered),
