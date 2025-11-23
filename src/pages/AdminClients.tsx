@@ -5,8 +5,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAdminCheck } from "@/lib/auth-helpers";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ExternalLink, Plus } from "lucide-react";
+import { ExternalLink, Plus, Trash2, Loader2 } from "lucide-react";
 import { CreateClientDialog } from "@/components/CreateClientDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 interface Client {
   id: string;
@@ -23,6 +34,8 @@ const AdminClients = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (!adminLoading && !isAdmin) {
@@ -54,6 +67,29 @@ const AdminClients = () => {
   const handleClientCreated = (clientId: string) => {
     loadClients();
     navigate(`/admin/clients/${clientId}`);
+  };
+
+  const handleDeleteClient = async () => {
+    if (!clientToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("clients")
+        .delete()
+        .eq("id", clientToDelete.id);
+
+      if (error) throw error;
+
+      toast.success("Client deleted");
+      setClients((prev) => prev.filter((client) => client.id !== clientToDelete.id));
+      setClientToDelete(null);
+    } catch (error) {
+      console.error("Error deleting client:", error);
+      toast.error("Failed to delete client");
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   if (adminLoading || loading) {
@@ -116,6 +152,7 @@ const AdminClients = () => {
                       <th className="pb-3 font-semibold">Website</th>
                       <th className="pb-3 font-semibold">Created</th>
                       <th className="pb-3"></th>
+                      <th className="pb-3 w-[50px]"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -156,6 +193,19 @@ const AdminClients = () => {
                             View
                           </Button>
                         </td>
+                        <td className="py-3">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setClientToDelete(client);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -170,6 +220,36 @@ const AdminClients = () => {
           onOpenChange={setCreateDialogOpen}
           onClientCreated={handleClientCreated}
         />
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={!!clientToDelete} onOpenChange={() => setClientToDelete(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Client?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete{" "}
+                <span className="font-semibold">{clientToDelete?.name}</span>? This will also delete all their requests. This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteClient}
+                disabled={isDeleting}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  "Delete"
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

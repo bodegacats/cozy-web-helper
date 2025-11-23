@@ -237,6 +237,7 @@ const AdminIntakes = () => {
         onClose={() => setSelectedIntake(null)}
         onUpdate={handleUpdateIntake}
         onCreateRequest={handleCreateRequest}
+        onDelete={fetchIntakes}
       />
     </div>
   );
