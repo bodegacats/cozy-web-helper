@@ -12,7 +12,17 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
-import { Loader2, ExternalLink } from "lucide-react";
+import { Loader2, ExternalLink, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Lead {
   id: string;
@@ -54,6 +64,8 @@ const AdminLeads = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isConverting, setIsConverting] = useState(false);
+  const [leadToDelete, setLeadToDelete] = useState<Lead | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -171,6 +183,33 @@ const AdminLeads = () => {
     }
   };
 
+  const handleDeleteLead = async () => {
+    if (!leadToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("leads")
+        .delete()
+        .eq("id", leadToDelete.id);
+
+      if (error) throw error;
+
+      toast.success("Lead deleted");
+      setLeads((prev) => prev.filter((lead) => lead.id !== leadToDelete.id));
+      setLeadToDelete(null);
+      
+      if (selectedLead?.id === leadToDelete.id) {
+        setSelectedLead(null);
+      }
+    } catch (error) {
+      console.error("Error deleting lead:", error);
+      toast.error("Failed to delete lead");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const getSourceBadge = (source: string) => {
     const variants: Record<string, { variant: "default" | "secondary" | "outline"; label: string }> = {
       ai_intake: { variant: "default", label: "AI Intake" },
@@ -234,6 +273,7 @@ const AdminLeads = () => {
                   <TableHead>Status</TableHead>
                   <TableHead>Est. Price</TableHead>
                   <TableHead>Created</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -245,21 +285,58 @@ const AdminLeads = () => {
                   </TableRow>
                 ) : (
                   leads.map((lead) => (
-                    <TableRow
-                      key={lead.id}
-                      className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => setSelectedLead(lead)}
-                    >
-                      <TableCell className="font-medium">{lead.name}</TableCell>
-                      <TableCell>{lead.email}</TableCell>
-                      <TableCell>{getSourceBadge(lead.source)}</TableCell>
-                      <TableCell>{getStatusBadge(lead.status)}</TableCell>
-                      <TableCell>
+                    <TableRow key={lead.id}>
+                      <TableCell 
+                        className="font-medium cursor-pointer hover:bg-muted/50"
+                        onClick={() => setSelectedLead(lead)}
+                      >
+                        {lead.name}
+                      </TableCell>
+                      <TableCell 
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => setSelectedLead(lead)}
+                      >
+                        {lead.email}
+                      </TableCell>
+                      <TableCell 
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => setSelectedLead(lead)}
+                      >
+                        {getSourceBadge(lead.source)}
+                      </TableCell>
+                      <TableCell 
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => setSelectedLead(lead)}
+                      >
+                        {getStatusBadge(lead.status)}
+                      </TableCell>
+                      <TableCell 
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => setSelectedLead(lead)}
+                      >
                         {lead.estimated_price
                           ? `$${(lead.estimated_price / 100).toFixed(0)}`
                           : "—"}
                       </TableCell>
-                      <TableCell>{format(new Date(lead.created_at), "MMM d, yyyy")}</TableCell>
+                      <TableCell 
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => setSelectedLead(lead)}
+                      >
+                        {format(new Date(lead.created_at), "MMM d, yyyy")}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setLeadToDelete(lead);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))
                 )}
@@ -461,21 +538,63 @@ const AdminLeads = () => {
 
               {/* Actions */}
               <Separator />
-              <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={() => setSelectedLead(null)}>
-                  Close
+              <div className="flex justify-between gap-3">
+                <Button
+                  variant="outline"
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  onClick={() => {
+                    setLeadToDelete(selectedLead);
+                  }}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete Lead
                 </Button>
-                {selectedLead.status !== "converted" && (
+                <div className="flex gap-3">
+                  <Button variant="outline" onClick={() => setSelectedLead(null)}>
+                    Close
+                  </Button>
+                  {selectedLead.status !== "converted" && (
                   <Button onClick={handleConvertToClient} disabled={isConverting}>
                     {isConverting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                     Convert to Client
                   </Button>
                 )}
+                </div>
               </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!leadToDelete} onOpenChange={() => setLeadToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Lead?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete the lead for{" "}
+              <span className="font-semibold">{leadToDelete?.name}</span>? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteLead}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
