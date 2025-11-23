@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExternalLink, Plus, Trash2, Loader2 } from "lucide-react";
 import { CreateClientDialog } from "@/components/CreateClientDialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,6 +37,7 @@ const AdminClients = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedClientIds, setSelectedClientIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (!adminLoading && !isAdmin) {
@@ -92,6 +94,44 @@ const AdminClients = () => {
     }
   };
 
+  const handleBulkDelete = async () => {
+    if (selectedClientIds.length === 0) return;
+
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("clients")
+        .delete()
+        .in("id", selectedClientIds);
+
+      if (error) throw error;
+
+      toast.success(`${selectedClientIds.length} client(s) deleted`);
+      setClients((prev) => prev.filter((client) => !selectedClientIds.includes(client.id)));
+      setSelectedClientIds([]);
+      setClientToDelete(null);
+    } catch (error) {
+      console.error("Error deleting clients:", error);
+      toast.error("Failed to delete clients");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const toggleClientSelection = (clientId: string) => {
+    setSelectedClientIds((prev) =>
+      prev.includes(clientId) ? prev.filter((id) => id !== clientId) : [...prev, clientId]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedClientIds.length === clients.length) {
+      setSelectedClientIds([]);
+    } else {
+      setSelectedClientIds(clients.map((client) => client.id));
+    }
+  };
+
   if (adminLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -115,6 +155,15 @@ const AdminClients = () => {
             </p>
           </div>
           <div className="flex gap-2">
+            {selectedClientIds.length > 0 && (
+              <Button
+                variant="destructive"
+                onClick={() => setClientToDelete({ id: "bulk" } as Client)}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete {selectedClientIds.length} selected
+              </Button>
+            )}
             <Button onClick={() => setCreateDialogOpen(true)}>
               <Plus className="w-4 h-4 mr-2" />
               Create Client
@@ -146,6 +195,12 @@ const AdminClients = () => {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b text-left">
+                      <th className="pb-3 w-[50px]">
+                        <Checkbox
+                          checked={selectedClientIds.length === clients.length && clients.length > 0}
+                          onCheckedChange={toggleSelectAll}
+                        />
+                      </th>
                       <th className="pb-3 font-semibold">Name</th>
                       <th className="pb-3 font-semibold">Business/Project</th>
                       <th className="pb-3 font-semibold">Email</th>
@@ -158,6 +213,12 @@ const AdminClients = () => {
                   <tbody>
                     {clients.map((client) => (
                       <tr key={client.id} className="border-b last:border-0">
+                        <td className="py-3">
+                          <Checkbox
+                            checked={selectedClientIds.includes(client.id)}
+                            onCheckedChange={() => toggleClientSelection(client.id)}
+                          />
+                        </td>
                         <td className="py-3">{client.name}</td>
                         <td className="py-3 text-muted-foreground">
                           {client.business_name || '—'}
@@ -225,16 +286,24 @@ const AdminClients = () => {
         <AlertDialog open={!!clientToDelete} onOpenChange={() => setClientToDelete(null)}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Delete Client?</AlertDialogTitle>
+              <AlertDialogTitle>Delete Client{selectedClientIds.length > 1 ? "s" : ""}?</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete{" "}
-                <span className="font-semibold">{clientToDelete?.name}</span>? This will also delete all their requests. This action cannot be undone.
+                {clientToDelete?.id === "bulk" ? (
+                  <>
+                    Are you sure you want to delete {selectedClientIds.length} selected client(s)? This will also delete all their requests. This action cannot be undone.
+                  </>
+                ) : (
+                  <>
+                    Are you sure you want to delete{" "}
+                    <span className="font-semibold">{clientToDelete?.name}</span>? This will also delete all their requests. This action cannot be undone.
+                  </>
+                )}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
               <AlertDialogAction
-                onClick={handleDeleteClient}
+                onClick={clientToDelete?.id === "bulk" ? handleBulkDelete : handleDeleteClient}
                 disabled={isDeleting}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
