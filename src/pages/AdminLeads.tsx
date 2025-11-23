@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -66,6 +67,7 @@ const AdminLeads = () => {
   const [isConverting, setIsConverting] = useState(false);
   const [leadToDelete, setLeadToDelete] = useState<Lead | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedLeadIds, setSelectedLeadIds] = useState<string[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -210,6 +212,44 @@ const AdminLeads = () => {
     }
   };
 
+  const handleBulkDelete = async () => {
+    if (selectedLeadIds.length === 0) return;
+
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("leads")
+        .delete()
+        .in("id", selectedLeadIds);
+
+      if (error) throw error;
+
+      toast.success(`${selectedLeadIds.length} lead(s) deleted`);
+      setLeads((prev) => prev.filter((lead) => !selectedLeadIds.includes(lead.id)));
+      setSelectedLeadIds([]);
+      setLeadToDelete(null);
+    } catch (error) {
+      console.error("Error deleting leads:", error);
+      toast.error("Failed to delete leads");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const toggleLeadSelection = (leadId: string) => {
+    setSelectedLeadIds((prev) =>
+      prev.includes(leadId) ? prev.filter((id) => id !== leadId) : [...prev, leadId]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedLeadIds.length === leads.length) {
+      setSelectedLeadIds([]);
+    } else {
+      setSelectedLeadIds(leads.map((lead) => lead.id));
+    }
+  };
+
   const getSourceBadge = (source: string) => {
     const variants: Record<string, { variant: "default" | "secondary" | "outline"; label: string }> = {
       ai_intake: { variant: "default", label: "AI Intake" },
@@ -257,9 +297,20 @@ const AdminLeads = () => {
               All lead submissions from AI intake, quote forms, checkups, and contact forms.
             </p>
           </div>
-          <Button variant="outline" onClick={() => navigate("/admin/clients")}>
-            View Clients
-          </Button>
+          <div className="flex gap-2 items-center">
+            {selectedLeadIds.length > 0 && (
+              <Button
+                variant="destructive"
+                onClick={() => setLeadToDelete({ id: "bulk" } as Lead)}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete {selectedLeadIds.length} selected
+              </Button>
+            )}
+            <Button variant="outline" onClick={() => navigate("/admin/clients")}>
+              View Clients
+            </Button>
+          </div>
         </div>
 
         <Card>
@@ -267,6 +318,12 @@ const AdminLeads = () => {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[50px]">
+                    <Checkbox
+                      checked={selectedLeadIds.length === leads.length && leads.length > 0}
+                      onCheckedChange={toggleSelectAll}
+                    />
+                  </TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Source</TableHead>
@@ -279,13 +336,19 @@ const AdminLeads = () => {
               <TableBody>
                 {leads.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                    <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
                       No leads yet
                     </TableCell>
                   </TableRow>
                 ) : (
                   leads.map((lead) => (
                     <TableRow key={lead.id}>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={selectedLeadIds.includes(lead.id)}
+                          onCheckedChange={() => toggleLeadSelection(lead.id)}
+                        />
+                      </TableCell>
                       <TableCell 
                         className="font-medium cursor-pointer hover:bg-muted/50"
                         onClick={() => setSelectedLead(lead)}
@@ -570,19 +633,27 @@ const AdminLeads = () => {
       <AlertDialog open={!!leadToDelete} onOpenChange={() => setLeadToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Lead?</AlertDialogTitle>
+            <AlertDialogTitle>Delete Lead{selectedLeadIds.length > 1 ? "s" : ""}?</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete the lead for{" "}
-              <span className="font-semibold">{leadToDelete?.name}</span>? This action cannot be undone.
+              {leadToDelete?.id === "bulk" ? (
+                <>
+                  Are you sure you want to delete {selectedLeadIds.length} selected lead(s)? This action cannot be undone.
+                </>
+              ) : (
+                <>
+                  Are you sure you want to delete the lead for{" "}
+                  <span className="font-semibold">{leadToDelete?.name}</span>? This action cannot be undone.
+                </>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteLead}
-              disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
+              <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={leadToDelete?.id === "bulk" ? handleBulkDelete : handleDeleteLead}
+                disabled={isDeleting}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
               {isDeleting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

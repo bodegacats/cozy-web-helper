@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { ExternalLink, Trash2, Loader2 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
@@ -66,6 +67,7 @@ const AdminRequests = () => {
   });
   const [requestToDelete, setRequestToDelete] = useState<UpdateRequest | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedRequestIds, setSelectedRequestIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (!adminLoading && !isAdmin) {
@@ -187,6 +189,44 @@ const AdminRequests = () => {
     }
   };
 
+  const handleBulkDelete = async () => {
+    if (selectedRequestIds.length === 0) return;
+
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("update_requests")
+        .delete()
+        .in("id", selectedRequestIds);
+
+      if (error) throw error;
+
+      toast.success(`${selectedRequestIds.length} request(s) deleted`);
+      setRequests((prev) => prev.filter((req) => !selectedRequestIds.includes(req.id)));
+      setSelectedRequestIds([]);
+      setRequestToDelete(null);
+    } catch (error) {
+      console.error("Error deleting requests:", error);
+      toast.error("Failed to delete requests");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const toggleRequestSelection = (requestId: string) => {
+    setSelectedRequestIds((prev) =>
+      prev.includes(requestId) ? prev.filter((id) => id !== requestId) : [...prev, requestId]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedRequestIds.length === filteredRequests.length) {
+      setSelectedRequestIds([]);
+    } else {
+      setSelectedRequestIds(filteredRequests.map((req) => req.id));
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; label: string }> = {
       new: { variant: "default", label: "New" },
@@ -239,6 +279,15 @@ const AdminRequests = () => {
             </p>
           </div>
           <div className="flex gap-2">
+            {selectedRequestIds.length > 0 && (
+              <Button
+                variant="destructive"
+                onClick={() => setRequestToDelete({ id: "bulk" } as UpdateRequest)}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete {selectedRequestIds.length} selected
+              </Button>
+            )}
             <Button variant="outline" onClick={() => navigate('/admin/clients')}>
               View clients
             </Button>
@@ -297,6 +346,12 @@ const AdminRequests = () => {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b text-left">
+                      <th className="p-4 w-[50px]">
+                        <Checkbox
+                          checked={selectedRequestIds.length === filteredRequests.length && filteredRequests.length > 0}
+                          onCheckedChange={toggleSelectAll}
+                        />
+                      </th>
                       <th className="p-4 font-semibold">Client</th>
                       <th className="p-4 font-semibold">Title</th>
                       <th className="p-4 font-semibold">Status</th>
@@ -313,6 +368,12 @@ const AdminRequests = () => {
                         className="border-b last:border-0 hover:bg-muted/50 cursor-pointer"
                         onClick={() => handleOpenRequest(request)}
                       >
+                        <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                          <Checkbox
+                            checked={selectedRequestIds.includes(request.id)}
+                            onCheckedChange={() => toggleRequestSelection(request.id)}
+                          />
+                        </td>
                         <td className="p-4">
                           <div>
                             <div className="font-medium">{request.clients.business_name || request.clients.name}</div>
@@ -524,16 +585,24 @@ const AdminRequests = () => {
         <AlertDialog open={!!requestToDelete} onOpenChange={() => setRequestToDelete(null)}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Delete Request?</AlertDialogTitle>
+              <AlertDialogTitle>Delete Request{selectedRequestIds.length > 1 ? "s" : ""}?</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete the request{" "}
-                <span className="font-semibold">"{requestToDelete?.title}"</span>? This action cannot be undone.
+                {requestToDelete?.id === "bulk" ? (
+                  <>
+                    Are you sure you want to delete {selectedRequestIds.length} selected request(s)? This action cannot be undone.
+                  </>
+                ) : (
+                  <>
+                    Are you sure you want to delete the request{" "}
+                    <span className="font-semibold">"{requestToDelete?.title}"</span>? This action cannot be undone.
+                  </>
+                )}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
               <AlertDialogAction
-                onClick={handleDeleteRequest}
+                onClick={requestToDelete?.id === "bulk" ? handleBulkDelete : handleDeleteRequest}
                 disabled={isDeleting}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
