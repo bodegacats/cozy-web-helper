@@ -262,16 +262,19 @@ const PortalRequest = () => {
         return;
       }
 
-      // Send notification email
+      // Send notification email via unified function
       try {
-        await supabase.functions.invoke('send-request-notification', {
+        await supabase.functions.invoke('send-notification', {
           body: {
-            type: 'new_request',
-            request: insertedRequest,
-            client: {
-              name: client.name,
-              email: client.email,
-              business_name: client.business_name
+            type: 'request',
+            data: {
+              type: 'new_request',
+              request: insertedRequest,
+              client: {
+                name: client.name,
+                email: client.email,
+                business_name: client.business_name
+              }
             }
           }
         });
