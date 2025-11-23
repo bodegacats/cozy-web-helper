@@ -9,48 +9,55 @@ const corsHeaders = {
 };
 
 interface NotificationRequest {
-  intake: any;
-  client_id: string;
+  lead: any;
+  client_id?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
-
   try {
-    const { intake, client_id }: NotificationRequest = await req.json();
+    if (req.method === "OPTIONS") {
+      return new Response(null, { headers: corsHeaders });
+    }
 
-    const fitBadge = intake.fit_status === 'good' ? '✅ Good Fit' : 
-                     intake.fit_status === 'borderline' ? '⚠️ Borderline' : 
+    const { lead }: NotificationRequest = await req.json();
+
+    if (!lead) {
+      return new Response(JSON.stringify({ error: "Missing lead payload" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    const fitBadge = lead.fit_status === 'good' ? '✅ Good Fit' :
+                     lead.fit_status === 'borderline' ? '⚠️ Borderline' :
                      '❌ Not a Fit';
-    
-    const tierLabel = intake.suggested_tier ? `$${intake.suggested_tier}` : 'Not determined';
+
+    const tierLabel = lead.suggested_tier ? `$${lead.suggested_tier}` : 'Not determined';
 
     const emailHtml = `
-      <h1>New AI Intake – ${intake.business_name || intake.name}</h1>
-      
+      <h1>New AI Intake – ${lead.business_name || lead.name}</h1>
+
       <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
         <p><strong>Fit Status:</strong> ${fitBadge}</p>
         <p><strong>Suggested Tier:</strong> ${tierLabel}</p>
-        <p><strong>Email:</strong> ${intake.email}</p>
-        <p><strong>Created:</strong> ${new Date(intake.created_at).toLocaleString()}</p>
+        <p><strong>Email:</strong> ${lead.email}</p>
+        <p><strong>Created:</strong> ${new Date(lead.created_at).toLocaleString()}</p>
       </div>
 
       <h2>Summary</h2>
-      <p>${intake.raw_summary || 'No summary provided'}</p>
+      <p>${lead.raw_summary || 'No summary provided'}</p>
 
       <h2>Key Details</h2>
       <ul>
-        <li><strong>What they do:</strong> ${intake.project_description || 'N/A'}</li>
-        <li><strong>Goals:</strong> ${intake.goals || 'N/A'}</li>
-        <li><strong>Pages needed:</strong> ${intake.pages_estimate || 'Not specified'}</li>
-        <li><strong>Content readiness:</strong> ${intake.content_readiness || 'N/A'}</li>
-        <li><strong>Timeline:</strong> ${intake.timeline || 'N/A'}</li>
-        <li><strong>Budget:</strong> ${intake.budget_range || 'N/A'}</li>
-        <li><strong>Special needs:</strong> ${intake.special_needs || 'None mentioned'}</li>
-        <li><strong>Tech comfort:</strong> ${intake.tech_comfort || 'N/A'}</li>
-        <li><strong>Discount:</strong> ${intake.discount_offered ? `$${intake.discount_amount || 0} offered` : 'No discount offered'}</li>
+        <li><strong>What they do:</strong> ${lead.project_description || 'N/A'}</li>
+        <li><strong>Goals:</strong> ${lead.goals || 'N/A'}</li>
+        <li><strong>Pages needed:</strong> ${lead.pages_estimate || 'Not specified'}</li>
+        <li><strong>Content readiness:</strong> ${lead.content_readiness || 'N/A'}</li>
+        <li><strong>Timeline:</strong> ${lead.timeline || 'N/A'}</li>
+        <li><strong>Budget:</strong> ${lead.budget_range || 'N/A'}</li>
+        <li><strong>Special needs:</strong> ${lead.special_needs || 'None mentioned'}</li>
+        <li><strong>Tech comfort:</strong> ${lead.tech_comfort || 'N/A'}</li>
+        <li><strong>Discount:</strong> ${lead.discount_offered ? `$${lead.discount_amount || 0} offered` : 'No discount offered'}</li>
       </ul>
 
       <div style="margin-top: 24px; padding: 16px; background: #e0f2fe; border-radius: 8px;">
@@ -61,7 +68,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "Build me a simple site <onboarding@resend.dev>",
       to: ["dannymule@gmail.com"], // Your admin email
-      subject: `New AI intake – ${intake.business_name || intake.name}`,
+      subject: `New AI intake – ${lead.business_name || lead.name}`,
       html: emailHtml,
     });
 
@@ -74,15 +81,12 @@ const handler = async (req: Request): Promise<Response> => {
         ...corsHeaders,
       },
     });
-  } catch (error: any) {
-    console.error("Error sending notification:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
-    );
+  } catch (err: any) {
+    console.error("send-intake-notification failed:", err);
+    return new Response(JSON.stringify({ error: err?.message || "Internal error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
   }
 };
 
