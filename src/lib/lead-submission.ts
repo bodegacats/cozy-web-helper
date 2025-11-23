@@ -52,6 +52,7 @@ type LeadPayloadMap = {
     suggested_tier?: "500" | "1000" | "1500" | string | null;
     raw_summary?: string | null;
     raw_conversation?: IntakeInsert["raw_conversation"];
+    intake_json?: IntakeInsert["intake_json"];
     lovable_build_prompt?: string | null;
     vibe?: string | null;
     discount_offered?: boolean;
@@ -142,7 +143,8 @@ const buildLeadInsert = (type: LeadType, payload: LeadPayloadMap[LeadType]): Lea
     fit_status: (intakePayload.fit_status as LeadInsert["fit_status"]) || "good",
     suggested_tier: intakePayload.suggested_tier as LeadInsert["suggested_tier"],
     raw_summary: intakePayload.raw_summary || null,
-    raw_conversation: intakePayload.raw_conversation || null,
+    raw_conversation:
+      (intakePayload.raw_conversation || null) as any,
     design_prompt: intakePayload.lovable_build_prompt || null,
     vibe_description: intakePayload.vibe || null,
     inspiration_sites: intakePayload.inspiration_sites || null,
@@ -154,10 +156,13 @@ const buildLeadInsert = (type: LeadType, payload: LeadPayloadMap[LeadType]): Lea
   };
 };
 
-const buildIntakeInsert = (payload: LeadPayloadMap["ai_intake"]): IntakeInsert => ({
+const buildIntakeInsert = (
+  payload: LeadPayloadMap["ai_intake"]
+): IntakeInsert => ({
   name: payload.name.trim(),
   email: payload.email.trim(),
   source: "ai_intake",
+
   business_name: payload.business_name || null,
   project_description: payload.project_description || payload.business_description || null,
   goals: payload.goals || null,
@@ -168,12 +173,22 @@ const buildIntakeInsert = (payload: LeadPayloadMap["ai_intake"]): IntakeInsert =
   design_examples: payload.design_examples || null,
   special_needs: payload.special_needs || null,
   tech_comfort: payload.tech_comfort || null,
-  fit_status: (payload.fit_status as IntakeInsert["fit_status"]) || "good",
-  suggested_tier: payload.suggested_tier as IntakeInsert["suggested_tier"],
+
+  fit_status:
+    (payload.fit_status as IntakeInsert["fit_status"]) || "good",
+  suggested_tier:
+    payload.suggested_tier as IntakeInsert["suggested_tier"],
+
   raw_summary: payload.raw_summary || null,
-  raw_conversation: (payload.raw_conversation || null) as IntakeInsert["raw_conversation"],
+  raw_conversation:
+    (payload.raw_conversation || null) as any,
+
+  intake_json:
+    (payload.intake_json || payload) as any,
+
   lovable_build_prompt: payload.lovable_build_prompt || null,
   kanban_stage: "new",
+
   discount_offered: Boolean(payload.discount_offered),
   discount_amount: payload.discount_amount ?? 0,
 });
