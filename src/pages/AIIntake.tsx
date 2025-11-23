@@ -149,26 +149,24 @@ const AIIntake = () => {
 
       console.log("AI response received:", data);
 
-      // 1. Detect JSON before rendering anything
+      // Check if the assistant response is the final JSON summary
       const intakeData = parseIntakeJSON(data.message);
 
       if (intakeData) {
         console.log("Final intake data detected, creating intake...");
-
-        // Show success toast first, so it doesn't get swallowed by UI reset
-        toast.success("Intake submitted! I'll review and follow up by email soon.");
-
         await createIntake(intakeData);
 
-        return; // prevent JSON from rendering
+        // Restore the missing success toast
+        toast.success("Intake submitted! I’ll review and follow up within one business day.");
+
+        return; // prevent rendering JSON to the page
       }
 
-      // 2. Only render the message if it's NOT JSON
+      // Otherwise it's a normal assistant message
       const assistantMessage: Message = {
         role: "assistant",
         content: data.message,
       };
-
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error("Error in AI intake:", error);
