@@ -6,9 +6,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ExternalLink, Copy, Check } from "lucide-react";
+import { ExternalLink, Copy, Check, Trash2, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { supabase } from "@/integrations/supabase/client";
+import { PROJECT_INTAKES_TABLE } from "@/constants/tables";
 
 interface Intake {
   id: string;
@@ -42,6 +54,7 @@ interface IntakeDetailDialogProps {
   onClose: () => void;
   onUpdate: (updates: Partial<Intake>) => void;
   onCreateRequest: (clientId: string, title: string, description: string) => void;
+  onDelete?: () => void;
 }
 
 export const IntakeDetailDialog = ({
@@ -49,11 +62,14 @@ export const IntakeDetailDialog = ({
   onClose,
   onUpdate,
   onCreateRequest,
+  onDelete,
 }: IntakeDetailDialogProps) => {
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [requestTitle, setRequestTitle] = useState("");
   const [requestDescription, setRequestDescription] = useState("");
   const [copied, setCopied] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const navigate = useNavigate();
 
   if (!intake) return null;
@@ -73,6 +89,30 @@ export const IntakeDetailDialog = ({
       setCopied(true);
       toast.success("Prompt copied to clipboard!");
       setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleDeleteIntake = async () => {
+    if (!intake) return;
+
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from(PROJECT_INTAKES_TABLE)
+        .delete()
+        .eq("id", intake.id);
+
+      if (error) throw error;
+
+      toast.success("Intake deleted");
+      setShowDeleteDialog(false);
+      onClose();
+      if (onDelete) onDelete();
+    } catch (error) {
+      console.error("Error deleting intake:", error);
+      toast.error("Failed to delete intake");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -350,8 +390,50 @@ export const IntakeDetailDialog = ({
               )}
             </div>
           )}
+
+          {/* Delete Button */}
+          <div className="pt-4 border-t">
+            <Button
+              variant="outline"
+              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+              onClick={() => setShowDeleteDialog(true)}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete Intake
+            </Button>
+          </div>
         </div>
       </DialogContent>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Intake?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete the intake for{" "}
+              <span className="font-semibold">{intake?.name}</span>? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteIntake}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 };

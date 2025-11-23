@@ -12,8 +12,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Trash2, Loader2 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface UpdateRequest {
   id: string;
@@ -54,6 +64,8 @@ const AdminRequests = () => {
     status: "",
     internal_notes: ""
   });
+  const [requestToDelete, setRequestToDelete] = useState<UpdateRequest | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (!adminLoading && !isAdmin) {
@@ -145,6 +157,33 @@ const AdminRequests = () => {
       toast.success("Request updated");
       setSelectedRequest(null);
       loadRequests();
+    }
+  };
+
+  const handleDeleteRequest = async () => {
+    if (!requestToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("update_requests")
+        .delete()
+        .eq("id", requestToDelete.id);
+
+      if (error) throw error;
+
+      toast.success("Request deleted");
+      setRequests((prev) => prev.filter((req) => req.id !== requestToDelete.id));
+      setRequestToDelete(null);
+      
+      if (selectedRequest?.id === requestToDelete.id) {
+        setSelectedRequest(null);
+      }
+    } catch (error) {
+      console.error("Error deleting request:", error);
+      toast.error("Failed to delete request");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -456,18 +495,60 @@ const AdminRequests = () => {
                   />
                 </div>
 
-                <div className="flex gap-2 justify-end">
-                  <Button variant="outline" onClick={() => setSelectedRequest(null)}>
-                    Close
+                <div className="flex gap-2 justify-between pt-4 border-t">
+                  <Button
+                    variant="outline"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => {
+                      setRequestToDelete(selectedRequest);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Request
                   </Button>
-                  <Button onClick={handleSaveRequest}>
-                    Save changes
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={() => setSelectedRequest(null)}>
+                      Close
+                    </Button>
+                    <Button onClick={handleSaveRequest}>
+                      Save changes
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={!!requestToDelete} onOpenChange={() => setRequestToDelete(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Request?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete the request{" "}
+                <span className="font-semibold">"{requestToDelete?.title}"</span>? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteRequest}
+                disabled={isDeleting}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  "Delete"
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
