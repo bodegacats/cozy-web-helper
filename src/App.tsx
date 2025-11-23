@@ -6,20 +6,16 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Index from "./pages/Index";
 import AIIntake from "./pages/AIIntake";
-import AdminSubmissions from "./pages/AdminSubmissions";
 import Portal from "./pages/Portal";
 import PortalRequest from "./pages/PortalRequest";
 import PortalAIChat from "./pages/PortalAIChat";
 import AdminClients from "./pages/AdminClients";
 import AdminClientDetail from "./pages/AdminClientDetail";
 import AdminRequests from "./pages/AdminRequests";
-import AdminPipeline from "./pages/AdminPipeline";
 import AdminIntakes from "./pages/AdminIntakes";
 import AdminLeads from "./pages/AdminLeads";
 import AdminBlog from "./pages/AdminBlog";
 import AdminBlogEditor from "./pages/AdminBlogEditor";
-// import Blog from "./pages/Blog";
-// import BlogPost from "./pages/BlogPost";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 
@@ -38,14 +34,6 @@ const App = () => (
           <Route path="/portal" element={<Portal />} />
           <Route path="/portal/request" element={<PortalRequest />} />
           <Route path="/portal/chat" element={<PortalAIChat />} />
-          <Route
-            path="/admin/submissions"
-            element={
-              <ProtectedRoute>
-                <AdminSubmissions />
-              </ProtectedRoute>
-            }
-          />
           <Route
             path="/admin/clients"
             element={
@@ -83,14 +71,6 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <AdminIntakes />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/pipeline"
-            element={
-              <ProtectedRoute>
-                <AdminPipeline />
               </ProtectedRoute>
             }
           />

@@ -27,47 +27,67 @@ import {
 
 interface Lead {
   id: string;
-  created_at: string;
   name: string;
   email: string;
   source: string;
+  status: string | null;
+  created_at: string | null;
+  business_name: string | null;
+  business_description: string | null;
+  website_url: string | null;
+  goals: string | null;
+  timeline: string | null;
+  budget_range: string | null;
+  content_readiness: string | null;
+  tech_comfort: string | null;
+  design_prompt: string | null;
+  vibe_description: string | null;
+  inspiration_sites: string | null;
+  color_preferences: string | null;
   page_count: number | null;
   content_shaping: boolean | null;
   rush: boolean | null;
   estimated_price: number | null;
-  business_name: string | null;
-  business_description: string | null;
-  project_notes: string | null;
-  website_url: string | null;
-  vibe_description: string | null;
-  inspiration_sites: string | null;
-  color_preferences: string | null;
-  design_prompt: string | null;
-  goals: string | null;
-  content_readiness: string | null;
-  timeline: string | null;
-  budget_range: string | null;
   special_needs: string | null;
-  tech_comfort: string | null;
   fit_status: string | null;
   suggested_tier: string | null;
   raw_summary: string | null;
   wish: string | null;
-  status: string;
-  converted_to_client_id: string | null;
-  converted_at: string | null;
+  project_notes: string | null;
   discount_offered: boolean | null;
   discount_amount: number | null;
+  lead_score: number | null;
+  converted_to_client_id: string | null;
+  converted_at: string | null;
+  project_description?: string;
+  submission_type?: string;
+}
+
+interface ContactSubmission {
+  id: string;
+  name: string;
+  email: string;
+  created_at: string | null;
+  status: string;
+  wish: string;
+  project_description: string;
+  website_url: string | null;
+  submission_type: string;
+  estimate_low: number | null;
+  estimate_high: number | null;
+  selected_options: any;
+  notes: string | null;
 }
 
 const AdminLeads = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-  const [isConverting, setIsConverting] = useState(false);
-  const [leadToDelete, setLeadToDelete] = useState<Lead | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [selectedLeadIds, setSelectedLeadIds] = useState<string[]>([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [leadToDelete, setLeadToDelete] = useState<string | null>(null);
+  const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
+  const [sourceFilter, setSourceFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -95,174 +115,255 @@ const AdminLeads = () => {
   };
 
   const fetchLeads = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("leads")
-        .select("*")
-        .order("created_at", { ascending: false });
+    // Fetch from leads table
+    const { data: leadsData, error: leadsError } = await supabase
+      .from("leads")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      setLeads(data || []);
-    } catch (error) {
-      console.error("Error fetching leads:", error);
-      toast.error("Failed to load leads");
-    } finally {
-      setIsLoading(false);
+    // Fetch from contact_submissions table
+    const { data: submissionsData, error: submissionsError } = await supabase
+      .from("contact_submissions")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (leadsError) {
+      toast.error("Failed to fetch leads");
+      console.error(leadsError);
     }
+    
+    if (submissionsError) {
+      toast.error("Failed to fetch submissions");
+      console.error(submissionsError);
+    }
+
+    // Normalize contact submissions to lead format
+    const normalizedSubmissions: Lead[] = (submissionsData || []).map((sub: ContactSubmission) => ({
+      id: sub.id,
+      name: sub.name,
+      email: sub.email,
+      source: sub.submission_type || "contact",
+      status: sub.status,
+      created_at: sub.created_at,
+      business_name: null,
+      business_description: null,
+      website_url: sub.website_url,
+      goals: null,
+      timeline: null,
+      budget_range: null,
+      content_readiness: null,
+      tech_comfort: null,
+      design_prompt: null,
+      vibe_description: null,
+      inspiration_sites: null,
+      color_preferences: null,
+      page_count: null,
+      content_shaping: null,
+      rush: null,
+      estimated_price: sub.estimate_low || sub.estimate_high || null,
+      special_needs: null,
+      fit_status: null,
+      suggested_tier: null,
+      raw_summary: null,
+      wish: sub.wish,
+      project_notes: sub.notes,
+      discount_offered: null,
+      discount_amount: null,
+      lead_score: null,
+      converted_to_client_id: null,
+      converted_at: null,
+      project_description: sub.project_description,
+      submission_type: sub.submission_type,
+    }));
+
+    // Combine both datasets
+    const allLeads = [...(leadsData || []), ...normalizedSubmissions];
+    setLeads(allLeads);
+    setLoading(false);
   };
 
   const handleStatusUpdate = async (leadId: string, newStatus: string) => {
-    try {
-      const { error } = await supabase
-        .from("leads")
-        .update({ status: newStatus })
-        .eq("id", leadId);
+    const lead = leads.find(l => l.id === leadId);
+    if (!lead) return;
 
-      if (error) throw error;
+    const table = lead.source === "contact" ? "contact_submissions" : "leads";
+    const { error } = await supabase
+      .from(table)
+      .update({ status: newStatus })
+      .eq("id", leadId);
 
-      setLeads((prev) =>
-        prev.map((lead) => (lead.id === leadId ? { ...lead, status: newStatus } : lead))
-      );
-      if (selectedLead?.id === leadId) {
-        setSelectedLead({ ...selectedLead, status: newStatus });
-      }
-      toast.success("Status updated");
-    } catch (error) {
-      console.error("Error updating status:", error);
+    if (error) {
       toast.error("Failed to update status");
+      return;
     }
+
+    setLeads((prev) =>
+      prev.map((l) => (l.id === leadId ? { ...l, status: newStatus } : l))
+    );
+    if (selectedLead?.id === leadId) {
+      setSelectedLead({ ...selectedLead, status: newStatus });
+    }
+    toast.success("Status updated");
   };
 
-  const handleConvertToClient = async () => {
-    if (!selectedLead) return;
+  const handleConvertToClient = async (lead: Lead) => {
+    const { data: existingClients } = await supabase
+      .from("clients")
+      .select("id")
+      .eq("email", lead.email)
+      .maybeSingle();
 
-    setIsConverting(true);
-    try {
-      // Create client record
-      const { data: clientData, error: clientError } = await supabase
-        .from("clients")
-        .insert({
-          name: selectedLead.name,
-          email: selectedLead.email,
-          business_name: selectedLead.business_name,
-          website_url: selectedLead.website_url,
-          notes: selectedLead.business_description || selectedLead.project_notes,
-          source_lead_id: selectedLead.id,
-          pipeline_stage: "lead",
-        })
-        .select()
-        .single();
+    if (existingClients) {
+      toast.error("A client with this email already exists");
+      return;
+    }
 
-      if (clientError) throw clientError;
+    const { data: client, error: clientError } = await supabase
+      .from("clients")
+      .insert({
+        name: lead.name,
+        email: lead.email,
+        business_name: lead.business_name,
+        website_url: lead.website_url,
+        notes: lead.project_notes,
+        source_lead_id: lead.source === "contact" ? null : lead.id,
+        source_submission_id: lead.source === "contact" ? lead.id : null,
+      })
+      .select()
+      .single();
 
-      // Update lead to mark as converted
+    if (clientError) {
+      toast.error("Failed to create client");
+      return;
+    }
+
+    // Update the appropriate table
+    if (lead.source === "contact") {
+      const { error: updateError } = await supabase
+        .from("contact_submissions")
+        .update({ status: "converted" })
+        .eq("id", lead.id);
+
+      if (updateError) {
+        toast.error("Failed to update submission status");
+        return;
+      }
+    } else {
       const { error: updateError } = await supabase
         .from("leads")
         .update({
           status: "converted",
-          converted_to_client_id: clientData.id,
+          converted_to_client_id: client.id,
           converted_at: new Date().toISOString(),
         })
-        .eq("id", selectedLead.id);
+        .eq("id", lead.id);
 
-      if (updateError) throw updateError;
-
-      toast.success("Lead converted to client!");
-      setSelectedLead(null);
-      fetchLeads();
-
-      // Navigate to client detail page
-      navigate(`/admin/clients/${clientData.id}`);
-    } catch (error: any) {
-      console.error("Error converting lead:", error);
-      if (error.message?.includes("duplicate key")) {
-        toast.error("A client with this email already exists");
-      } else {
-        toast.error("Failed to convert lead to client");
+      if (updateError) {
+        toast.error("Failed to update lead status");
+        return;
       }
-    } finally {
-      setIsConverting(false);
     }
+
+    toast.success("Lead converted to client successfully");
+    navigate(`/admin/clients/${client.id}`);
   };
 
   const handleDeleteLead = async () => {
     if (!leadToDelete) return;
 
-    setIsDeleting(true);
-    try {
-      const { error } = await supabase
-        .from("leads")
-        .delete()
-        .eq("id", leadToDelete.id);
+    const leadToDeleteObj = leads.find(l => l.id === leadToDelete);
+    if (!leadToDeleteObj) return;
 
-      if (error) throw error;
+    // Delete from the appropriate table
+    const table = leadToDeleteObj.source === "contact" ? "contact_submissions" : "leads";
+    const { error } = await supabase
+      .from(table)
+      .delete()
+      .eq("id", leadToDelete);
 
-      toast.success("Lead deleted");
-      setLeads((prev) => prev.filter((lead) => lead.id !== leadToDelete.id));
-      setLeadToDelete(null);
-      
-      if (selectedLead?.id === leadToDelete.id) {
-        setSelectedLead(null);
-      }
-    } catch (error) {
-      console.error("Error deleting lead:", error);
+    if (error) {
       toast.error("Failed to delete lead");
-    } finally {
-      setIsDeleting(false);
+      return;
     }
+
+    toast.success("Lead deleted successfully");
+    setDeleteDialogOpen(false);
+    setLeadToDelete(null);
+    fetchLeads();
   };
 
   const handleBulkDelete = async () => {
-    if (selectedLeadIds.length === 0) return;
+    const leadsArray = Array.from(selectedLeads);
+    const selectedLeadObjs = leads.filter(l => leadsArray.includes(l.id));
+    
+    // Group by source type
+    const contactLeads = selectedLeadObjs.filter(l => l.source === "contact").map(l => l.id);
+    const regularLeads = selectedLeadObjs.filter(l => l.source !== "contact").map(l => l.id);
 
-    setIsDeleting(true);
-    try {
+    let hasError = false;
+
+    if (contactLeads.length > 0) {
+      const { error } = await supabase
+        .from("contact_submissions")
+        .delete()
+        .in("id", contactLeads);
+      if (error) hasError = true;
+    }
+
+    if (regularLeads.length > 0) {
       const { error } = await supabase
         .from("leads")
         .delete()
-        .in("id", selectedLeadIds);
-
-      if (error) throw error;
-
-      toast.success(`${selectedLeadIds.length} lead(s) deleted`);
-      setLeads((prev) => prev.filter((lead) => !selectedLeadIds.includes(lead.id)));
-      setSelectedLeadIds([]);
-      setLeadToDelete(null);
-    } catch (error) {
-      console.error("Error deleting leads:", error);
-      toast.error("Failed to delete leads");
-    } finally {
-      setIsDeleting(false);
+        .in("id", regularLeads);
+      if (error) hasError = true;
     }
+
+    if (hasError) {
+      toast.error("Failed to delete some leads");
+    } else {
+      toast.success(`Successfully deleted ${leadsArray.length} lead(s)`);
+    }
+
+    setSelectedLeads(new Set());
+    setDeleteDialogOpen(false);
+    fetchLeads();
   };
 
   const toggleLeadSelection = (leadId: string) => {
-    setSelectedLeadIds((prev) =>
-      prev.includes(leadId) ? prev.filter((id) => id !== leadId) : [...prev, leadId]
-    );
+    setSelectedLeads((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(leadId)) {
+        newSet.delete(leadId);
+      } else {
+        newSet.add(leadId);
+      }
+      return newSet;
+    });
   };
 
   const toggleSelectAll = () => {
-    if (selectedLeadIds.length === leads.length) {
-      setSelectedLeadIds([]);
+    if (selectedLeads.size === filteredLeads.length) {
+      setSelectedLeads(new Set());
     } else {
-      setSelectedLeadIds(leads.map((lead) => lead.id));
+      setSelectedLeads(new Set(filteredLeads.map((lead) => lead.id)));
     }
   };
 
   const getSourceBadge = (source: string) => {
-    const variants: Record<string, { variant: "default" | "secondary" | "outline"; label: string }> = {
-      ai_intake: { variant: "default", label: "AI Intake" },
-      quote: { variant: "secondary", label: "Quote" },
+    const variants: Record<string, { variant: any; label: string }> = {
+      quote: { variant: "default", label: "Quote Form" },
+      ai_intake: { variant: "secondary", label: "AI Intake" },
       checkup: { variant: "outline", label: "Checkup" },
-      contact: { variant: "outline", label: "Contact" },
+      contact: { variant: "outline", label: "Contact Form" },
     };
 
-    const config = variants[source] || { variant: "outline" as const, label: source };
+    const config = variants[source] || { variant: "outline", label: source };
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string | null) => {
+    if (!status) return <Badge variant="outline">new</Badge>;
+    
     const variants: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
       new: "default",
       reviewed: "secondary",
@@ -275,10 +376,16 @@ const AdminLeads = () => {
     return <Badge variant={variants[status] || "outline"}>{status.replace("_", " ")}</Badge>;
   };
 
-  if (isLoading) {
+  const filteredLeads = leads.filter((lead) => {
+    const matchesSource = sourceFilter === "all" || lead.source === sourceFilter;
+    const matchesStatus = statusFilter === "all" || lead.status === statusFilter;
+    return matchesSource && matchesStatus;
+  });
+
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin" />
+        <div className="text-lg">Loading leads...</div>
       </div>
     );
   }
@@ -290,26 +397,57 @@ const AdminLeads = () => {
       </Helmet>
 
       <div className="container mx-auto max-w-7xl">
-        <div className="mb-8 flex justify-between items-center">
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-semibold mb-2">Leads Pipeline</h1>
-            <p className="text-muted-foreground">
-              All lead submissions from AI intake, quote forms, checkups, and contact forms.
+            <h1 className="text-3xl font-bold">Leads</h1>
+            <p className="text-muted-foreground mt-1">
+              Manage and track potential clients from all sources
             </p>
           </div>
-          <div className="flex gap-2 items-center">
-            {selectedLeadIds.length > 0 && (
-              <Button
-                variant="destructive"
-                onClick={() => setLeadToDelete({ id: "bulk" } as Lead)}
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete {selectedLeadIds.length} selected
-              </Button>
-            )}
-            <Button variant="outline" onClick={() => navigate("/admin/clients")}>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => navigate('/admin/clients')}>
               View Clients
             </Button>
+            {selectedLeads.size > 0 && (
+              <Button
+                variant="destructive"
+                onClick={() => setDeleteDialogOpen(true)}
+              >
+                Delete Selected ({selectedLeads.size})
+              </Button>
+            )}
+          </div>
+        </div>
+
+        <div className="flex gap-4 mb-6">
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Source:</label>
+            <select
+              value={sourceFilter}
+              onChange={(e) => setSourceFilter(e.target.value)}
+              className="border rounded-md px-3 py-1.5 text-sm bg-background"
+            >
+              <option value="all">All Sources</option>
+              <option value="quote">Quote Form</option>
+              <option value="contact">Contact Form</option>
+              <option value="ai_intake">AI Intake</option>
+              <option value="checkup">Checkup</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Status:</label>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="border rounded-md px-3 py-1.5 text-sm bg-background"
+            >
+              <option value="all">All Statuses</option>
+              <option value="new">New</option>
+              <option value="contacted">Contacted</option>
+              <option value="qualified">Qualified</option>
+              <option value="converted">Converted</option>
+              <option value="not_fit">Not Fit</option>
+            </select>
           </div>
         </div>
 
@@ -320,7 +458,7 @@ const AdminLeads = () => {
                 <TableRow>
                   <TableHead className="w-[50px]">
                     <Checkbox
-                      checked={selectedLeadIds.length === leads.length && leads.length > 0}
+                      checked={selectedLeads.size === filteredLeads.length && filteredLeads.length > 0}
                       onCheckedChange={toggleSelectAll}
                     />
                   </TableHead>
@@ -334,75 +472,68 @@ const AdminLeads = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {leads.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
-                      No leads yet
+                {filteredLeads.map((lead) => (
+                  <TableRow key={lead.id}>
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={selectedLeads.has(lead.id)}
+                        onCheckedChange={() => toggleLeadSelection(lead.id)}
+                      />
+                    </TableCell>
+                    <TableCell 
+                      className="font-medium cursor-pointer hover:bg-muted/50"
+                      onClick={() => setSelectedLead(lead)}
+                    >
+                      {lead.name}
+                    </TableCell>
+                    <TableCell 
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => setSelectedLead(lead)}
+                    >
+                      {lead.email}
+                    </TableCell>
+                    <TableCell 
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => setSelectedLead(lead)}
+                    >
+                      {getSourceBadge(lead.source)}
+                    </TableCell>
+                    <TableCell 
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => setSelectedLead(lead)}
+                    >
+                      {getStatusBadge(lead.status)}
+                    </TableCell>
+                    <TableCell 
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => setSelectedLead(lead)}
+                    >
+                      {lead.estimated_price
+                        ? `$${(lead.estimated_price / 100).toFixed(0)}`
+                        : "—"}
+                    </TableCell>
+                    <TableCell 
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => setSelectedLead(lead)}
+                    >
+                      {lead.created_at && format(new Date(lead.created_at), "MMM d, yyyy")}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setLeadToDelete(lead.id);
+                          setDeleteDialogOpen(true);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </TableCell>
                   </TableRow>
-                ) : (
-                  leads.map((lead) => (
-                    <TableRow key={lead.id}>
-                      <TableCell onClick={(e) => e.stopPropagation()}>
-                        <Checkbox
-                          checked={selectedLeadIds.includes(lead.id)}
-                          onCheckedChange={() => toggleLeadSelection(lead.id)}
-                        />
-                      </TableCell>
-                      <TableCell 
-                        className="font-medium cursor-pointer hover:bg-muted/50"
-                        onClick={() => setSelectedLead(lead)}
-                      >
-                        {lead.name}
-                      </TableCell>
-                      <TableCell 
-                        className="cursor-pointer hover:bg-muted/50"
-                        onClick={() => setSelectedLead(lead)}
-                      >
-                        {lead.email}
-                      </TableCell>
-                      <TableCell 
-                        className="cursor-pointer hover:bg-muted/50"
-                        onClick={() => setSelectedLead(lead)}
-                      >
-                        {getSourceBadge(lead.source)}
-                      </TableCell>
-                      <TableCell 
-                        className="cursor-pointer hover:bg-muted/50"
-                        onClick={() => setSelectedLead(lead)}
-                      >
-                        {getStatusBadge(lead.status)}
-                      </TableCell>
-                      <TableCell 
-                        className="cursor-pointer hover:bg-muted/50"
-                        onClick={() => setSelectedLead(lead)}
-                      >
-                        {lead.estimated_price
-                          ? `$${(lead.estimated_price / 100).toFixed(0)}`
-                          : "—"}
-                      </TableCell>
-                      <TableCell 
-                        className="cursor-pointer hover:bg-muted/50"
-                        onClick={() => setSelectedLead(lead)}
-                      >
-                        {format(new Date(lead.created_at), "MMM d, yyyy")}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setLeadToDelete(lead);
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
+                ))}
               </TableBody>
             </Table>
           </CardContent>
@@ -418,7 +549,6 @@ const AdminLeads = () => {
 
           {selectedLead && (
             <div className="space-y-6">
-              {/* Header Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">Name</p>
@@ -434,17 +564,16 @@ const AdminLeads = () => {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Created</p>
-                  <p>{format(new Date(selectedLead.created_at), "MMM d, yyyy 'at' h:mm a")}</p>
+                  <p>{selectedLead.created_at && format(new Date(selectedLead.created_at), "MMM d, yyyy 'at' h:mm a")}</p>
                 </div>
               </div>
 
               <Separator />
 
-              {/* Status Management */}
               <div>
                 <Label className="text-sm font-medium mb-2 block">Lead Status</Label>
                 <Select
-                  value={selectedLead.status}
+                  value={selectedLead.status || "new"}
                   onValueChange={(value) => handleStatusUpdate(selectedLead.id, value)}
                 >
                   <SelectTrigger className="w-full">
@@ -461,207 +590,65 @@ const AdminLeads = () => {
                 </Select>
               </div>
 
-              {/* Pricing Info */}
-              {(selectedLead.estimated_price || selectedLead.page_count || selectedLead.discount_offered) && (
+              {selectedLead.wish && (
                 <>
                   <Separator />
                   <div>
-                    <h3 className="font-semibold mb-3">Pricing Details</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      {selectedLead.estimated_price && (
-                        <div>
-                          <p className="text-sm text-muted-foreground">Estimated Price</p>
-                          <p className="text-xl font-semibold">
-                            ${(selectedLead.estimated_price / 100).toFixed(0)}
-                          </p>
-                        </div>
-                      )}
-                      {selectedLead.discount_offered && (
-                        <div>
-                          <p className="text-sm text-muted-foreground">Discount Offered</p>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className="text-base">
-                              ${selectedLead.discount_amount}
-                            </Badge>
-                            {selectedLead.estimated_price && selectedLead.discount_amount && (
-                              <p className="text-sm text-muted-foreground">
-                                (Final: ${((selectedLead.estimated_price / 100) - selectedLead.discount_amount).toFixed(0)})
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                      {selectedLead.page_count && (
-                        <div>
-                          <p className="text-sm text-muted-foreground">Page Count</p>
-                          <p className="font-medium">{selectedLead.page_count} pages</p>
-                        </div>
-                      )}
-                      {selectedLead.content_shaping && (
-                        <div>
-                          <Badge variant="secondary">Content Shaping</Badge>
-                        </div>
-                      )}
-                      {selectedLead.rush && (
-                        <div>
-                          <Badge variant="secondary">Rush Delivery</Badge>
-                        </div>
-                      )}
-                    </div>
+                    <p className="text-sm text-muted-foreground mb-2">What they wish for</p>
+                    <p>{selectedLead.wish}</p>
                   </div>
                 </>
               )}
 
-              {/* Business Info */}
-              {(selectedLead.business_name || selectedLead.business_description || selectedLead.website_url) && (
+              {selectedLead.project_description && (
                 <>
                   <Separator />
                   <div>
-                    <h3 className="font-semibold mb-3">Business Information</h3>
-                    <div className="space-y-3">
-                      {selectedLead.business_name && (
-                        <div>
-                          <p className="text-sm text-muted-foreground">Business Name</p>
-                          <p>{selectedLead.business_name}</p>
-                        </div>
-                      )}
-                      {selectedLead.business_description && (
-                        <div>
-                          <p className="text-sm text-muted-foreground">Description</p>
-                          <p className="whitespace-pre-wrap">{selectedLead.business_description}</p>
-                        </div>
-                      )}
-                      {selectedLead.website_url && (
-                        <div>
-                          <p className="text-sm text-muted-foreground">Website</p>
-                          <a
-                            href={selectedLead.website_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary hover:underline flex items-center gap-1"
-                          >
-                            {selectedLead.website_url}
-                            <ExternalLink className="w-3 h-3" />
-                          </a>
-                        </div>
-                      )}
-                    </div>
+                    <p className="text-sm text-muted-foreground mb-2">Project Description</p>
+                    <p>{selectedLead.project_description}</p>
                   </div>
                 </>
               )}
 
-              {/* AI Intake Specific */}
-              {selectedLead.source === "ai_intake" && selectedLead.design_prompt && (
-                <>
-                  <Separator />
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-semibold">AI-Generated Design Prompt</h3>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          navigator.clipboard.writeText(selectedLead.design_prompt || "");
-                          toast.success("Build prompt copied to clipboard!");
-                        }}
-                      >
-                        Copy Build Prompt
-                      </Button>
-                    </div>
-                    <div className="bg-muted p-4 rounded-md">
-                      <pre className="whitespace-pre-wrap text-sm font-mono">
-                        {selectedLead.design_prompt}
-                      </pre>
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {/* Checkup Specific */}
-              {selectedLead.source === "checkup" && selectedLead.wish && (
-                <>
-                  <Separator />
-                  <div>
-                    <h3 className="font-semibold mb-3">What They Want</h3>
-                    <p className="whitespace-pre-wrap">{selectedLead.wish}</p>
-                  </div>
-                </>
-              )}
-
-              {/* Notes */}
-              {selectedLead.project_notes && (
-                <>
-                  <Separator />
-                  <div>
-                    <h3 className="font-semibold mb-3">Additional Notes</h3>
-                    <p className="whitespace-pre-wrap">{selectedLead.project_notes}</p>
-                  </div>
-                </>
-              )}
-
-              {/* Actions */}
               <Separator />
-              <div className="flex justify-between gap-3">
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => handleConvertToClient(selectedLead)}
+                  disabled={selectedLead.status === "converted"}
+                >
+                  Convert to Client
+                </Button>
                 <Button
                   variant="outline"
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                  onClick={() => {
-                    setLeadToDelete(selectedLead);
-                  }}
+                  onClick={() => setSelectedLead(null)}
                 >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete Lead
+                  Close
                 </Button>
-                <div className="flex gap-3">
-                  <Button variant="outline" onClick={() => setSelectedLead(null)}>
-                    Close
-                  </Button>
-                  {selectedLead.status !== "converted" && (
-                  <Button onClick={handleConvertToClient} disabled={isConverting}>
-                    {isConverting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                    Convert to Client
-                  </Button>
-                )}
-                </div>
               </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!leadToDelete} onOpenChange={() => setLeadToDelete(null)}>
+      {/* Delete Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Lead{selectedLeadIds.length > 1 ? "s" : ""}?</AlertDialogTitle>
+            <AlertDialogTitle>Delete Lead{selectedLeads.size > 1 ? "s" : ""}?</AlertDialogTitle>
             <AlertDialogDescription>
-              {leadToDelete?.id === "bulk" ? (
-                <>
-                  Are you sure you want to delete {selectedLeadIds.length} selected lead(s)? This action cannot be undone.
-                </>
-              ) : (
-                <>
-                  Are you sure you want to delete the lead for{" "}
-                  <span className="font-semibold">{leadToDelete?.name}</span>? This action cannot be undone.
-                </>
-              )}
+              {selectedLeads.size > 1 
+                ? `Are you sure you want to delete ${selectedLeads.size} leads? This action cannot be undone.`
+                : "Are you sure you want to delete this lead? This action cannot be undone."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-              <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={leadToDelete?.id === "bulk" ? handleBulkDelete : handleDeleteLead}
-                disabled={isDeleting}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              >
-              {isDeleting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
-                </>
-              ) : (
-                "Delete"
-              )}
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={selectedLeads.size > 1 ? handleBulkDelete : handleDeleteLead}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
